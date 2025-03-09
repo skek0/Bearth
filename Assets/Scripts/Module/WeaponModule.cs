@@ -1,8 +1,9 @@
-using UnityEngine;
+    using UnityEngine;
 
 public class WeaponModule : Module
 {
     Weapon weapon;
+    CoreModule core;
 
     protected override void Awake()
     {
@@ -19,6 +20,7 @@ public class WeaponModule : Module
     protected override void TryDetach()
     {
         ConnectCore(false);
+        Debug.Log("detach weapon");
         base.TryDetach();
     }
     protected override void TryAttach()
@@ -29,11 +31,24 @@ public class WeaponModule : Module
 
     public void ConnectCore(bool connect_disConnect)
     {
-        if (transform.root.TryGetComponent(out CoreModule core))
+        if(connect_disConnect && core == null)
         {
-            if (connect_disConnect) core.AddConnectedWeapon(weapon);
-            else core.RemoveConnectedWeapon(weapon);
+            if(transform.root.TryGetComponent(out CoreModule _core))
+            {
+                core = _core;
+                core.AddConnectedWeapon(weapon);
+            }
         }
+        else if(core != null) // && connect_disConnect = false;
+        {
+            core.RemoveConnectedWeapon(weapon);
+            core = null;
+        }
+        //if (transform.root.TryGetComponent(out CoreModule core))
+        //{
+        //    if (connect_disConnect) core.AddConnectedWeapon(weapon);
+        //    else core.RemoveConnectedWeapon(weapon);
+        //}
         else { Debug.Log("Weapon Not Attached To Core!"); }
     }
 }

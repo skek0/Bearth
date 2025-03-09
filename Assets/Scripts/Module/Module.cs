@@ -49,18 +49,20 @@ public class Module : ModuleInfo, IDamageable, IClickable
 
     protected virtual void Die()
     {
-        DetachChildren();
-        VacateConnector(ConnectorType.Receiver);
-        Destroy(gameObject); // OnDestroy()
+        //DetachChildren();
+        //VacateConnector(ConnectorType.Receiver);
+        //Destroy(gameObject); // OnDestroy()
+        Detach();
+        Destroy(gameObject);
     }
 
-    public void Detached()
-    {
-        DetachChildren();
-        transform.SetParent(null);
-        AddRigidBody();
-        VacateConnector(ConnectorType.Sender);
-    }
+    //public void Detached()
+    //{
+    //    DetachChildren();
+    //    transform.SetParent(null);
+    //    AddRigidBody();
+    //    VacateConnector(ConnectorType.Sender);
+    //}
 
     private void Detach()
     {
@@ -69,7 +71,6 @@ public class Module : ModuleInfo, IDamageable, IClickable
         VacateConnectors();
         AddRigidBody();
     }
-
     private void SetChildrenDetach()
     {
         for (int i = transform.childCount - 1; i >= 0; i--)
@@ -77,11 +78,10 @@ public class Module : ModuleInfo, IDamageable, IClickable
             Transform child = transform.GetChild(i);
             if (child.TryGetComponent(out Module part))
             {
-                part.Detach();
+                part.TryDetach();
             }
         }
     }
-
     private void VacateConnectors()
     {
         sender.isOccupied = false;
@@ -92,30 +92,30 @@ public class Module : ModuleInfo, IDamageable, IClickable
             receiver.isOccupied = false;
         }
     }
-
     private void AddRigidBody()
     {
         rigid = gameObject.AddComponent<Rigidbody2D>();
         rigid.mass = mass;
         rigid.gravityScale = 0f;
     }
-    private void VacateConnector(ConnectorType type)
-    {
-        if (type == ConnectorType.Sender) 
-        {
-            transform.SetParent(null);
-            sender.isOccupied = false;
-            connectedTo.isOccupied = false;
-            connectedTo = null;
-        }
-        else if(type == ConnectorType.Receiver)
-        {
-            foreach(var receiver in receivers)
-            {
-                receiver.isOccupied = false;
-            }
-        }
-    }
+    
+    //private void VacateConnector(ConnectorType type)
+    //{
+    //    if (type == ConnectorType.Sender) 
+    //    {
+    //        transform.SetParent(null);
+    //        sender.isOccupied = false;
+    //        connectedTo.isOccupied = false;
+    //        connectedTo = null;
+    //    }
+    //    else if(type == ConnectorType.Receiver)
+    //    {
+    //        foreach(var receiver in receivers)
+    //        {
+    //            receiver.isOccupied = false;
+    //        }
+    //    }
+    //}
 
     private void OnDestroy()
     {
@@ -179,7 +179,7 @@ public class Module : ModuleInfo, IDamageable, IClickable
     {
         if (ignoreCollide)
         {
-            DetachChildren();
+            //DetachChildren();
             gameObject.layer = LayerMask.NameToLayer("ClickedModule");
         }
         else //ignoreCollider == false
@@ -189,17 +189,27 @@ public class Module : ModuleInfo, IDamageable, IClickable
         //충돌 판정 유무는 Project Setting에서 변경됨
     }
 
-    private void DetachChildren()
+    //private void DetachChildren()
+    //{
+    //    for (int i = transform.childCount - 1; i >= 0; i--)
+    //    {
+    //        Transform child = transform.GetChild(i);
+    //        if (child.TryGetComponent(out Module part))
+    //        {
+    //            part.Detached();    // 자식의 자식도 독립되게
+    //        }
+    //    }
+    //    VacateConnector(ConnectorType.Receiver);
+    //}
+
+    protected virtual void TryDetach()
     {
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        if (sender.isOccupied)
         {
-            Transform child = transform.GetChild(i);
-            if (child.TryGetComponent(out Module part))
-            {
-                part.Detached();    // 자식의 자식도 독립되게
-            }
+            //VacateConnector(ConnectorType.Sender);
+            //AddRigidBody();
+            Detach();
         }
-        VacateConnector(ConnectorType.Receiver);
     }
 
     private void HeadingToReceiver()
@@ -210,7 +220,8 @@ public class Module : ModuleInfo, IDamageable, IClickable
             HeadingToTarget(receiver.transform);
         }
     }
-    void HeadingToTarget(Transform targetReceiver)
+
+    private void HeadingToTarget(Transform targetReceiver)
     {
         if (targetReceiver != null)
         {
@@ -220,15 +231,6 @@ public class Module : ModuleInfo, IDamageable, IClickable
 
             float newAngle = Mathf.LerpAngle(currentAngle, targetAngle, Time.deltaTime * 20f); // 부드러운 회전
             transform.rotation = Quaternion.Euler(0, 0, newAngle);
-        }
-    }
-
-    protected virtual void TryDetach()
-    {
-        if (sender.isOccupied)
-        {
-            VacateConnector(ConnectorType.Sender);
-            AddRigidBody();
         }
     }
 
