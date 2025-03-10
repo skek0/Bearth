@@ -20,7 +20,7 @@ public class ObjectPoolManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void CreatePool(string key, GameObject prefab, int initialSize, Transform parent = null)
+    public void CreatePool(string key, GameObject prefab, int initialSize)
     {
         if (!pools.ContainsKey(key))
         {

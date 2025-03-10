@@ -56,8 +56,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4545729898506431705}
-  - component: {fileID: 7203220853110509387}
   - component: {fileID: 8591550557577611491}
+  - component: {fileID: 7203220853110509387}
   - component: {fileID: 8697977812585558365}
   - component: {fileID: 7424927133522587552}
   - component: {fileID: 4496030332520367598}
@@ -88,6 +88,21 @@ Transform:
   - {fileID: 6041495283822557258}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8591550557577611491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3151153861438216856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ea95a987bff9d84699af12820bab3a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  coolTime: 1
+  speed: 1
 --- !u!114 &7203220853110509387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,22 +120,6 @@ MonoBehaviour:
   connectionDistance: 2
   explosionForce: 1
   explosionRadius: 1.5
---- !u!114 &8591550557577611491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3151153861438216856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ea95a987bff9d84699af12820bab3a3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damage: 1
-  interval: 1
-  speed: 1
-  offsetTransform: {fileID: 0}
 --- !u!50 &8697977812585558365
 Rigidbody2D:
   serializedVersion: 5
@@ -709,10 +708,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7814208947227792126}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 0, y: -1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4545729898506431705}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}

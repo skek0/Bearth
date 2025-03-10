@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class ObjectPool : MonoBehaviour
 {
     private Queue<GameObject> pool = new Queue<GameObject>();
     private GameObject prefab;
+    private readonly object _lock = new object(); // 동기화를 위한 락 객체
 
     public void Initialize(GameObject prefab, int initialSize)
     {
@@ -20,25 +20,34 @@ public class ObjectPool : MonoBehaviour
     private GameObject CreateNewObject()
     {
         GameObject obj = Instantiate(prefab, transform); // 풀 매니저 하위로 생성
-        obj.SetActive(false);
+        obj.SetActive(false); // 처음에는 비활성화된 상태로 추가
         return obj;
     }
 
     public GameObject GetObject()
     {
-        if (pool.Count > 0)
+        lock (_lock) // 동시 접근 방지
         {
-            GameObject obj = pool.Dequeue();
-            obj.SetActive(true);
-            return obj;
-        }
+            if (pool.Count > 0)
+            {
+                GameObject obj = pool.Dequeue();
+                obj.SetActive(true);
+                return obj;
+            }
 
-        return CreateNewObject(); // 동적 확장
+            // 부족하면 새로 생성
+            GameObject newObj = CreateNewObject();
+            newObj.SetActive(true);
+            return newObj;
+        }
     }
 
     public void ReturnObject(GameObject obj)
     {
-        obj.SetActive(false);
-        pool.Enqueue(obj);
+        lock (_lock) // 동시 접근 방지
+        {
+            obj.SetActive(false);
+            pool.Enqueue(obj);
+        }
     }
 }

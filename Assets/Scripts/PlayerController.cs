@@ -55,8 +55,8 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rigid.AddRelativeForceY(moveY * Time.fixedDeltaTime, ForceMode2D.Force);
-        rigid.AddRelativeForceX(moveX * Time.fixedDeltaTime, ForceMode2D.Force);
+        rigid.AddRelativeForceY(moveY * 10f * Time.fixedDeltaTime, ForceMode2D.Force);
+        rigid.AddRelativeForceX(moveX * 10f * Time.fixedDeltaTime, ForceMode2D.Force);
         if (isRotating > 0.1) TurnShip();
     }
 

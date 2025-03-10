@@ -49,20 +49,9 @@ public class Module : ModuleInfo, IDamageable, IClickable
 
     protected virtual void Die()
     {
-        //DetachChildren();
-        //VacateConnector(ConnectorType.Receiver);
-        //Destroy(gameObject); // OnDestroy()
         Detach();
         Destroy(gameObject);
     }
-
-    //public void Detached()
-    //{
-    //    DetachChildren();
-    //    transform.SetParent(null);
-    //    AddRigidBody();
-    //    VacateConnector(ConnectorType.Sender);
-    //}
 
     private void Detach()
     {
@@ -98,24 +87,6 @@ public class Module : ModuleInfo, IDamageable, IClickable
         rigid.mass = mass;
         rigid.gravityScale = 0f;
     }
-    
-    //private void VacateConnector(ConnectorType type)
-    //{
-    //    if (type == ConnectorType.Sender) 
-    //    {
-    //        transform.SetParent(null);
-    //        sender.isOccupied = false;
-    //        connectedTo.isOccupied = false;
-    //        connectedTo = null;
-    //    }
-    //    else if(type == ConnectorType.Receiver)
-    //    {
-    //        foreach(var receiver in receivers)
-    //        {
-    //            receiver.isOccupied = false;
-    //        }
-    //    }
-    //}
 
     private void OnDestroy()
     {
@@ -179,7 +150,6 @@ public class Module : ModuleInfo, IDamageable, IClickable
     {
         if (ignoreCollide)
         {
-            //DetachChildren();
             gameObject.layer = LayerMask.NameToLayer("ClickedModule");
         }
         else //ignoreCollider == false
@@ -189,25 +159,11 @@ public class Module : ModuleInfo, IDamageable, IClickable
         //충돌 판정 유무는 Project Setting에서 변경됨
     }
 
-    //private void DetachChildren()
-    //{
-    //    for (int i = transform.childCount - 1; i >= 0; i--)
-    //    {
-    //        Transform child = transform.GetChild(i);
-    //        if (child.TryGetComponent(out Module part))
-    //        {
-    //            part.Detached();    // 자식의 자식도 독립되게
-    //        }
-    //    }
-    //    VacateConnector(ConnectorType.Receiver);
-    //}
 
     protected virtual void TryDetach()
     {
         if (sender.isOccupied)
         {
-            //VacateConnector(ConnectorType.Sender);
-            //AddRigidBody();
             Detach();
         }
     }
@@ -253,7 +209,7 @@ public class Module : ModuleInfo, IDamageable, IClickable
         float closestDistance = float.MaxValue;
         foreach (var collider in nearbyModules)
         {
-            if (collider.TryGetComponent(out Connector receiver) && // 커넥터이고
+            if (collider.TryGetComponent(out Connector receiver) &&
                 receiver.IsAttachable(transform)
                 )
             {

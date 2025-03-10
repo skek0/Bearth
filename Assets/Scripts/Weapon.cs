@@ -8,14 +8,14 @@ public class Weapon : MonoBehaviour
     [Header("Weapon Stats")]
     [SerializeField] int damage;
     [Tooltip("Time between attacks")]
-    [SerializeField] float interval;
+    [SerializeField] float coolTime;
     [Tooltip("Flying speed of Projectile")]
     [SerializeField] float speed;
 
-    float cooldown = 0f;
+    bool OnCooldown = false;
+    Transform offsetTransform;
 
-    [Header("Not SerializeField")]
-    [SerializeField] Transform offsetTransform;
+    //[Header("Not SerializeField")]
 
     private void Awake()
     {
@@ -23,30 +23,28 @@ public class Weapon : MonoBehaviour
         if (offsetTransform == null) Debug.Log($"{gameObject.name} has no offset!");
     }
 
-    private void Update()
-    {
-        if(cooldown > 0f)
-        {
-            cooldown -= Time.deltaTime;
-        }
-    }
-
     public virtual void Attack()
     {
-        if (cooldown <= 0f)
+        if (!OnCooldown)
         {
-            cooldown = interval;
+            OnCooldown = true;
             GameObject projectile = ObjectPoolManager.Instance.GetObject("Bullet");
             if (projectile != null && projectile.TryGetComponent(out Bullet bullet))
             {
                 bullet.transform.SetPositionAndRotation(
                     offsetTransform.position,
-                    Quaternion.LookRotation(Vector3.forward, transform.right)
+                    offsetTransform.rotation * Quaternion.Euler(0, 0, 90)
                     );
                 bullet.damage = damage;
                 bullet.speed = speed;
             }
+            StartCoroutine(StartCoolDown());
         }
     }
 
+    IEnumerator StartCoolDown()
+    {
+        yield return new WaitForSeconds(coolTime);
+        OnCooldown = false;
+    }
 }

@@ -6,6 +6,6 @@ public class BulletPool : MonoBehaviour
 
     private void Start()
     {
-        ObjectPoolManager.Instance.CreatePool("Bullet", bullet, 5, transform);
+        ObjectPoolManager.Instance.CreatePool("Bullet", bullet, 5);
     }
 }

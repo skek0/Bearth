@@ -20,7 +20,6 @@ public class WeaponModule : Module
     protected override void TryDetach()
     {
         ConnectCore(false);
-        Debug.Log("detach weapon");
         base.TryDetach();
     }
     protected override void TryAttach()
@@ -44,11 +43,5 @@ public class WeaponModule : Module
             core.RemoveConnectedWeapon(weapon);
             core = null;
         }
-        //if (transform.root.TryGetComponent(out CoreModule core))
-        //{
-        //    if (connect_disConnect) core.AddConnectedWeapon(weapon);
-        //    else core.RemoveConnectedWeapon(weapon);
-        //}
-        else { Debug.Log("Weapon Not Attached To Core!"); }
     }
 }
