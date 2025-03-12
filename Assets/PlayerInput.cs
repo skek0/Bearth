@@ -62,6 +62,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Button"",
+                    ""id"": ""ce35565c-2c91-47b3-8f70-710224a198ca"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -152,6 +161,39 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""94a7abc0-3885-4f09-9ba8-6aac36c0b8ad"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""64474031-1b1d-42a3-bbf8-81eb8d6ab5de"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""80b5bb04-9d5a-40f3-a23a-8384da0844be"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -192,6 +234,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerActions_Shift = m_PlayerActions.FindAction("Shift", throwIfNotFound: true);
         m_PlayerActions_Aim = m_PlayerActions.FindAction("Aim", throwIfNotFound: true);
         m_PlayerActions_Attack = m_PlayerActions.FindAction("Attack", throwIfNotFound: true);
+        m_PlayerActions_Zoom = m_PlayerActions.FindAction("Zoom", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
@@ -262,6 +305,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerActions_Shift;
     private readonly InputAction m_PlayerActions_Aim;
     private readonly InputAction m_PlayerActions_Attack;
+    private readonly InputAction m_PlayerActions_Zoom;
     public struct PlayerActionsActions
     {
         private @PlayerInput m_Wrapper;
@@ -270,6 +314,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Shift => m_Wrapper.m_PlayerActions_Shift;
         public InputAction @Aim => m_Wrapper.m_PlayerActions_Aim;
         public InputAction @Attack => m_Wrapper.m_PlayerActions_Attack;
+        public InputAction @Zoom => m_Wrapper.m_PlayerActions_Zoom;
         public InputActionMap Get() { return m_Wrapper.m_PlayerActions; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -291,6 +336,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Attack.started += instance.OnAttack;
             @Attack.performed += instance.OnAttack;
             @Attack.canceled += instance.OnAttack;
+            @Zoom.started += instance.OnZoom;
+            @Zoom.performed += instance.OnZoom;
+            @Zoom.canceled += instance.OnZoom;
         }
 
         private void UnregisterCallbacks(IPlayerActionsActions instance)
@@ -307,6 +355,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Attack.started -= instance.OnAttack;
             @Attack.performed -= instance.OnAttack;
             @Attack.canceled -= instance.OnAttack;
+            @Zoom.started -= instance.OnZoom;
+            @Zoom.performed -= instance.OnZoom;
+            @Zoom.canceled -= instance.OnZoom;
         }
 
         public void RemoveCallbacks(IPlayerActionsActions instance)
@@ -348,5 +399,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnShift(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
+        void OnZoom(InputAction.CallbackContext context);
     }
 }

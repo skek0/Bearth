@@ -1,20 +1,42 @@
+using System;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ClickController : MonoBehaviour
 {
-    [SerializeField] InputAction clickAction;
+    [SerializeField] CinemachineCamera cinemachineCamera;
+    InputAction clickAction;
+    InputAction zoomAction;
+
     private IClickable clickedObject;  // 현재 선택된 오브젝트
+
+    float maxZoom = 20f;
+    float minZoom = 5f;
 
     private void Awake()
     {
         clickAction = InputSystem.actions.FindAction("Shift");
         clickAction.performed += ctx => OnClickStart();
         clickAction.canceled += ctx => OnClickEnd();
+        zoomAction = InputSystem.actions.FindAction("Zoom");
+        zoomAction.performed += ctx => OnZoom();
+    }
+    private void Start()
+    {
+        if (cinemachineCamera == null) { Debug.Log("cinemachineCamera is Missing!"); }
     }
 
-    private void OnEnable() => clickAction.Enable();
-    private void OnDisable() => clickAction.Disable();
+    private void OnEnable()
+    {
+        clickAction.Enable();
+        zoomAction.Enable();
+    }
+
+    //public void UpgradeZoom()
+    //{
+    //    maxZoom += 5f;
+    //}
 
     private void OnClickStart()
     {
@@ -34,11 +56,23 @@ public class ClickController : MonoBehaviour
             }
         }
     }
-
     private void OnClickEnd()
     {
         // 클릭을 놓으면 선택 해제
         clickedObject?.OnDeselected();
         clickedObject = null;
+    }
+
+    private void OnZoom()
+    {
+        Debug.Log(zoomAction.ReadValue<float>());
+        float newZoom = cinemachineCamera.Lens.OrthographicSize += zoomAction.ReadValue<float>();
+        cinemachineCamera.Lens.OrthographicSize = Mathf.Clamp(newZoom, minZoom, maxZoom);
+    }
+
+    private void OnDisable()
+    {
+        clickAction.Disable();
+        zoomAction.Disable();
     }
 }
