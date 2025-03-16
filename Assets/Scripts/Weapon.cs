@@ -44,7 +44,7 @@ public class Weapon : MonoBehaviour
 
     IEnumerator StartCoolDown()
     {
-        yield return new WaitForSeconds(coolTime);
+        yield return CoroutineCache.WaitforSeconds(coolTime);
         OnCooldown = false;
     }
 }

@@ -10,7 +10,7 @@ public class ParallexBackgroundManager : MonoBehaviour
     {
         backgrounds = GetComponentsInChildren<ParallexBackground>();
         SetReferenceTransform();
-        RandomizeSpeed();
+        ArrangeSpeed();
     }
 
     private void SetReferenceTransform()
@@ -21,7 +21,7 @@ public class ParallexBackgroundManager : MonoBehaviour
         }
     }
 
-    private void RandomizeSpeed()
+    private void ArrangeSpeed()
     {
         if(speeds.Length >= backgrounds.Length)
         {

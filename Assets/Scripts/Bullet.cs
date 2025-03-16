@@ -57,7 +57,7 @@ public class Bullet : MonoBehaviour
     }
     IEnumerator IsMaybeinSight()
     {
-        yield return new WaitForSeconds(sight / (speed*2));
+        yield return CoroutineCache.WaitforSeconds(sight / (speed*2));
         if(gameObject.activeInHierarchy)
         {
             ObjectPoolManager.Instance.ReturnObject("Bullet", gameObject);

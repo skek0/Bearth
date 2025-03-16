@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,6 +14,7 @@ public class ClickController : MonoBehaviour
 
     float maxZoom = 20f;
     float minZoom = 5f;
+    Coroutine zoomCoroutine;
 
     private void Awake()
     {
@@ -65,9 +67,27 @@ public class ClickController : MonoBehaviour
 
     private void OnZoom()
     {
-        Debug.Log(zoomAction.ReadValue<float>());
-        float newZoom = cinemachineCamera.Lens.OrthographicSize += zoomAction.ReadValue<float>();
-        cinemachineCamera.Lens.OrthographicSize = Mathf.Clamp(newZoom, minZoom, maxZoom);
+        float newZoom = cinemachineCamera.Lens.OrthographicSize + zoomAction.ReadValue<float>();
+        newZoom = Mathf.Clamp(newZoom, minZoom, maxZoom);
+        if(zoomCoroutine != null) StopCoroutine(zoomCoroutine);
+        zoomCoroutine = StartCoroutine(ZoomCamera(newZoom));
+
+    }
+
+    IEnumerator ZoomCamera(float targetSize)
+    {
+        float startSize = cinemachineCamera.Lens.OrthographicSize;
+        float elapsedTime = 0f;
+        float duration = 0.15f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            cinemachineCamera.Lens.OrthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);
+            yield return null;
+        }
+
+        cinemachineCamera.Lens.OrthographicSize = targetSize;
     }
 
     private void OnDisable()
