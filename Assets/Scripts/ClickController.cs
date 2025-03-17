@@ -6,15 +6,12 @@ using UnityEngine.InputSystem;
 
 public class ClickController : MonoBehaviour
 {
-    [SerializeField] CinemachineCamera cinemachineCamera;
+    [SerializeField] CameraController cameraController;
     InputAction clickAction;
     InputAction zoomAction;
 
     private IClickable clickedObject;  // 현재 선택된 오브젝트
 
-    float maxZoom = 20f;
-    float minZoom = 5f;
-    Coroutine zoomCoroutine;
 
     private void Awake()
     {
@@ -26,7 +23,7 @@ public class ClickController : MonoBehaviour
     }
     private void Start()
     {
-        if (cinemachineCamera == null) { Debug.Log("cinemachineCamera is Missing!"); }
+        if (cameraController == null) { Debug.Log("cameraController is Missing!"); }
     }
 
     private void OnEnable()
@@ -34,11 +31,6 @@ public class ClickController : MonoBehaviour
         clickAction.Enable();
         zoomAction.Enable();
     }
-
-    //public void UpgradeZoom()
-    //{
-    //    maxZoom += 5f;
-    //}
 
     private void OnClickStart()
     {
@@ -67,32 +59,12 @@ public class ClickController : MonoBehaviour
 
     private void OnZoom()
     {
-        float newZoom = cinemachineCamera.Lens.OrthographicSize + zoomAction.ReadValue<float>();
-        newZoom = Mathf.Clamp(newZoom, minZoom, maxZoom);
-        if(zoomCoroutine != null) StopCoroutine(zoomCoroutine);
-        zoomCoroutine = StartCoroutine(ZoomCamera(newZoom));
-
-    }
-
-    IEnumerator ZoomCamera(float targetSize)
-    {
-        float startSize = cinemachineCamera.Lens.OrthographicSize;
-        float elapsedTime = 0f;
-        float duration = 0.15f;
-
-        while (elapsedTime < duration)
-        {
-            elapsedTime += Time.deltaTime;
-            cinemachineCamera.Lens.OrthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);
-            yield return null;
-        }
-
-        cinemachineCamera.Lens.OrthographicSize = targetSize;
+        cameraController.OnZoom(zoomAction.ReadValue<float>());
     }
 
     private void OnDisable()
     {
         clickAction.Disable();
         zoomAction.Disable();
-    }
+    }   
 }

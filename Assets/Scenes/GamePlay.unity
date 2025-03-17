@@ -1283,6 +1283,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   parallaxSpeed: 0
+  lengthX: 0
+  lengthY: 0
 --- !u!1 &683784243
 GameObject:
   m_ObjectHideFlags: 0
@@ -1597,8 +1599,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1225757011}
-  - component: {fileID: 1225757012}
   - component: {fileID: 1225757013}
+  - component: {fileID: 1225757012}
   m_Layer: 0
   m_Name: Stars Small_1
   m_TagString: Untagged
@@ -1690,6 +1692,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   parallaxSpeed: 0
+  lengthX: 0
+  lengthY: 0
 --- !u!1 &1257105260
 GameObject:
   m_ObjectHideFlags: 0
@@ -1792,6 +1796,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   parallaxSpeed: 0
+  lengthX: 0
+  lengthY: 0
 --- !u!1 &1481347373
 GameObject:
   m_ObjectHideFlags: 0

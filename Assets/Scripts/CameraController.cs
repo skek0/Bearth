@@ -1,28 +1,43 @@
+using Unity.Cinemachine;
 using UnityEngine;
+using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
-    public float followingSpeed;
-    [SerializeField] Transform player;
-    Camera thisCamera;
+    [SerializeField] CinemachineCamera cinemachineCamera;
+
+    float maxZoom = 20f;
+    float minZoom = 5f;
+    Coroutine zoomCoroutine;
 
     private void Awake()
     {
-        thisCamera = GetComponent<Camera>();
-    }
-    private void Start()
-    {
-        player = GameObject.FindWithTag("Player").transform;    
+        TryGetComponent(out cinemachineCamera);
+        if (cinemachineCamera == null) Debug.Log("CinemachineCamera is NULL!");
     }
 
-    private void Update()
+    public void OnZoom(float adjustValue)
     {
-        transform.position = Vector3.Lerp(transform.position, player.position, followingSpeed) + Vector3.back*10;
+        float newZoom = cinemachineCamera.Lens.OrthographicSize + adjustValue;
+        newZoom = Mathf.Clamp(newZoom, minZoom, maxZoom);
+        if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
+        zoomCoroutine = StartCoroutine(ZoomCamera(newZoom));
+
     }
 
-    public void SetZoom(int size)
+    IEnumerator ZoomCamera(float targetSize)
     {
-        thisCamera.orthographicSize = size;
-    }
+        float startSize = cinemachineCamera.Lens.OrthographicSize;
+        float elapsedTime = 0f;
+        float duration = 0.15f;
 
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            cinemachineCamera.Lens.OrthographicSize = Mathf.Lerp(startSize, targetSize, elapsedTime / duration);
+            yield return null;
+        }
+
+        cinemachineCamera.Lens.OrthographicSize = targetSize;
+    }
 }
