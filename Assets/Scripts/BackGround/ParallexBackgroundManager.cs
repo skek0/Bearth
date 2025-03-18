@@ -4,6 +4,7 @@ public class ParallexBackgroundManager : MonoBehaviour
 {
     ParallexBackground[] backgrounds;
     public float[] speeds;
+    public float zoomOffset;
     [SerializeField] Transform virtualCamera;
 
     private void Awake()
@@ -18,6 +19,7 @@ public class ParallexBackgroundManager : MonoBehaviour
         foreach (var bg in backgrounds)
         {
             bg.target = virtualCamera;
+            bg.zoomOffset = zoomOffset;
         }
     }
 
@@ -36,5 +38,14 @@ public class ParallexBackgroundManager : MonoBehaviour
         {
             bg.parallaxSpeed = Random.Range(0.2f, 0.8f);
         }
+    }
+
+    public void ZoomBackgrounds(float zoomSize)
+    {
+        Debug.Log(zoomSize);
+        foreach(var bg in backgrounds)
+        {
+            bg.ZoomImage(zoomSize);
+        }    
     }
 }

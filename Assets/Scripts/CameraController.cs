@@ -5,6 +5,7 @@ using System.Collections;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] CinemachineCamera cinemachineCamera;
+    [SerializeField] ParallexBackgroundManager backgroundManager;
 
     float maxZoom = 20f;
     float minZoom = 5f;
@@ -12,8 +13,11 @@ public class CameraController : MonoBehaviour
 
     private void Awake()
     {
-        TryGetComponent(out cinemachineCamera);
         if (cinemachineCamera == null) Debug.Log("CinemachineCamera is NULL!");
+    }
+    private void Start()
+    {
+        backgroundManager = FindAnyObjectByType<ParallexBackgroundManager>();
     }
 
     public void OnZoom(float adjustValue)
@@ -22,7 +26,6 @@ public class CameraController : MonoBehaviour
         newZoom = Mathf.Clamp(newZoom, minZoom, maxZoom);
         if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
         zoomCoroutine = StartCoroutine(ZoomCamera(newZoom));
-
     }
 
     IEnumerator ZoomCamera(float targetSize)

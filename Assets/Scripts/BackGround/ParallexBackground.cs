@@ -4,6 +4,8 @@ public class ParallexBackground : MonoBehaviour
 {
     public Transform target;
     public float parallaxSpeed;
+    public float zoomOffset;
+
     [SerializeField] float lengthX;
     [SerializeField] float lengthY;
 
@@ -23,5 +25,10 @@ public class ParallexBackground : MonoBehaviour
         Vector3 deltaMovement = target.position - lastTargetPosition;
         transform.position += new Vector3(deltaMovement.x * parallaxSpeed, deltaMovement.y * parallaxSpeed, 0);
         lastTargetPosition = target.position;
+    }
+
+    public void ZoomImage(float size)
+    {
+        transform.localScale = size * zoomOffset * Vector3.one;
     }
 }
