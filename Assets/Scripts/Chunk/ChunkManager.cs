@@ -5,7 +5,7 @@ public class ChunkManager : MonoBehaviour
 {
     public GameObject chunkPrefab;
     public int chunkSize = 10;
-    public int viewDistance = 2; // 플레이어 주변 몇 개의 청크를 유지할지
+    public int viewDistance = 3; // 플레이어 주변 몇 개의 청크를 유지할지
 
     private Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
     private Vector2Int lastPlayerChunk;

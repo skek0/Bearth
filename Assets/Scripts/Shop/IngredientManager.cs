@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class IngredientManager : MonoBehaviour
 {
-    [SerializeField] float metal;
-    [SerializeField] int fuel;
+    float metal =1000;
+    int fuel;
     Text metalText;
     Text fuelText;
 
