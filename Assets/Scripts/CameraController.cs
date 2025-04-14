@@ -10,6 +10,8 @@ public class CameraController : MonoBehaviour
     float maxZoom = 20f;
     float minZoom = 5f;
     Coroutine zoomCoroutine;
+    CinemachineFollow cinemachinFollow;
+    Vector3 damping = new(1f, 1f, 0f);
 
     private void Awake()
     {
@@ -18,14 +20,21 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         backgroundManager = FindAnyObjectByType<ParallexBackgroundManager>();
-    }
 
+        cinemachinFollow = cinemachineCamera.GetComponent<CinemachineFollow>();
+    }
+    
     public void OnZoom(float adjustValue)
     {
         float newZoom = cinemachineCamera.Lens.OrthographicSize + adjustValue;
-        newZoom = Mathf.Clamp(newZoom, minZoom, maxZoom);
-        if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
-        zoomCoroutine = StartCoroutine(ZoomCamera(newZoom));
+
+        if (newZoom > minZoom && newZoom < maxZoom) // Damping 변경때문에 Clamp 사용 안함
+        {
+            if (zoomCoroutine != null) StopCoroutine(zoomCoroutine);
+            zoomCoroutine = StartCoroutine(ZoomCamera(newZoom));
+            //cinemachinFollow.TrackerSettings.PositionDamping += damping * adjustValue;
+        }
+        
     }
 
     IEnumerator ZoomCamera(float targetSize)
@@ -33,6 +42,7 @@ public class CameraController : MonoBehaviour
         float startSize = cinemachineCamera.Lens.OrthographicSize;
         float elapsedTime = 0f;
         float duration = 0.15f;
+
 
         while (elapsedTime < duration)
         {

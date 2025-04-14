@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,7 +5,7 @@ using UnityEngine.InputSystem;
 public class Module : ModuleInfo, IDamageable, IClickable
 {
     [Header("General")]
-    [SerializeField] int maxHP;
+    [SerializeField] float maxHP;
     [SerializeField] float mass = 1f;
     [Tooltip("Distance between Parts")]
     [SerializeField] float connectionDistance;
@@ -17,19 +16,18 @@ public class Module : ModuleInfo, IDamageable, IClickable
     [Tooltip("Explosion : on destroyed")]
     public float explosionRadius;
 
-    private int hp;
+    private float hp;
 
     #region Base Module Function----------------
     protected override void Awake()
     {
         base.Awake();
     }
-    private void Start()
+    private void OnEnable()
     {
         hp = maxHP;
     }
-
-    public void GetDamage(int damage)
+    public void GetDamage(float damage)
     {
         hp -= damage;
 
@@ -38,13 +36,9 @@ public class Module : ModuleInfo, IDamageable, IClickable
             Die();
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void Push(Vector2 force)
     {
-        if(collision.CompareTag("Bullet") && TryGetComponent(out Bullet bullet))
-        {
-            GetDamage(bullet.damage);
-        }
+        rigid.AddForce(force, ForceMode2D.Impulse);
     }
 
     protected virtual void Die()
@@ -68,14 +62,18 @@ public class Module : ModuleInfo, IDamageable, IClickable
             if (child.TryGetComponent(out Module part))
             {
                 part.TryDetach();
+                part.Push(part.transform.position- transform.position);
             }
         }
     }
     private void VacateConnectors()
     {
         sender.isOccupied = false;
-        connectedTo.isOccupied = false;
-        connectedTo = null;
+        if (connectedTo != null)
+        {
+            connectedTo.isOccupied = false;
+            connectedTo = null;
+        }
         foreach(var receiver in receivers)
         {
             receiver.isOccupied = false;
@@ -83,9 +81,12 @@ public class Module : ModuleInfo, IDamageable, IClickable
     }
     private void AddRigidBody()
     {
-        rigid = gameObject.AddComponent<Rigidbody2D>();
-        rigid.mass = mass;
-        rigid.gravityScale = 0f;
+        if(rigid == null)
+        { 
+            rigid = gameObject.AddComponent<Rigidbody2D>();
+            rigid.mass = mass;
+            rigid.gravityScale = 0f;
+        }
     }
 
     private void OnDestroy()
@@ -138,6 +139,8 @@ public class Module : ModuleInfo, IDamageable, IClickable
     }
     public void OnDeselected()
     {
+        //끌다가 파괴되면 오류남
+
         if (isControllable)
         {
             enabled = false;
@@ -158,7 +161,6 @@ public class Module : ModuleInfo, IDamageable, IClickable
         }
         //충돌 판정 유무는 Project Setting에서 변경됨
     }
-
 
     protected virtual void TryDetach()
     {

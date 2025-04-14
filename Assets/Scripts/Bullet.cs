@@ -1,5 +1,4 @@
 using System.Collections;
-using TreeEditor;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -31,10 +30,11 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<IDamageable>(out var damageable))
+        if (collision.TryGetComponent(out IDamageable damageable))
         {
+            Debug.Log($"Crushed to {collision.name}");
+            damageable.GetDamage(damage);
             ObjectPoolManager.Instance.ReturnObject("Bullet", gameObject);
-            Debug.Log($"Crushed to {gameObject.name}");
         }
     }
 

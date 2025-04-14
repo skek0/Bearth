@@ -1,7 +1,10 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(MoveHorizontal))]
+[RequireComponent(typeof(MoveVertical))]
+[RequireComponent(typeof(Rotation))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
     [Tooltip("Vertical Speed")]
@@ -14,17 +17,26 @@ public class PlayerController : MonoBehaviour
     InputAction moveAction;
     InputAction rotateAction;
     InputAction attackAction;
-    CoreModule playerPart;
+
+    MoveVertical m_moveVertical;
+    MoveHorizontal m_moveHorizontal;
+    Rotation m_rotation;
 
     Camera mainCamera;
     Rigidbody2D rigid;
     float moveX, moveY, isRotating, isAttacking;
+
+    CoreModule playerPart;
 
     private void Awake()
     {
         moveAction = InputSystem.actions.FindAction("Move");
         rotateAction = InputSystem.actions.FindAction("Aim");
         attackAction = InputSystem.actions.FindAction("Attack");
+
+        m_moveVertical = GetComponent<MoveVertical>();
+        m_moveHorizontal = GetComponent<MoveHorizontal>();
+        m_rotation = GetComponent<Rotation>();
 
         playerPart = GetComponent<CoreModule>();
         rigid = GetComponent<Rigidbody2D>();
@@ -55,8 +67,8 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rigid.AddRelativeForceY(moveY * 10f * Time.fixedDeltaTime, ForceMode2D.Force);
-        rigid.AddRelativeForceX(moveX * 10f * Time.fixedDeltaTime, ForceMode2D.Force);
+        m_moveVertical.Move(moveY * 10f * Time.fixedDeltaTime);
+        m_moveHorizontal.Move(moveX * 10f * Time.fixedDeltaTime);
         if (isRotating > 0.1) TurnShip();
     }
 
@@ -69,23 +81,11 @@ public class PlayerController : MonoBehaviour
 
     private void TurnShip()
     {
-        // 마우스 위치를 월드 좌표로 변환
         Vector3 mousePosition = mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        mousePosition.z = 0f; // 2D 환경이므로 Z는 0으로 설정
-
-        Vector3 direction = (mousePosition - transform.position).normalized;
-        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-
-        // 현재 회전을 Quaternion으로 변환
-        Quaternion currentRotation = Quaternion.Euler(0f, 0f, rigid.rotation);
-        Quaternion targetRotation = Quaternion.Euler(0f, 0f, targetAngle);
-
-        // Slerp을 사용하여 부드러운 회전 적용
-        Quaternion smoothRotation = Quaternion.Slerp(currentRotation, targetRotation, rotateSpeed * Time.fixedDeltaTime);
-
-        // Rigidbody2D를 이용해 회전 적용
-        rigid.MoveRotation(smoothRotation.eulerAngles.z);
+        mousePosition.z = 0f;
+        m_rotation.Turn((mousePosition - transform.position).normalized);
     }
+
     private void TryAttack()
     {
         playerPart.CommandAttack();

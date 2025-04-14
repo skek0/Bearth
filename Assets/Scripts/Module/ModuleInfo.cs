@@ -4,9 +4,12 @@ public class ModuleInfo : MonoBehaviour
 {
     protected Connector connectedTo;
     protected Connector sender;
-    protected Connector[] receivers;
+    [SerializeField]protected Connector[] receivers;
     protected Rigidbody2D rigid;
     public bool IsAttachedToCore {  get { return connectedTo != null; } }
+    /// <summary>
+    /// Is attached to other core?
+    /// </summary>
     protected bool isControllable = true;
 
     protected virtual void Awake()

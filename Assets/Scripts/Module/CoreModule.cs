@@ -3,15 +3,19 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Weapon))]
 public class CoreModule : Module
 {
+    Weapon ownWeapon;
     [SerializeField]List<Weapon> connectedWeapons;
 
     protected override void Awake()
     {
         isControllable = false;
         base.Awake();
+        ownWeapon = GetComponent<Weapon>();
     }
+
     public void AddConnectedWeapon(Weapon weapon)
     {
         connectedWeapons.Add(weapon);
@@ -23,6 +27,8 @@ public class CoreModule : Module
 
     public void CommandAttack()
     {
+        if(IsFrontVacant()) ownWeapon.Attack();
+
         foreach (var weapon in connectedWeapons)
         {
             weapon.Attack();
@@ -31,11 +37,20 @@ public class CoreModule : Module
 
     protected override void Die()
     {
-        
+        base.Die();
     }
 
-    private void BeFragile()
+    bool IsFrontVacant()
     {
-
+        if (receivers[0].isOccupied)
+        {
+            Debug.Log("Occupied");
+            return false;
+        }
+        else
+        {
+            Debug.Log("Vacant");
+            return true;
+        }
     }
 }

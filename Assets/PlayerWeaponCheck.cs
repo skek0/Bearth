@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShopManager : MonoBehaviour
+public class PlayerWeaponCheck : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

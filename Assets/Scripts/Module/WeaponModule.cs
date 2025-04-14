@@ -1,5 +1,6 @@
-    using UnityEngine;
+using UnityEngine;
 
+[RequireComponent(typeof(Weapon))]
 public class WeaponModule : Module
 {
     Weapon weapon;
@@ -8,10 +9,7 @@ public class WeaponModule : Module
     protected override void Awake()
     {
         base.Awake();
-        if(!TryGetComponent(out weapon))
-        {
-            Debug.Log($"{gameObject.name} Needs Weapon Component!");
-        }
+        weapon = GetComponent<Weapon>();
     }
     private void Start()
     {
@@ -38,7 +36,7 @@ public class WeaponModule : Module
                 core.AddConnectedWeapon(weapon);
             }
         }
-        else if(core != null) // && connect_disConnect = false;
+        else if(core != null) // || connect_disConnect = false;
         {
             core.RemoveConnectedWeapon(weapon);
             core = null;
