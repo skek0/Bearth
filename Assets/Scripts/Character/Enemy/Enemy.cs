@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(MoveVertical))]
 [RequireComponent(typeof(Rotation))]
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(DetectionRange))]
+//[RequireComponent(typeof(DetectionRange))]
 public class Enemy : MonoBehaviour
 {
     MoveHorizontal m_MoveHorizontal;
@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
         m_MoveHorizontal = GetComponent<MoveHorizontal>();
         m_MoveVertical = GetComponent<MoveVertical>();
         m_Rotation = GetComponent<Rotation>();
-        m_DetectionRange = GetComponent<DetectionRange>();
+        //m_DetectionRange = GetComponent<DetectionRange>();
     }
 
 }

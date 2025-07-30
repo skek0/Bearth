@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Rotation : MonoBehaviour
 {
-    public float rotationSpeed = 10f;
+    public float speed = 10f;
     Rigidbody2D rigid;
 
     private void Awake()
@@ -19,7 +19,7 @@ public class Rotation : MonoBehaviour
 
         Quaternion currentRotation = Quaternion.Euler(0, 0, rigid.rotation);
 
-        Quaternion newRotation = Quaternion.RotateTowards(currentRotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
+        Quaternion newRotation = Quaternion.RotateTowards(currentRotation, targetRotation, speed * Time.fixedDeltaTime);
 
         rigid.MoveRotation(newRotation.eulerAngles.z);
     }

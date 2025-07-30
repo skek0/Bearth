@@ -15,8 +15,6 @@ public class Weapon : MonoBehaviour
     bool OnCooldown = false;
     Transform offsetTransform;
 
-    //[Header("Not SerializeField")]
-
     private void Awake()
     {
         offsetTransform = transform.Find("Offset");
