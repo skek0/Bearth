@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour, ICamera
     }
     public void Zoom(float adjustValue)
     {
-        float newZoom = m_camera.orthographicSize + adjustValue * zoomSpeed;
+        float newZoom = m_camera.orthographicSize - adjustValue * zoomSpeed;
 
         if (newZoom >= minZoom && newZoom <= maxZoom) // Damping 변경때문에 Clamp 사용 안함
         {

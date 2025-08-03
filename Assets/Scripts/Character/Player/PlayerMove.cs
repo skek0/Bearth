@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerMove : MonoBehaviour, IPlayerControl
+public class PlayerMove : MonoBehaviour
 {
     [SerializeField] private float maxThrustSpeed;
     [SerializeField] private float maxThrottleSpeed;

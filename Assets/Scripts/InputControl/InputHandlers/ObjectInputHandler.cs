@@ -3,9 +3,12 @@ using UnityEngine.InputSystem;
 
 public class ObjectInputHandler : MonoBehaviour
 {
+    [SerializeField] LayerMask layerMask; // 클릭가능한 모듈
+
     private PlayerInputActions.ObjectControlActions objectControl;
 
     private bool dragging = false;
+    IControllable controllingObj;
 
     private void OnEnable()
     {
@@ -25,18 +28,28 @@ public class ObjectInputHandler : MonoBehaviour
     {
         if (dragging)
         {
-            Vector2 delta = objectControl.Drag.ReadValue<Vector2>();
-            // 선택한 오브젝트 이동
+            controllingObj?.OnDrag(objectControl.Drag.ReadValue<Vector2>());
         }
     }
 
     private void OnSelectHoldStart(InputAction.CallbackContext ctx)
     {
-        dragging = true;
+        dragging = true; 
+        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero, 100f, layerMask);
+
+        if (hit.collider != null)
+        {
+            controllingObj = hit.collider.GetComponent<IControllable>();
+            controllingObj?.OnSelected();
+        }
     }
 
     private void OnSelectHoldEnd(InputAction.CallbackContext ctx)
     {
         dragging = false;
+
+        controllingObj?.OnDeselected();
+        controllingObj = null;
     }
 }
