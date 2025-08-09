@@ -1,50 +1,69 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerInputHandler : MonoBehaviour
 {
-    IPlayerControl mover;
-    private PlayerInputActions.PlayerActions player;
+    IPlayerControl player;
+    private PlayerInputActions.PlayerActions playeraction;
 
     private bool looking;
+    private bool attacking;
 
+    private void Start()
+    {
+        SetPlayer(GetComponent<IPlayerControl>());
+    }
+    public void SetPlayer(IPlayerControl _player)
+    {
+        player = _player;
+    }
     private void OnEnable()
     {
-        mover = GetComponent<IPlayerControl>();
-        player = InputController.Instance.Actions.Player;
+        playeraction = InputController.Instance.Actions.Player;
 
-        player.Move.performed += OnMove;
-        player.Move.canceled += OnMoveCanceled;
+        playeraction.Move.performed += OnMove;
+        playeraction.Move.canceled += OnMoveCanceled;
 
-        player.LookHold.performed += OnLookStarted;
-        player.LookHold.canceled += OnLookCanceled;
+        playeraction.LookHold.performed += OnLookStarted;
+        playeraction.LookHold.canceled += OnLookCanceled;
+
+        playeraction.Attack.performed += OnAttackStarted;
+        playeraction.Attack.canceled += OnAttackCanceled;
     }
 
     private void OnDisable()
     {
-        player.Move.performed -= OnMove;
-        player.Move.canceled -= OnMoveCanceled;
+        playeraction.Move.performed -= OnMove;
+        playeraction.Move.canceled -= OnMoveCanceled;
 
-        player.LookHold.performed -= OnLookStarted;
-        player.LookHold.canceled -= OnLookCanceled;
+        playeraction.LookHold.performed -= OnLookStarted;
+        playeraction.LookHold.canceled -= OnLookCanceled;
+
+        playeraction.Attack.performed -= OnAttackStarted;
+        playeraction.Attack.canceled -= OnAttackCanceled;
     }
 
     private void Update()
     {
         if (looking)
         {
-            mover?.SetRotationInput(player.Look.ReadValue<Vector2>());
+            player?.SetRotationInput(playeraction.Look.ReadValue<Vector2>());
+        }
+        if (attacking)
+        {
+            player?.AttackCommand();
         }
     }
 
     private void OnMove(InputAction.CallbackContext ctx)
     {
-        mover?.SetMoveInput(ctx.ReadValue<Vector2>());
+        player?.SetMoveInput(ctx.ReadValue<Vector2>());
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
-        mover?.SetMoveInput(ctx.ReadValue<Vector2>());
+        player?.SetMoveInput(ctx.ReadValue<Vector2>());
     }
 
     private void OnLookStarted(InputAction.CallbackContext ctx)
@@ -55,5 +74,13 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnLookCanceled(InputAction.CallbackContext ctx)
     {
         looking = false;
+    }
+    private void OnAttackStarted(InputAction.CallbackContext ctx)
+    {
+        attacking = true;
+    }
+    private void OnAttackCanceled(InputAction.CallbackContext ctx)
+    {
+        attacking= false;
     }
 }

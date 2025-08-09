@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 9020772995629999136}
   - component: {fileID: 610042423497403513}
   - component: {fileID: 4879904921279283077}
+  - component: {fileID: 5158321477373493754}
   - component: {fileID: 3930822390790661046}
   - component: {fileID: 5961520597401139872}
   m_Layer: 0
@@ -186,6 +187,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53c86f939ec6e134f93cb79e4fffb428, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  faction: 0
+  health: 10
 --- !u!114 &4879904921279283077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,6 +205,18 @@ MonoBehaviour:
   maxThrottleSpeed: 5
   maxRotationSpeed: 90
   rotationSmoothFactor: 3
+--- !u!114 &5158321477373493754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3091535544408406432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a3b947c4877774dbd494cf2260cbe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3930822390790661046
 MonoBehaviour:
   m_ObjectHideFlags: 0

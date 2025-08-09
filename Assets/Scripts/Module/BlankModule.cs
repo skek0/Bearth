@@ -9,10 +9,11 @@ public class BlankModule : Module, IControllable
     protected Rigidbody2D rigid;
     protected float dragSpeed;
     protected Module attachedTo;
+    public Module AttachedTo {  get { return attachedTo; } }
 
     private void Awake()
     {
-        Debug.Assert(connectorTransform != null);
+        Debug.Assert(connectorTransform != null, name);
         rigid = GetComponent<Rigidbody2D>();
     }
     private void Start()
@@ -47,12 +48,14 @@ public class BlankModule : Module, IControllable
     {
         Detach(transform.position);
         rigid.mass = 0f;
+        rigid.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         connectable = false;
         connection.gameObject.SetActive(true);
     }
     public virtual void OnDeselected()
     {
         TryAttach();
+        rigid.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
         connection.gameObject.SetActive(false);
     }
 
@@ -67,6 +70,7 @@ public class BlankModule : Module, IControllable
         connectable = false;
 
         transform.parent = ModulesContainer.Instance.transform;
+        faction = FactionType.Neutral;
 
         Vector2 direction = transform.position - detachedPos;
         rigid.AddForce(direction, ForceMode2D.Impulse);
@@ -94,6 +98,7 @@ public class BlankModule : Module, IControllable
             Destroy(GetComponent<Rigidbody2D>());
             connectable = true;
             AddThisToAttachedModule(closestConnector);
+            faction = FactionType.Mine;
             return;
         }
         transform.SetParent(ModulesContainer.Instance.transform);
