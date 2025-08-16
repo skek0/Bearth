@@ -19,6 +19,7 @@ public class BlankModule : Module, IControllable
     private void Start()
     {
         connection = GetComponentInChildren<Connection>(true);
+        connection.SetColliderAndAnchor(GetComponents<Collider2D>(), connectorTransform);
         dragSpeed = GameManager.Instance.moduleDragSpeed;        
     }
     public virtual void OnDrag(Vector2 pos)

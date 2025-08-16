@@ -19,7 +19,6 @@ public class CoreModule : Module
     public void AddWeapon(IWeapon weapon)
     {
         weapons.Add(weapon);
-        Debug.Log($"Added {weapon} to {name}");
     }
     public void RemoveWeapon(IWeapon weapon)
     {
