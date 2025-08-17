@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 6304937936077788276}
   - component: {fileID: 6100180952659896903}
   m_Layer: 6
-  m_Name: WeaponModule
+  m_Name: GunModule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

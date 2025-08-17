@@ -723,6 +723,10 @@ PrefabInstance:
       propertyPath: interval
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2683455833383615977, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
+      propertyPath: preDelay
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2785998390510127149, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
       propertyPath: m_Name
       value: WeaponModule (1)
@@ -907,7 +911,7 @@ GameObject:
   - component: {fileID: 1944014520}
   - component: {fileID: 1944014519}
   m_Layer: 0
-  m_Name: ObjectInputController
+  m_Name: InputManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
