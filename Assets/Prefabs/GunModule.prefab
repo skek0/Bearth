@@ -247,7 +247,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7949291714425953105}
-  - component: {fileID: 2683455833383615977}
+  - component: {fileID: 9222021393051969713}
   - component: {fileID: 529675693583402877}
   - component: {fileID: 6304937936077788276}
   - component: {fileID: 6100180952659896903}
@@ -277,7 +277,7 @@ Transform:
   - {fileID: 8334292395635631473}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2683455833383615977
+--- !u!114 &9222021393051969713
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -286,17 +286,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2785998390510127149}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 163afdcbbeb773246871eb4d955f5acd, type: 3}
+  m_Script: {fileID: 11500000, guid: 1645911c8ab987c41b51ae8e9c494f77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   faction: 0
   health: 10
   connectorTransform: {fileID: 8119899153667138822}
-  attackable: 0
-  belongedCore: {fileID: 0}
-  damage: 0
-  speed: 0
   firePoint: {fileID: 8334292395635631473}
+  stat: {fileID: 11400000, guid: 86aaaa1eba8986847b55c73d52bb1e51, type: 2}
+  fireBehavior: {fileID: 11400000, guid: 21d936ebef09f904b88415d9876a760c, type: 2}
+  projectile: {fileID: 0}
 --- !u!61 &529675693583402877
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -461,6 +460,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf70b6a7f76d825499127098a8dfd5ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sizeOffset: 0.9
 --- !u!58 &471746568004675690
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -9,7 +9,7 @@ public class BlankModule : Module, IControllable
     protected Rigidbody2D rigid;
     protected float dragSpeed;
     protected Module attachedTo;
-    public Module AttachedTo {  get { return attachedTo; } }
+    //public Module AttachedTo {  get { return attachedTo; } }
 
     private void Awake()
     {

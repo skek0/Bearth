@@ -6,6 +6,6 @@ public class ObjectPoolStart : MonoBehaviour
 
     private void Start()
     {
-        ObjectPoolManager.Instance.CreatePool("Bullet", bulletPrefab, 100);
+        ObjectPoolManager.Instance.CreatePool(bulletPrefab, 10);
     }
 }

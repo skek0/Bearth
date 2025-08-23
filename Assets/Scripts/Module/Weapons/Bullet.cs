@@ -50,12 +50,11 @@ public class Bullet : MonoBehaviour
             Debug.Log($"Crushed to {collision.name}");
             DamageData damage = new DamageData
             {
-                Amount = this.damage,
-                Type = DamageType.Physics
+                Amount = this.damage
             };
 
             damageable.TakeDamage(damage);
-            ObjectPoolManager.Instance.ReturnObject("Bullet", gameObject);
+            ObjectPoolManager.Instance.ReturnObject(gameObject);
         }
     }
     
@@ -63,6 +62,6 @@ public class Bullet : MonoBehaviour
     private System.Collections.IEnumerator AutoReturn()
     {
         yield return new WaitForSeconds(lifetime);
-        ObjectPoolManager.Instance.ReturnObject("Bullet", gameObject);
+        ObjectPoolManager.Instance.ReturnObject(gameObject);
     }
 }

@@ -2,8 +2,11 @@ using UnityEngine;
 
 public abstract class WeaponModule : BlankModule, IWeapon
 {
-    [SerializeField] protected bool attackable;
+    public int Damage { get; }
+
+    protected bool attackable;
     protected CoreModule belongedCore;
+
     public abstract void Attack();
     public override void OnSelected()
     {

@@ -8,12 +8,5 @@ public interface IDamageable
 public struct DamageData
 {
     public int Amount;
-    public DamageType Type;
     //public float CriticalMultiplier;
-}
-
-public enum DamageType
-{
-    Physics,
-    Energy,
 }
