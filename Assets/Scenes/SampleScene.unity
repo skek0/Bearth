@@ -804,11 +804,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7949291714425953105, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.89
       objectReference: {fileID: 0}
     - target: {fileID: 7949291714425953105, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.95
       objectReference: {fileID: 0}
     - target: {fileID: 7949291714425953105, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1235,11 +1235,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7949291714425953105, guid: b8262a8a18251744eb79233445f5eb99, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.53
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7949291714425953105, guid: b8262a8a18251744eb79233445f5eb99, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.39
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 7949291714425953105, guid: b8262a8a18251744eb79233445f5eb99, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1289,6 +1289,14 @@ PrefabInstance:
     - target: {fileID: 3091535544408406432, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4879904921279283077, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
+      propertyPath: derivativeGain
+      value: 0.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 5961520597401139872, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
+      propertyPath: m_AngularDamping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9020772995629999136, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
       propertyPath: m_LocalPosition.x

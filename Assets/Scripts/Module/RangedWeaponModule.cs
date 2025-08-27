@@ -46,7 +46,7 @@ public class RangedWeaponModule : WeaponModule
     }
     void SpawnBullet(float extraAngleDeg)
     {
-        GameObject bullet = ObjectPoolManager.Instance.GetObject(projectile);
+        GameObject bullet = ObjectPoolManager.Instance.GetObject(projectile, false);
 
         // 정확도(랜덤) + 패턴 각도 보정
         float rnd = (stat.accuracy <= 0f) ? 0f : Random.Range(-stat.accuracy * 0.5f, stat.accuracy * 0.5f);

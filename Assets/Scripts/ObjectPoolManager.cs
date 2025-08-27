@@ -33,8 +33,11 @@ public class ObjectPoolManager : MonoBehaviour
 
         pools[prefab] = pool;
     }
-
+    /// <summary>오브젝트를 SetActive = true인 상태로 반환</summary>
     public GameObject GetObject(GameObject prefab)
+        => GetObject(prefab, true);
+
+    public GameObject GetObject(GameObject prefab, bool activateOnPooling)
     {
         if (!prefab)
         {
@@ -46,7 +49,7 @@ public class ObjectPoolManager : MonoBehaviour
             CreatePool(prefab, defaultSize);
             pool = pools[prefab];
         }
-        return pool.GetObject();
+        return pool.GetObject(activateOnPooling);
     }
     public void ReturnObject(GameObject obj)
     {

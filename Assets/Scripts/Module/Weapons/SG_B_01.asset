@@ -15,7 +15,7 @@ MonoBehaviour:
   displayName: 
   damage: 1
   damageType: 0
-  speed: 2
-  interval: 3
-  preDelay: 3
+  speed: 20
+  interval: 1
+  preDelay: 0
   accuracy: 1

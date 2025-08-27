@@ -31,13 +31,28 @@ public class ObjectPool : MonoBehaviour
             if (pool.Count > 0)
             {
                 GameObject obj = pool.Dequeue();
-                obj.SetActive(true);
                 return obj;
             }
 
             // 부족하면 새로 생성
             GameObject newObj = CreateNewObject();
-            newObj.SetActive(true);
+            return newObj;
+        }
+    }
+    public GameObject GetObject(bool activateOnPooling)
+    {
+        lock (_lock) // 동시 접근 방지
+        {
+            if (pool.Count > 0)
+            {
+                GameObject obj = pool.Dequeue();
+                obj.SetActive(activateOnPooling);
+                return obj;
+            }
+
+            // 부족하면 새로 생성   
+            GameObject newObj = CreateNewObject();
+            newObj.SetActive(activateOnPooling);
             return newObj;
         }
     }

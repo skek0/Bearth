@@ -295,7 +295,7 @@ MonoBehaviour:
   firePoint: {fileID: 8334292395635631473}
   stat: {fileID: 11400000, guid: 86aaaa1eba8986847b55c73d52bb1e51, type: 2}
   fireBehavior: {fileID: 11400000, guid: 21d936ebef09f904b88415d9876a760c, type: 2}
-  projectile: {fileID: 0}
+  projectile: {fileID: 1036691828998533664, guid: bbc2d98bf973cbf48aef8fdd78021652, type: 3}
 --- !u!61 &529675693583402877
 BoxCollider2D:
   m_ObjectHideFlags: 0
