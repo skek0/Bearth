@@ -1291,8 +1291,20 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 4879904921279283077, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
+      propertyPath: accelRate
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4879904921279283077, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
+      propertyPath: maxTorque
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4879904921279283077, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
       propertyPath: derivativeGain
-      value: 0.28
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4879904921279283077, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
+      propertyPath: proportionalGain
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5961520597401139872, guid: 24569019edfc2314e9b84b3da39560fa, type: 3}
       propertyPath: m_AngularDamping

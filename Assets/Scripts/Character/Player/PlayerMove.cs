@@ -3,11 +3,15 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMove : MonoBehaviour
 {
-    [SerializeField] private float maxThrustSpeed;
-    [SerializeField] private float maxThrottleSpeed;
-    [SerializeField] private float maxRotationSpeed;
+    [Header("이동 설정")]
+    public float maxForwardSpeed = 14f; // transform.up 방향
+    public float maxSideSpeed = 8f;  // transform.right 방향
+    [SerializeField] private float accelRate = 2f;
 
-    [SerializeField] private float rotationSmoothFactor = 5f;       // P-계수
+    [Header("회전 설정")]
+    [SerializeField] private float proportionalGain = 2.0f;   // P 게인
+    [SerializeField] private float derivativeGain = 0.7f;    // D 게인
+    [SerializeField] private float maxTorque = 15f;       // 최대 토크 제한
 
     private Rigidbody2D rb;
 
@@ -31,26 +35,44 @@ public class PlayerMove : MonoBehaviour
     private void FixedUpdate()
     {
         // 이동 처리
-        Vector2 thrust = maxThrustSpeed * moveInput.y * transform.up;
-        Vector2 throttle = maxThrottleSpeed * moveInput.x * transform.right;
+        Vector2 thrust = maxForwardSpeed * accelRate * Time.fixedDeltaTime * moveInput.y * transform.up;
+        Vector2 throttle = maxSideSpeed * accelRate * Time.fixedDeltaTime * moveInput.x * transform.right;
         rb.AddForce(thrust + throttle);
+        AdjustLocalSpeeds();
 
-        // 회전 처리 (감속 회전)
+        // 회전 처리 (PD 제어 기반)
         if (rotationInput != Vector2.zero)
         {
-            // 목표 각도 계산 (월드 좌표에서)
+            // 목표 각도 계산
             Vector2 dir = (Vector2)Camera.main.ScreenToWorldPoint(rotationInput) - rb.position;
             float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 
-            // 현재 각도
+            // 현재 각도와 오차
             float currentAngle = rb.rotation;
-
             float angleDiff = Mathf.DeltaAngle(currentAngle, targetAngle);
 
-            // 비례 제어 + 최대 회전 속도 제한
-            float angularVelocity = Mathf.Clamp(angleDiff * rotationSmoothFactor, -maxRotationSpeed, maxRotationSpeed);
+            // PD 제어
+            float torque = angleDiff * proportionalGain - rb.angularVelocity * derivativeGain;
 
-            rb.MoveRotation(currentAngle + angularVelocity * Time.fixedDeltaTime);
+            // 토크 제한
+            torque = Mathf.Clamp(torque, -maxTorque, maxTorque);
+
+            rb.AddTorque(torque);
         }
+
+    }
+    void AdjustLocalSpeeds()
+    {
+        Vector2 v = rb.linearVelocity;
+        // 로컬 축 분해
+        float vForward = Vector2.Dot(v, transform.up);
+        float vStrafe = Vector2.Dot(v, transform.right);
+
+        // 축별 클램프
+        vForward = Mathf.Clamp(vForward, -maxForwardSpeed/2, maxForwardSpeed);
+        vStrafe = Mathf.Clamp(vStrafe, -maxSideSpeed, maxSideSpeed);
+
+        // 월드 벡터로 재합성
+        rb.linearVelocity = transform.up * vForward + transform.right * vStrafe;
     }
 }
