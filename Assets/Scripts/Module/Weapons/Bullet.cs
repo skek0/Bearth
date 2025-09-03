@@ -46,6 +46,7 @@ public class Bullet : MonoBehaviour
     }
     private void OnDisable()
     {
+        Debug.Log(name);
         // 반환되었을 때 코루틴 정리
         if (returnRoutine != null)
         {
@@ -73,6 +74,12 @@ public class Bullet : MonoBehaviour
                 trailEmitter.AssignLastPos(transform.position);
             }
             CallHitEffect(closestPoint);
+
+            EventBus.Publish(new DamageInfo
+            {
+                Position = closestPoint,
+                Amount = this.damage
+            });
 
             ObjectPoolManager.Instance.ReturnObject(gameObject);
 

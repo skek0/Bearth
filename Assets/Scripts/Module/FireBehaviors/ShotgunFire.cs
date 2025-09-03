@@ -15,7 +15,7 @@ public class ShotgunFire : FireBehavior
         float step = spreadAngle / (pelletCount - 1);
         float start = -spreadAngle * 0.5f;
 
-        for (int i = 0; i < pelletCount; i++)
+        for (int i = 0; i < pelletCount; i++)   
             spawn(start + step * i);
     }
 }
