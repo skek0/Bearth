@@ -16,8 +16,6 @@ public abstract class Module : MonoBehaviour, IDamageable
     public bool Connectable {  get { return connectable; } }
     public void TakeDamage(DamageData damage)
     {
-        Debug.Log($"{gameObject.name} took {damage.Amount} damage");
-
         health -= damage.Amount;
 
         if (health <= 0)

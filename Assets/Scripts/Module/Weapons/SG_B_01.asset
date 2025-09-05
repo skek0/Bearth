@@ -18,4 +18,4 @@ MonoBehaviour:
   speed: 20
   interval: 1
   preDelay: 0
-  accuracy: 1
+  accuracy: 0

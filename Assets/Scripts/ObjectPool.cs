@@ -24,21 +24,8 @@ public class ObjectPool : MonoBehaviour
         return obj;
     }
 
-    public GameObject GetObject()
-    {
-        lock (_lock) // 동시 접근 방지
-        {
-            if (pool.Count > 0)
-            {
-                GameObject obj = pool.Dequeue();
-                return obj;
-            }
+    public GameObject GetObject() => GetObject(true);
 
-            // 부족하면 새로 생성
-            GameObject newObj = CreateNewObject();
-            return newObj;
-        }
-    }
     public GameObject GetObject(bool activateOnPooling)
     {
         lock (_lock) // 동시 접근 방지

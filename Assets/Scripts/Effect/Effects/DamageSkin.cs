@@ -59,7 +59,7 @@ public class DamageSkin : MonoBehaviour
     }
     public void SetInfo(DamageInfo damageInfo)
     {
-        transform.position = damageInfo.Position + Random.Range(-horizontalJitter, horizontalJitter) * Vector3.right;
+        transform.position = damageInfo.Position + Random.Range(-horizontalJitter, horizontalJitter) * Vector2.right;
         tmp.text = damageInfo.Amount.ToString();
     }
     private void OnEnable()

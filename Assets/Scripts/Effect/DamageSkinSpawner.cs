@@ -1,15 +1,15 @@
 using UnityEngine;
 public struct DamageInfo
 {
-    public Vector3 Position;
+    public Vector2 Position;
     public int Amount;
     public DamageType Type;
 }
-public class DamagePopup : MonoBehaviour
+public class DamageSkinSpawner : MonoBehaviour
 {
     [SerializeField] GameObject damageSkinPrefab;
-
-    [SerializeField]ObjectPoolManager poolManager;
+    
+    ObjectPoolManager poolManager;
 
     private void Start()
     {
@@ -20,7 +20,6 @@ public class DamagePopup : MonoBehaviour
 
     void OnDamageTaken(DamageInfo damageTaken)
     {
-        // 타겟 기준으로 떠있는 데미지 숫자 출력, 히트 사운드 등
         if (damageTaken.Position == null) return;
         GameObject _object = poolManager.GetObject(damageSkinPrefab, false);
         if(_object != null && _object.TryGetComponent(out DamageSkin popup))
@@ -28,6 +27,5 @@ public class DamagePopup : MonoBehaviour
             popup.SetInfo(damageTaken);
             popup.gameObject.SetActive(true);
         }
-        // 예: FloatingText.Spawn(damageTaken.Target.transform.position, damageTaken.Amount);
     }
 }
