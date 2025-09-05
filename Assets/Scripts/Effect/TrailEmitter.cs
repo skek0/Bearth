@@ -5,7 +5,7 @@ public class TrailEmitter : MonoBehaviour
 {
     [SerializeField] private ParticleSystem ps;
 
-    private Transform followTarget;
+    [SerializeField]private Transform followingTarget;
     private bool following;
 
     void Awake()
@@ -25,10 +25,10 @@ public class TrailEmitter : MonoBehaviour
     /// 총알과 바인딩하여 따라다니며 궤적 생성 시작
     public void Begin(Transform target)
     {
-        followTarget = target;
+        followingTarget = target;
         following = true;
 
-        ps.Clear();
+        //ps.Clear();
         ps.Play();
     }
     public void AssignLastPos(Vector3 pos)
@@ -53,22 +53,23 @@ public class TrailEmitter : MonoBehaviour
             ps.Stop();
     }
 
-    void Update()
+    void FixedUpdate()
     {
-        if (following && followTarget)
-            transform.SetPositionAndRotation(followTarget.position, followTarget.rotation);
+        if (following && followingTarget)
+            transform.SetPositionAndRotation(followingTarget.position, followingTarget.rotation);
 
         // 분리되고 모든 입자가 사라지면 풀로 복귀
         if (!following && !ps.IsAlive())
-            ObjectPoolManager.Instance.ReturnObject(gameObject);
+            ReturnTrail();
     }
 
-    void OnDisable()
+    void ReturnTrail()
     {
         // 다음 재사용을 위한 초기화
-        followTarget = null;
+        followingTarget = null;
         following = false;
         if (ps) ps.Clear();
+        ObjectPoolManager.Instance.ReturnObject(gameObject);
     }
 
 }

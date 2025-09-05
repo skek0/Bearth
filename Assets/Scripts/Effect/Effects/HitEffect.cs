@@ -16,8 +16,12 @@ public class HitEffect : MonoBehaviour
             ObjectPoolManager.Instance.ReturnObject(gameObject);
         }
     }
+    public void SetInfo(HitEffectInfo hitEffectInfo)
+    {
+        transform.SetPositionAndRotation(hitEffectInfo.Position, Quaternion.FromToRotation(Vector3.up, hitEffectInfo.Direction));
+    }
 
-    public void Begin(Vector2 pos)
+    public void Begin()
     {
         ps.Clear();
         ps.Play();

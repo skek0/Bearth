@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class ObjectPoolStart : MonoBehaviour
 {
-    public GameObject bulletPrefab;
+    //public GameObject bulletPrefab;
 
-    private void Start()
-    {
-        ObjectPoolManager.Instance.CreatePool(bulletPrefab, 10);
-    }
+    //private void Start()
+    //{
+    //    ObjectPoolManager.Instance.CreatePool(bulletPrefab, 10);
+    //}
 }

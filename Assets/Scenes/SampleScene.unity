@@ -318,7 +318,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b8bf2efdc43fb347894eb6d5e63e373, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletPrefab: {fileID: 1036691828998533664, guid: bbc2d98bf973cbf48aef8fdd78021652, type: 3}
 --- !u!4 &448328963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7949291714425953105, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
@@ -1023,9 +1022,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9222021393051969713, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
+      propertyPath: stat
+      value: 
+      objectReference: {fileID: 11400000, guid: 0ab2b86bbd359cd44be0ee951172c8a4, type: 2}
+    - target: {fileID: 9222021393051969713, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
       propertyPath: projectile
       value: 
       objectReference: {fileID: 1036691828998533664, guid: 4338fac55112c754a95a08fe6bed058a, type: 3}
+    - target: {fileID: 9222021393051969713, guid: becc11811d732c544ab9e38ba8d207dd, type: 3}
+      propertyPath: fireBehavior
+      value: 
+      objectReference: {fileID: 11400000, guid: 21d936ebef09f904b88415d9876a760c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1222,8 +1229,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1864276147}
   - component: {fileID: 1864276146}
+  - component: {fileID: 1864276148}
   m_Layer: 0
-  m_Name: DamagePopup
+  m_Name: EffectSpawners
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1242,7 +1250,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageSkinPrefab: {fileID: 4107567844774986265, guid: 9105eaff347722042b42fd3758d6d7d6, type: 3}
-  poolManager: {fileID: 414729076}
 --- !u!4 &1864276147
 Transform:
   m_ObjectHideFlags: 0
@@ -1258,6 +1265,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1864276148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864276145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb24cd78eb5d0924ebb038867a375f13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hitEffectPrefab: {fileID: 2616772810237679137, guid: 8d0a1c9a27b32ea42a0dd13ca5360232, type: 3}
 --- !u!1 &1944014518
 GameObject:
   m_ObjectHideFlags: 0

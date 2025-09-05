@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -35,9 +36,10 @@ public class Bullet : MonoBehaviour
 
         if (trailEmitterPrefab)
         {
-            var emitter = ObjectPoolManager.Instance.GetObject(trailEmitterPrefab);
+            var emitter = ObjectPoolManager.Instance.GetObject(trailEmitterPrefab,false);
+            emitter.transform.position = transform.position;
+            emitter.SetActive(true);
             trailEmitter = emitter.GetComponent<TrailEmitter>();
-            trailEmitter.transform.position = transform.position;
             trailEmitter.Begin(transform);
         }
 
@@ -46,61 +48,38 @@ public class Bullet : MonoBehaviour
     }
     private void OnDisable()
     {
-        Debug.Log(name);
         // 반환되었을 때 코루틴 정리
         if (returnRoutine != null)
         {
             StopCoroutine(returnRoutine);
             returnRoutine = null;
         }
-        // 외부에서 비활성화되더라도 궤적은 자연 소멸로 마무리
-        ReturnBullet();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out IDamageable damageable))
         {
-            Vector3 closestPoint = collision.ClosestPoint(prevPos);
-            Debug.Log($"Crushed to {collision.name}");
-            DamageData damage = new DamageData
-            {
-                Amount = this.damage
-            };
-            damageable.TakeDamage(damage);
+            damageable.TakeDamage(new DamageData { Amount = damage });
 
             if (trailEmitter != null) 
             {
                 trailEmitter.AssignLastPos(transform.position);
             }
-            CallHitEffect(closestPoint);
 
-            EventBus.Publish(new DamageInfo
-            {
-                Position = closestPoint,
-                Amount = this.damage
-            });
+            Vector2 closestPoint = collision.ClosestPoint(prevPos);
+            Vector2 dir = (prevPos - closestPoint).normalized;
 
-            ObjectPoolManager.Instance.ReturnObject(gameObject);
+            EventBus.Publish(new HitEffectInfo { Position = closestPoint, Direction = dir });
+            EventBus.Publish(new DamageInfo { Position = closestPoint, Amount = damage });
 
             ReturnBullet();
         }
     }
-
-
-    private void CallHitEffect(Vector3 hitPos)
-    {
-        var hitEffect = ObjectPoolManager.Instance.GetObject(hitEffectPrefab,false);
-
-        Vector2 dir = (prevPos - (Vector2)hitPos).normalized;
-        hitEffect.transform.SetPositionAndRotation(hitPos, Quaternion.FromToRotation(Vector3.up, dir));
-        hitEffect.SetActive(true);
-        hitEffect.GetComponent<ParticleSystem>().Play();
-    }
     private IEnumerator AutoReturn()
     {
         yield return CoroutineCache.WaitforSeconds(lifetime);
-        ObjectPoolManager.Instance.ReturnObject(gameObject);
+        ReturnBullet();
     }
 
     void ReturnBullet()
