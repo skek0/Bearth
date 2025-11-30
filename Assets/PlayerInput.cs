@@ -4,7 +4,7 @@
 //     version 1.11.2
 //     from Assets/PlayerInput.inputactions
 //
-//     Changes to this file may cause incorrect behavior and will be lost if
+//     Changes to this file may cause incorrect Type and will be lost if
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
