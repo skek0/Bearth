@@ -8,7 +8,7 @@ public class PlayerModule : CoreModule, IPlayerControl
     protected override void Awake()
     {
         base.Awake();
-
+        if(!TryGetComponent<IDamageable>(out var idmga)) { Debug.Log("Not damagable"); }
         moveComponent = GetComponent<PlayerMove>();
         attackComponent = GetComponent<PlayerAttack>();
     }

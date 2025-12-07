@@ -10,20 +10,34 @@ public enum FactionType
 public abstract class Module : MonoBehaviour, IDamageable
 {
     protected bool connectable = false;
-    protected List<BlankModule> connectedModules = new List<BlankModule>();
-    [SerializeField]protected FactionType faction = FactionType.Neutral;
-    [SerializeField]protected float health = 10;
-    [SerializeField]public BasicInfo baseStat;
+    [SerializeField] protected List<BlankModule> connectedModules = new List<BlankModule>();
+    [SerializeField] protected FactionType faction = FactionType.Neutral;
+    [SerializeField] protected BasicInfo baseStat;  // 캐싱용 serializefield
+    [SerializeField] protected int hp = 5;
     public bool Connectable {  get { return connectable; } }
 
     protected virtual void Awake()
     {
-        gameObject.layer = LayerMask.NameToLayer("Module");
+        //gameObject.layer = LayerMask.NameToLayer("Module");
+        hp = baseStat.MaxHp;
     }
     public virtual void TakeDamage(DamageData damage)
     {
-        Debug.Log($"{gameObject.name} needs TakeDamage");
+        hp -= damage.Amount;
+        
+        if(hp <= 0)
+        {
+            hp = 0;
+            OnDeath();
+
+            for(int i = connectedModules.Count - 1; i >= 0; i--)
+            {
+                connectedModules[i].Detach(transform.position);
+            }
+            Destroy(gameObject);
+        }
     }
+    protected virtual void OnDeath() {}
     public void AddConnectedModule(BlankModule module)
     {
         connectedModules.Add(module);

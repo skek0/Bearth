@@ -20,6 +20,7 @@ public class FCTManager : S_Singleton<FCTManager>
 
     public void SpawnFCT(FCTInfo damageTaken)
     {
+        //if(데미지 표시 옵션)
         if (damageTaken.Position == null) return;
         GameObject _object = poolManager.GetObject(damageSkinPrefab, false);
         if(_object != null && _object.TryGetComponent(out DamageSkin popup))

@@ -2,12 +2,16 @@ using UnityEngine;
 
 public class GunModule : RangedWeaponModule
 {
-
+    protected override void Awake()
+    {
+        base.Awake();
+        FinalDamage = rangedStat.damage;
+    }
     protected override void SpawnBullet(float extraAngleDeg)
     {
         GameObject _bullet = ObjectPoolManager.Instance.GetObject(projectile, false);
 
-        // Á¤È®µµ(·£´ı) + ÆĞÅÏ °¢µµ º¸Á¤
+        // ì •í™•ë„(ëœë¤) + íŒ¨í„´ ê°ë„ ë³´ì •
         float rnd = (rangedStat.accuracy <= 0f) ? 0f : Random.Range(-rangedStat.accuracy * 0.5f, rangedStat.accuracy * 0.5f);
         Quaternion rot = firePoint.rotation * Quaternion.Euler(0, 0, extraAngleDeg + rnd);
 
@@ -15,9 +19,8 @@ public class GunModule : RangedWeaponModule
 
         if (_bullet.TryGetComponent<Bullet>(out var bullet))
         {
-            bullet.SetBulletInfo(Damage, rangedStat.speed);
+            bullet.SetBulletInfo(FinalDamage, rangedStat.speed);
             _bullet.SetActive(true);
         }
     }
-
 }

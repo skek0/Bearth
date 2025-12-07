@@ -1,22 +1,22 @@
 using UnityEngine;
 
-// ¿ø°Å¸®
-[CreateAssetMenu(menuName = "Weapon/RangedStat")]
+// ì›ê±°ë¦¬
+[CreateAssetMenu(menuName = "ModuleStat/Weapon/RangedStat")]
 public class RangedWeaponStat : WeaponStat
 {
     // displayName, damage, damageType
     [Tooltip("Projectile's speed")]
-    public float speed;         // ºñÇà ¼Óµµ
+    public float speed;         // ë¹„í–‰ ì†ë„
     [Tooltip("Time between each fire\nWorks as channeling time for laser")]
-    public float interval;      // ¹ß»ç °£°İ(Äğ´Ù¿î)
+    public float interval;      // ë°œì‚¬ ê°„ê²©(ì¿¨íƒ€ì„)
     [Tooltip("Time before first shot after attach\nWorks as charge time for laser")]
-    public float preDelay;      // ¿¬°á Á÷ÈÄ ¹ß»ç °¡´É±îÁö ½Ã°£
+    public float preDelay;      // ì—°ê²° ì§í›„ ë°œì‚¬ ê°€ëŠ¥ê¹Œì§€ ì‹œê°„
     [Tooltip("Random degrees from targeting direction.\n0 is 100% accuracy")]
-    public float accuracy;      // ÅºÆÛÁü(µµ ´ÜÀ§)
+    public float accuracy;      // íƒ„í¼ì§(ë„ ë‹¨ìœ„)
 
-    public int penetration;     // °üÅë
+    public int penetration = 0;     // ê´€í†µ
     [Tooltip("Prefab to Fire - Projectile, Laser...")]
-    [SerializeField] GameObject firingPrefab;   // ¹ß»çÇÒ ¹°Ã¼ - Åõ»çÃ¼, ·¹ÀÌÀú µî
+    [SerializeField] GameObject firingPrefab;   // ë°œì‚¬í•  ë¬¼ì²´ - íˆ¬ì‚¬ì²´, ë ˆì´ì € ë“±
 
 
 }

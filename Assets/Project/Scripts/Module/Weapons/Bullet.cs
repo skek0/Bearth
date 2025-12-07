@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float lifetime = 2f; // ¸î ÃÊ ÈÄ ¹İÈ¯ÇÒÁö
+    public float lifetime = 2f; // ëª‡ ì´ˆ í›„ ë°˜í™˜í• ì§€
     public GameObject trailEmitterPrefab;
     public GameObject hitEffectPrefab;
 
@@ -12,7 +12,7 @@ public class Bullet : MonoBehaviour
     float speed;
 
     private Coroutine returnRoutine;
-    TrailEmitter trailEmitter;  // Ãæµ¹ ÈÄ ÀÌÆåÆ® »èÁ¦µÇ´Â ¹®Á¦·Î ±ËÀûÀ» µû·Î µÒ
+    TrailEmitter trailEmitter;  // ì¶©ëŒ í›„ ì´í™íŠ¸ ì‚­ì œë˜ëŠ” ë¬¸ì œë¡œ ê¶¤ì ì„ ë”°ë¡œ ë‘ 
     bool returned;
     Vector2 prevPos;
 
@@ -23,10 +23,10 @@ public class Bullet : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         prevPos = transform.position;
-        transform.Translate(speed * Time.fixedDeltaTime * Vector2.up);
+        transform.Translate(speed * Time.deltaTime * Vector2.up);
     }
 
     private void OnEnable()
@@ -42,12 +42,12 @@ public class Bullet : MonoBehaviour
             trailEmitter.Begin(transform);
         }
 
-        // È°¼ºÈ­µÇ¸é ÀÚµ¿À¸·Î ¹İÈ¯ Å¸ÀÌ¸Ó ½ÃÀÛ
+        // í™œì„±í™”ë˜ë©´ ìë™ìœ¼ë¡œ ë°˜í™˜ íƒ€ì´ë¨¸ ì‹œì‘
         returnRoutine = StartCoroutine(AutoReturn());
     }
     private void OnDisable()
     {
-        // ¹İÈ¯µÇ¾úÀ» ¶§ ÄÚ·çÆ¾ Á¤¸®
+        // ë°˜í™˜ë˜ì—ˆì„ ë•Œ ì½”ë£¨í‹´ ì •ë¦¬
         if (returnRoutine != null)
         {
             StopCoroutine(returnRoutine);
@@ -61,7 +61,7 @@ public class Bullet : MonoBehaviour
         {
             damageable.TakeDamage(new DamageData { Amount = damage });
 
-            if (trailEmitter != null) 
+            if (trailEmitter != null)
             {
                 trailEmitter.AssignLastPos(transform.position);
             }
@@ -86,13 +86,13 @@ public class Bullet : MonoBehaviour
         if (returned) return;
         returned = true;
 
-        // 1) ±ËÀûÀº ÀÚ¿¬ ¼Ò¸ê
+        // 1) ê¶¤ì ì€ ìì—° ì†Œë©¸
         if (trailEmitter != null)
         {
             trailEmitter.Fade();
             trailEmitter = null;
         }
-        // 2) ÃÑ¾ËÀº Áï½Ã Ç® º¹±Í
+        // 2) ì´ì•Œì€ ì¦‰ì‹œ í’€ ë³µê·€
         ObjectPoolManager.Instance.ReturnObject(gameObject);
     }
 }

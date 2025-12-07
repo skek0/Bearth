@@ -2,11 +2,21 @@ using UnityEngine;
 
 public abstract class WeaponModule : BlankModule, IWeapon
 {
-    public int Damage { get; }
-
+    public int FinalDamage { get; protected set; }
     protected bool attackable;
     protected CoreModule belongedCore;
 
+    protected override void OnDeath()
+    {
+        base.OnDeath();
+        attackable = false;
+
+        if (belongedCore != null)
+        {
+            belongedCore.RemoveWeapon(this);
+            belongedCore = null;
+        }
+    }
     public abstract void Attack();
     public override void OnSelected()
     {

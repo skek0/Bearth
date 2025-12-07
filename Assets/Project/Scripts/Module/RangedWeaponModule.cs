@@ -16,7 +16,7 @@ public abstract class RangedWeaponModule : WeaponModule
 
     bool isReady = false;
     Coroutine readyCoroutine;
-    Coroutine firingCoroutine;
+    Coroutine firingCoroutine;  // 점사/패턴 코루틴
 
     private void OnEnable()
     {
@@ -32,7 +32,7 @@ public abstract class RangedWeaponModule : WeaponModule
         if (!attackable) return;
         if (!isReady) return;
         if (fireBehavior == null) return;
-        if (firingCoroutine != null) return; // 점사/패턴 중 재진입 금지
+        if (firingCoroutine != null) return;
 
         firingCoroutine = StartCoroutine(FireRoutine());
     }

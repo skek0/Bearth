@@ -16,7 +16,7 @@ public class BlankModule : Module, IControllable
         base.Awake();
         rigid = GetComponent<Rigidbody2D>();
     }
-    private void Start()
+    protected virtual void Start()
     {
         if (senderTransform == null) 
         { 
@@ -28,10 +28,6 @@ public class BlankModule : Module, IControllable
         dragSpeed = GameManager.Instance.moduleDragSpeed;        
     }
 
-    public override void TakeDamage(DamageData damage)
-    {
-        
-    }
     public virtual void OnDrag(Vector2 pos)
     {
         DragToMove(pos);
@@ -70,9 +66,9 @@ public class BlankModule : Module, IControllable
         connection.gameObject.SetActive(false);
     }
 
-    public void Detach(Vector3 detachedPos)
+    public void Detach(Vector3 detachedFromPos)
     {
-        if (GetComponent<Rigidbody2D>() == null) // µ¶¸³ ¸ğµâÀÌ ¾Æ´Ï¾úÀ»°æ¿ì
+        if (GetComponent<Rigidbody2D>() == null) // ë…ë¦½ ëª¨ë“ˆì´ ì•„ë‹ˆì—ˆì„ê²½ìš°
         {
             rigid = gameObject.AddComponent<Rigidbody2D>();
             GameManager.Instance.Rigidbody2DSettings.ApplyTo(rigid);
@@ -83,7 +79,7 @@ public class BlankModule : Module, IControllable
         transform.parent = ModulesContainer.Instance.transform;
         faction = FactionType.Neutral;
 
-        Vector2 direction = transform.position - detachedPos;
+        Vector2 direction = transform.position - detachedFromPos;
         rigid.AddForce(direction, ForceMode2D.Impulse);
 
         if(attachedTo != null)
@@ -94,7 +90,7 @@ public class BlankModule : Module, IControllable
 
         for (int i = connectedModules.Count - 1; i >= 0; i--)
         {
-            connectedModules[i].Detach(detachedPos);
+            connectedModules[i].Detach(detachedFromPos);
         }
 
     }
@@ -139,7 +135,7 @@ public class BlankModule : Module, IControllable
     }
 
     void SetPositionAndRotationByConnector(Transform closestConnector)
-    { // connector±âÁØÀ¸·Î À§Ä¡ ¸ÂÃß±â
+    { // connectorê¸°ì¤€ìœ¼ë¡œ ìœ„ì¹˜ ë§ì¶”ê¸°
         senderTransform.GetLocalPositionAndRotation(out Vector3 localPos, out Quaternion localRot);
 
         Quaternion targetRot = closestConnector.rotation * Quaternion.Inverse(localRot);
@@ -149,7 +145,7 @@ public class BlankModule : Module, IControllable
     }
 
     private void SetParent(Transform connector)
-    { //»óÀ§ ÄÚ¾î¸ğµâ Ã£±â
+    { //ìƒìœ„ ì½”ì–´ëª¨ë“ˆ ì°¾ê¸°
         Transform current = connector;
 
         while(current != null)

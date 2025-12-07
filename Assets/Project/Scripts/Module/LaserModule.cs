@@ -6,18 +6,18 @@ public class LaserModule : RangedWeaponModule
     {
         GameObject _laser = ObjectPoolManager.Instance.GetObject(projectile, false);
 
-        // Á¤È®µµ(·£´ı) + ÆĞÅÏ °¢µµ º¸Á¤
+        // ì •í™•ë„(ëœë¤) + íŒ¨í„´ ê°ë„ ë³´ì •
         float rnd = (rangedStat.accuracy <= 0f) ? 0f : Random.Range(-rangedStat.accuracy * 0.5f, rangedStat.accuracy * 0.5f);
         Quaternion rot = firePoint.rotation * Quaternion.Euler(0, 0, extraAngleDeg + rnd);
 
         _laser.SetActive(true);
 
         _laser.transform.SetPositionAndRotation(firePoint.position, rot);
-        // 1) ·¹ÀÌÀú ÇÁ¸®ÆÕÀÎ °æ¿ì(ILaserProjectileÀ» ±¸Çö)
+        // 1) ë ˆì´ì € í”„ë¦¬íŒ¹ì¸ ê²½ìš°(ILaserProjectileì„ êµ¬í˜„)
         if (_laser.TryGetComponent<ILaserProjectile>(out var laser))
         {
-            // Damage¸¦ "Á¢ÃË ½Ã ÇÇÇØ·®"À¸·Î »ç¿ë, durationÀº rangedStat.interval
-            laser.SetInfo(Damage / 20, rangedStat.interval, firePoint);
+            // Damageë¥¼ "ì ‘ì´‰ ì‹œ í”¼í•´ëŸ‰"ìœ¼ë¡œ ì‚¬ìš©, durationì€ rangedStat.interval
+            laser.SetInfo(FinalDamage / 20, rangedStat.interval, firePoint);
         }
         else { Debug.Log("needs laserProjectile"); }
     }

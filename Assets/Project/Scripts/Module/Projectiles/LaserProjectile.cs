@@ -11,7 +11,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class LaserProjectile : MonoBehaviour, ILaserProjectile
 {
-    [Header("Beam (Visual/Physics)")]
+    [Header("Beam (Visual/PHYSICS)")]
     [Min(0.1f)] public float range = 12f;          // 레이저 사거리
     [Min(0.01f)] public float width = 0.6f;         // 레이저 굵기(월드 단위)
     [Range(1f, 60f)] public float samplesPerUnit = 12f;    // 폭 1유닛 당 샘플 수(정밀도)
@@ -189,7 +189,7 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
                 c.GetComponentInParent<IDamageable>()?.TakeDamage(new DamageData
                 {
                     Amount = dmg,
-                    Type = DamageType.Energy
+                    Type = DamageType.ENERGY
                 });
 
                 // 2) FCT는 "실제 데미지" 기준으로 1번 출력

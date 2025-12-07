@@ -12,18 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6e7701632ef18459ffb8baa967be7c, type: 3}
   m_Name: LS_B_01
   m_EditorClassIdentifier: 
-  displayName: 
-  stats:
-    kind: 0
-    stats:
-      rid: -2
+  damage: 1
+  damageType: 0
   speed: 0
   interval: 2
   preDelay: 1
   accuracy: 0
+  penetration: 0
   firingPrefab: {fileID: 7877830026569308073, guid: 22fd52105231d234db8525982e174e00, type: 3}
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }

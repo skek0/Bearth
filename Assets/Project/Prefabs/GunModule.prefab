@@ -297,7 +297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   faction: 0
   health: 10
-  baseStat: {fileID: 0}
+  baseStat: {fileID: 11400000, guid: c7a26596c89718c46b670adbfe5e8485, type: 2}
   senderTransform: {fileID: 8119899153667138822}
   firePoint: {fileID: 8334292395635631473}
   rangedStat: {fileID: 11400000, guid: 0ab2b86bbd359cd44be0ee951172c8a4, type: 2}

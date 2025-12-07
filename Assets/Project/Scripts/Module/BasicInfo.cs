@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Game/Module Basic Info")]
+[CreateAssetMenu(menuName = "ModuleStat/BasicInfo")]
 public class BasicInfo : ScriptableObject
 {
     [Header("Identity")]

@@ -1,11 +1,11 @@
 using UnityEngine;
 
-// ±ÙÁ¢
-[CreateAssetMenu(menuName = "Weapon/MeleeStat")]
+// ê·¼ì ‘
+[CreateAssetMenu(menuName = "ModuleStat/Weapon/MeleeStat")]
 public class MeleeWeaponStat : WeaponStat
 {
     // displayName, damage, damageType
-    public float attackRange;
-    public float knockback;
-    public float cooldown;   // ¿¬Å¸ °£°Ý
+    public float length;
+    public float knockbackForce;
+    public float cooldown;   // ì—°íƒ€ ê°„ê²©
 }
