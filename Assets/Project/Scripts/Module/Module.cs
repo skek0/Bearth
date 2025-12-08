@@ -32,7 +32,7 @@ public abstract class Module : MonoBehaviour, IDamageable
 
             for(int i = connectedModules.Count - 1; i >= 0; i--)
             {
-                connectedModules[i].Detach(transform.position);
+                connectedModules[i].Detach(transform.position, true);
             }
             Destroy(gameObject);
         }

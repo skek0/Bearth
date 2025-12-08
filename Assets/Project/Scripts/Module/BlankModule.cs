@@ -9,7 +9,9 @@ public class BlankModule : Module, IControllable
     protected Rigidbody2D rigid;
     protected float dragSpeed;
     protected Module attachedTo;
-    //public Module AttachedTo {  get { return attachedTo; } }
+    protected float torqueOnExplosion = 0f;
+
+    public event Action<IControllable> OnDestroyed;
 
     protected override void Awake()
     {
@@ -21,11 +23,12 @@ public class BlankModule : Module, IControllable
         if (senderTransform == null) 
         { 
             senderTransform = transform.Find("Sender");
-            Debug.Log("Sender assigned automatically");
+            Debug.Log("Sender assigned automatically, recommend cache");
         }
         connection = GetComponentInChildren<Connection>(true);
         connection.SetColliderAndAnchor(GetComponents<Collider2D>(), senderTransform);
-        dragSpeed = GameManager.Instance.moduleDragSpeed;        
+        dragSpeed = GameManager.Instance.moduleDragSpeed;
+        torqueOnExplosion = GameManager.Instance.moduleTorqueOnExplosion;
     }
 
     public virtual void OnDrag(Vector2 pos)
@@ -66,7 +69,7 @@ public class BlankModule : Module, IControllable
         connection.gameObject.SetActive(false);
     }
 
-    public void Detach(Vector3 detachedFromPos)
+    public virtual void Detach(Vector3 detachedFromPos, bool byDemolition = false)
     {
         if (GetComponent<Rigidbody2D>() == null) // 독립 모듈이 아니었을경우
         {
@@ -79,20 +82,31 @@ public class BlankModule : Module, IControllable
         transform.parent = ModulesContainer.Instance.transform;
         faction = FactionType.Neutral;
 
+        for (int i = connectedModules.Count - 1; i >= 0; i--)
+        {
+            connectedModules[i].Detach(detachedFromPos, byDemolition);
+        }
+
         Vector2 direction = transform.position - detachedFromPos;
         rigid.AddForce(direction, ForceMode2D.Impulse);
+        if(byDemolition)
+        {
+            float torque = UnityEngine.Random.Range(-torqueOnExplosion, torqueOnExplosion);
+            rigid.AddTorque(torque, ForceMode2D.Impulse);
+            Debug.Log(gameObject.name + " " + torque);
+        }
 
-        if(attachedTo != null)
+        if (attachedTo != null)
         {
             attachedTo.RemoveConnectedModule(this);
             attachedTo = null;
         }
 
-        for (int i = connectedModules.Count - 1; i >= 0; i--)
-        {
-            connectedModules[i].Detach(detachedFromPos);
-        }
-
+    }
+    protected override void OnDeath()
+    {
+        base.OnDeath();
+        OnDestroyed?.Invoke(this);
     }
 
     private void TryAttach()

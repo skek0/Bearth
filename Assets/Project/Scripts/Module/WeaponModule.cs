@@ -18,6 +18,11 @@ public abstract class WeaponModule : BlankModule, IWeapon
         }
     }
     public abstract void Attack();
+    public override void Detach(Vector3 detachedFromPos, bool byDemolition = false)
+    {
+        base.Detach(detachedFromPos, byDemolition);
+        SetUnAttakable();
+    }
     public override void OnSelected()
     {
         base.OnSelected();
@@ -37,6 +42,17 @@ public abstract class WeaponModule : BlankModule, IWeapon
             belongedCore = core;
             belongedCore.AddWeapon(this);
             attackable = true;
+        }
+    }
+
+    private void SetUnAttakable()
+    {
+        attackable = false;
+
+        if (belongedCore != null)
+        {
+            belongedCore.RemoveWeapon(this);
+            belongedCore = null;
         }
     }
 }

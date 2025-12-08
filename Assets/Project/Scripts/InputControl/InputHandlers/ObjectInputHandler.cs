@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class ObjectInputHandler : MonoBehaviour
 {
-    [SerializeField] LayerMask layerMask; // ≈¨∏Ø∞°¥…«— ∏µ‚
+    [SerializeField] LayerMask layerMask; // ÌÅ¥Î¶≠Í∞ÄÎä•Ìïú Î™®Îìà
 
     private PlayerInputActions.ObjectControlActions objectControl;
 
@@ -22,6 +22,12 @@ public class ObjectInputHandler : MonoBehaviour
     {
         objectControl.SelectHold.performed -= OnSelectHoldStart;
         objectControl.SelectHold.canceled -= OnSelectHoldEnd;
+
+        if (controllingObj != null)
+        {
+            controllingObj.OnDestroyed -= OnControllableDestroyed;
+            controllingObj = null;
+        }
     }
 
     private void Update()
@@ -38,10 +44,30 @@ public class ObjectInputHandler : MonoBehaviour
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero, 100f, layerMask);
 
+        if (controllingObj != null)
+        {
+            controllingObj.OnDestroyed -= OnControllableDestroyed;
+            controllingObj = null;
+        }
+
         if (hit.collider != null)
         {
-            controllingObj = hit.collider.GetComponent<IControllable>();
-            controllingObj?.OnSelected();
+            var controllable = hit.collider.GetComponent<IControllable>();
+            if (controllable != null)
+            {
+                controllingObj = controllable;
+                controllingObj.OnDestroyed += OnControllableDestroyed;
+                controllingObj.OnSelected();
+            }
+            else
+            {
+                // IControllableÏù¥ ÏïÑÎãàÎ©¥ ÎìúÎûòÍ∑∏ Ï∑®ÏÜå
+                dragging = false;
+            }
+        }
+        else
+        {
+            dragging = false;
         }
     }
 
@@ -49,7 +75,22 @@ public class ObjectInputHandler : MonoBehaviour
     {
         dragging = false;
 
-        controllingObj?.OnDeselected();
-        controllingObj = null;
+        if(controllingObj != null)
+        {
+            controllingObj.OnDestroyed -= OnControllableDestroyed;
+            controllingObj?.OnDeselected();
+            controllingObj = null;
+        }
     }
+
+    void OnControllableDestroyed(IControllable obj)
+    {
+        if (controllingObj == obj)
+        {
+            controllingObj.OnDestroyed -= OnControllableDestroyed;
+            controllingObj = null;
+        }
+
+        dragging = false;
+    }    
 }

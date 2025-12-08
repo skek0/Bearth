@@ -1655,7 +1655,7 @@ MonoBehaviour:
     gravityScale: 0
     drag: 0.2
     angularDrag: 0.2
-  moduleTorqueOnExplosion: 1
+  moduleTorqueOnExplosion: 5
 --- !u!1 &2038443617
 GameObject:
   m_ObjectHideFlags: 0
@@ -1844,12 +1844,12 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 619394802}
-  - {fileID: 2038278683}
   - {fileID: 519420032}
   - {fileID: 2038443619}
   - {fileID: 5585539419986471554}
   - {fileID: 1944014520}
   - {fileID: 931713890}
+  - {fileID: 2038278683}
   - {fileID: 539559678}
   - {fileID: 414729077}
   - {fileID: 1864276147}
