@@ -16,7 +16,7 @@ MonoBehaviour:
   damageType: 0
   speed: 0
   interval: 2
-  preDelay: 1
+  preDelay: 3
   accuracy: 0
   penetration: 0
   firingPrefab: {fileID: 7877830026569308073, guid: 22fd52105231d234db8525982e174e00, type: 3}

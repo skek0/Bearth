@@ -7,21 +7,25 @@ public enum FactionType
     Enemy,
     Mine
 }
+
+[RequireComponent(typeof(ModuleGuid))]
+[RequireComponent(typeof(ModuleTypeId))]
 public abstract class Module : MonoBehaviour, IDamageable
 {
     protected bool connectable = false;
-    [SerializeField] protected List<BlankModule> connectedModules = new List<BlankModule>();
+    [SerializeField] private List<BaseModule> connectedModules = new();
     [SerializeField] protected FactionType faction = FactionType.Neutral;
     [SerializeField] protected BasicInfo baseStat;  // 캐싱용 serializefield
     [SerializeField] protected int hp = 5;
-    public bool Connectable {  get { return connectable; } }
+    public IReadOnlyList<BaseModule> ConnectedModules => connectedModules;
+    public bool Connectable => connectable;
 
     protected virtual void Awake()
     {
         //gameObject.layer = LayerMask.NameToLayer("Module");
         hp = baseStat.MaxHp;
     }
-    public virtual void TakeDamage(DamageData damage)
+    public void ApplyDamage(DamageData damage)
     {
         hp -= damage.Amount;
         
@@ -30,19 +34,19 @@ public abstract class Module : MonoBehaviour, IDamageable
             hp = 0;
             OnDeath();
 
-            for(int i = connectedModules.Count - 1; i >= 0; i--)
+            for(int i = ConnectedModules.Count - 1; i >= 0; i--)
             {
-                connectedModules[i].Detach(transform.position, true);
+                ConnectedModules[i].Detach(transform.position, true);
             }
             Destroy(gameObject);
         }
     }
     protected virtual void OnDeath() {}
-    public void AddConnectedModule(BlankModule module)
+    public void AddConnectedModule(BaseModule module)
     {
         connectedModules.Add(module);
     }
-    public void RemoveConnectedModule(BlankModule module)
+    public void RemoveConnectedModule(BaseModule module)
     {
         connectedModules.Remove(module);
     }

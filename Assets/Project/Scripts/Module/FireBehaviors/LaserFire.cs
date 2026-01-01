@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-// ·¹ÀÌÀúÇü
+// ë ˆì´ì €í˜•
 [CreateAssetMenu(menuName = "Weapon/FireBehaviors/Laser")]
 public class LaserFire : FireBehavior
 {
-    public override IEnumerator Fire(Action<float> spawn)
+    public override void BuildShots(List<Shot> outShots)
     {
-        spawn(0f);
-        yield break;
+        outShots.Add(new Shot { angleDeg = 0f, delay = 0f });
     }
 }

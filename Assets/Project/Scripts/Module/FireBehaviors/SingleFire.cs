@@ -1,13 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
-using System;
-// 일반형
+
 [CreateAssetMenu(menuName = "Weapon/FireBehaviors/Single")]
 public class SingleFire : FireBehavior
 {
-    public override IEnumerator Fire(Action<float> spawn)
+    public override void BuildShots(List<Shot> outShots)
     {
-        spawn(0f); // 각도 보정 0, 속도 기본
-        yield break;
+        outShots.Add(new Shot { angleDeg = 0f, delay = 0f });
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IDamageable
 {
-    void TakeDamage(DamageData data);
+    void ApplyDamage(DamageData data);
 }
 
 public struct DamageData

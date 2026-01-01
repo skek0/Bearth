@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2038804132620361766}
   - component: {fileID: 4990816374287940426}
+  - component: {fileID: -8576974925921894147}
   m_Layer: 8
   m_Name: Receiver
   m_TagString: Untagged
@@ -78,3 +79,16 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.1, y: 0.1}
   m_EdgeRadius: 0
+--- !u!114 &-8576974925921894147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 626485942792438493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 799fa5913c00ad04a9a7a1120d5bc55c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConnectorPort
+  portId: Receiver

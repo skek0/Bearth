@@ -48,6 +48,10 @@ MonoBehaviour:
   lifetime: 2
   trailEmitterPrefab: {fileID: 7517913133050154352, guid: 73e855588fea4e34d8f9ba88ba0b90c1, type: 3}
   hitEffectPrefab: {fileID: 2616772810237679137, guid: 8d0a1c9a27b32ea42a0dd13ca5360232, type: 3}
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 64
+  radius: 0.05
 --- !u!58 &4545657487391682089
 CircleCollider2D:
   m_ObjectHideFlags: 0

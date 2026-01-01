@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6e7701632ef18459ffb8baa967be7c, type: 3}
   m_Name: SG_B_01
   m_EditorClassIdentifier: 
-  damage: 1
+  damage: 5
   damageType: 0
-  speed: 20
+  speed: 100
   interval: 1
   preDelay: 0
   accuracy: 10

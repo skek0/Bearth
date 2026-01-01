@@ -9,6 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a32975bbd604984294224b9ff585ece, type: 3}
-  m_Name: New Laser Fire
-  m_EditorClassIdentifier: 
+  m_Script: {fileID: 11500000, guid: 0de263b311c6aa644846bf1536e27dc2, type: 3}
+  m_Name: New Burst Fire
+  m_EditorClassIdentifier: Assembly-CSharp::BurstFire
+  burstCount: 5
+  burstInterval: 0.08

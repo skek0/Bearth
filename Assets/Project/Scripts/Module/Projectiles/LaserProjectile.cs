@@ -3,46 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// ±½Àº ·¹ÀÌÀú: ÆøÀ» µû¶ó N°³ »ùÇÃ ·¹ÀÌ¸¦ ½î°í,
-/// »ùÇÃº° ¸·Èù ±æÀÌ·Î "µé¾¦ÇÑ ³¡¼±"À» ¸¸µç µÚ ¸Ş½¬ ½ºÆ®¸³(2N ¹öÅØ½º)·Î ±×¸°´Ù.
-/// ¹°¸®´Â RaycastNonAlloc(NÈ¸/ÇÁ·¹ÀÓ), ·»´õ´Â ¸Ş½¬ 1µå·Î¿ì.
-/// DPS´Â "ÇØ´ç ÇÁ·¹ÀÓ¿¡ ¸ÂÀº »ùÇÃ ºñÀ²(m/N)"·Î ºĞ¹èÇÏ¿© ´©Àû-Æ½ ´ÜÀ§·Î ¹İ¿µ.
+/// êµµì€ ë ˆì´ì €: í­ì„ ë”°ë¼ Nê°œ ìƒ˜í”Œ ë ˆì´ë¥¼ ì˜ê³ ,
+/// ìƒ˜í”Œë³„ ë§‰íŒ ê¸¸ì´ë¡œ "ë“¤ì‘¥í•œ ëì„ "ì„ ë§Œë“  ë’¤ ë©”ì‰¬ ìŠ¤íŠ¸ë¦½(2N ë²„í…ìŠ¤)ë¡œ ê·¸ë¦°ë‹¤.
+/// ë¬¼ë¦¬ëŠ” RaycastNonAlloc(NíšŒ/í”„ë ˆì„), ë Œë”ëŠ” ë©”ì‰¬ 1ë“œë¡œìš°.
+/// DPSëŠ” "í•´ë‹¹ í”„ë ˆì„ì— ë§ì€ ìƒ˜í”Œ ë¹„ìœ¨(m/N)"ë¡œ ë¶„ë°°í•˜ì—¬ ëˆ„ì -í‹± ë‹¨ìœ„ë¡œ ë°˜ì˜.
 /// </summary>
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class LaserProjectile : MonoBehaviour, ILaserProjectile
 {
     [Header("Beam (Visual/PHYSICS)")]
-    [Min(0.1f)] public float range = 12f;          // ·¹ÀÌÀú »ç°Å¸®
-    [Min(0.01f)] public float width = 0.6f;         // ·¹ÀÌÀú ±½±â(¿ùµå ´ÜÀ§)
-    [Range(1f, 60f)] public float samplesPerUnit = 12f;    // Æø 1À¯´Ö ´ç »ùÇÃ ¼ö(Á¤¹Ğµµ)
-    [Range(3, 63)] public int maxSamples = 21;      // »ùÇÃ »óÇÑ(¼º´É/Á¤¹Ğµµ Æ®·¹ÀÌµå¿ÀÇÁ)
+    [Min(0.1f)] public float range = 12f;          // ë ˆì´ì € ì‚¬ê±°ë¦¬
+    [Min(0.01f)] public float width = 0.6f;         // ë ˆì´ì € êµµê¸°(ì›”ë“œ ë‹¨ìœ„)
+    [Range(1f, 60f)] public float samplesPerUnit = 12f;    // í­ 1ìœ ë‹› ë‹¹ ìƒ˜í”Œ ìˆ˜(ì •ë°€ë„)
+    [Range(3, 63)] public int maxSamples = 21;      // ìƒ˜í”Œ ìƒí•œ(ì„±ëŠ¥/ì •ë°€ë„ íŠ¸ë ˆì´ë“œì˜¤í”„)
     public LayerMask hitMask;
 
     [Header("Damage")]
-    [Tooltip("µ¥¹ÌÁö Àû¿ë ÁÖ±â(ÃÊ). 0ÀÌ¸é ¸Å ÇÁ·¹ÀÓ ¹İ¿µ")]
+    [Tooltip("ë°ë¯¸ì§€ ì ìš© ì£¼ê¸°(ì´ˆ). 0ì´ë©´ ë§¤ í”„ë ˆì„ ë°˜ì˜")]
     [Range(0f, 0.2f)] public float tick = 0.02f;
 
     [Header("Rendering")]
-    public Material beamMaterial;                   // Additive/Glow °è¿­ ±ÇÀå
-    [Tooltip("UV¸¦ ¼¼·Î·Î ½ºÅ©·Ñ(0ÀÌ¸é °íÁ¤)")]
+    public Material beamMaterial;                   // Additive/Glow ê³„ì—´ ê¶Œì¥
+    [Tooltip("UVë¥¼ ì„¸ë¡œë¡œ ìŠ¤í¬ë¡¤(0ì´ë©´ ê³ ì •)")]
     public float uvScrollSpeedV = 3f;
 
-    // ·±Å¸ÀÓ ÆÄ¶ó¹ÌÅÍ(ILaserProjectile¿¡¼­ ÁÖÀÔ)
+    // ëŸ°íƒ€ì„ íŒŒë¼ë¯¸í„°(ILaserProjectileì—ì„œ ì£¼ì…)
     Transform firePoint;
-    float dps;            // ÃÊ´ç µ¥¹ÌÁö
-    float duration;       // À¯Áö ½Ã°£
+    float dps;            // ì´ˆë‹¹ ë°ë¯¸ì§€
+    float duration;       // ìœ ì§€ ì‹œê°„
     float timer, tickTimer;
 
-    // »ùÇÃ¸µ/´©Àû
-    int N;                                      // ½ÇÁ¦ »ùÇÃ ¼ö
-    Vector3[] sampleEnds;                       // »ùÇÃ ³¡Á¡(¿ùµå)
-    readonly Dictionary<Collider2D, float> accum = new(); // Å¸°Ùº° ´©Àû µ¥¹ÌÁö(¼Ò¼ö Æ÷ÇÔ)
+    // ìƒ˜í”Œë§/ëˆ„ì 
+    int N;                                      // ì‹¤ì œ ìƒ˜í”Œ ìˆ˜
+    Vector3[] sampleEnds;                       // ìƒ˜í”Œ ëì (ì›”ë“œ)
+    readonly Dictionary<Collider2D, float> accum = new(); // íƒ€ê²Ÿë³„ ëˆ„ì  ë°ë¯¸ì§€(ì†Œìˆ˜ í¬í•¨)
 
-    // ºñÁÖ¾ó: ¸Ş½¬ ½ºÆ®¸³(2N ¹öÅØ½º: [start(i), end(i)] ½Ö)
+    // ë¹„ì£¼ì–¼: ë©”ì‰¬ ìŠ¤íŠ¸ë¦½(2N ë²„í…ìŠ¤: [start(i), end(i)] ìŒ)
     MeshFilter mf; MeshRenderer mr; Mesh mesh;
     Vector3[] verts; Vector2[] uvs; int[] indices;
 
-    // ¹°¸® ¹öÆÛ(ÇÒ´ç ÁÙÀÌ±â)
+    // ë¬¼ë¦¬ ë²„í¼(í• ë‹¹ ì¤„ì´ê¸°)
     readonly RaycastHit2D[] hitsBuffer = new RaycastHit2D[32];
 
     Coroutine runCoro;
@@ -60,13 +60,13 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
         mf.sharedMesh = mesh;
         if (beamMaterial != null) mr.sharedMaterial = beamMaterial;
 
-        // »ùÇÃ ¼ö °áÁ¤ ¹× ¹öÆÛ ÁØºñ
+        // ìƒ˜í”Œ ìˆ˜ ê²°ì • ë° ë²„í¼ ì¤€ë¹„
         N = Mathf.Clamp(Mathf.CeilToInt(width * samplesPerUnit), 2, maxSamples);
         sampleEnds = sampleEnds != null && sampleEnds.Length == N ? sampleEnds : new Vector3[N];
 
-        BuildStripBuffersIfNeeded(N);  // ÀÎµ¦½º/UV/¹öÅØ½º ¹è¿­ ÁØºñ
+        BuildStripBuffersIfNeeded(N);  // ì¸ë±ìŠ¤/UV/ë²„í…ìŠ¤ ë°°ì—´ ì¤€ë¹„
 
-        // »óÅÂ ÃÊ±âÈ­
+        // ìƒíƒœ ì´ˆê¸°í™”
         timer = tickTimer = 0f;
         accum.Clear();
 
@@ -87,24 +87,24 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
         {
             if (!firePoint) break;
 
-            // ±âº» º¤ÅÍµé
+            // ê¸°ë³¸ ë²¡í„°ë“¤
             Vector2 origin = firePoint.position;
-            Vector2 dir = firePoint.up.normalized;       // ÇÊ¿ä ½Ã upÀ¸·Î º¯°æ
-            Vector2 nrm = new Vector2(-dir.y, dir.x);       // ÁøÇà¿¡ ¼öÁ÷
+            Vector2 dir = firePoint.up.normalized;       // í•„ìš” ì‹œ upìœ¼ë¡œ ë³€ê²½
+            Vector2 nrm = new Vector2(-dir.y, dir.x);       // ì§„í–‰ì— ìˆ˜ì§
             float halfW = width * 0.5f;
 
-            // »ùÇÃ¸µ °á°ú: Äİ¶óÀÌ´õº° ±â¿©µµ(ÇØ´ç ÇÁ·¹ÀÓ m/N ÇÕ»ê)
-            var perColliderWeight = DictionaryPool<Collider2D, float>.Get(); // ÀÓ½Ã µñ¼Å³Ê¸®(°¡ºñÁö Àı¾à¿ë)
+            // ìƒ˜í”Œë§ ê²°ê³¼: ì½œë¼ì´ë”ë³„ ê¸°ì—¬ë„(í•´ë‹¹ í”„ë ˆì„ m/N í•©ì‚°)
+            var perColliderWeight = DictionaryPool<Collider2D, float>.Get(); // ì„ì‹œ ë”•ì…”ë„ˆë¦¬(ê°€ë¹„ì§€ ì ˆì•½ìš©)
 
-            // 1) ¸ÖÆ¼ »ùÇÃ Raycast
+            // 1) ë©€í‹° ìƒ˜í”Œ Raycast
             for (int i = 0; i < N; i++)
             {
-                // Æø ¹æÇâ ¿ÀÇÁ¼Â
+                // í­ ë°©í–¥ ì˜¤í”„ì…‹
                 float t = (i + 0.5f) / N;
                 float off = Mathf.Lerp(-halfW, halfW, t);
                 Vector2 o = origin + nrm * off;
 
-                // °¡±î¿î È÷Æ® Ã£±â
+                // ê°€ê¹Œìš´ íˆíŠ¸ ì°¾ê¸°
                 int count = Physics2D.RaycastNonAlloc(o, dir, hitsBuffer, range, hitMask);
                 float endDist = range; 
                 Collider2D hitCollider = null; 
@@ -127,21 +127,21 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
                     endDist = (hitCollider != null) ? min : range;
                 }
 
-                // »ùÇÃ ³¡Á¡
+                // ìƒ˜í”Œ ëì 
                 Vector2 end = o + dir * endDist;
                 sampleEnds[i] = end;
 
-                // µ¥¹ÌÁö ±â¿©µµ(»ùÇÃ 1°³ = 1/N)
+                // ë°ë¯¸ì§€ ê¸°ì—¬ë„(ìƒ˜í”Œ 1ê°œ = 1/N)
                 if (hitCollider != null)
                 {
                     if (perColliderWeight.TryGetValue(hitCollider, out float w)) perColliderWeight[hitCollider] = w + (1f / N);
                     else perColliderWeight[hitCollider] = (1f / N);
                 }
 
-                // ¹öÅØ½º µÎ °³: start(i), end(i) °»½Å¿ë ¿ùµå ÁÂÇ¥ ÀúÀåÀº ¾Æ·¡¿¡¼­ ÀÏ°ı Ã³¸®
+                // ë²„í…ìŠ¤ ë‘ ê°œ: start(i), end(i) ê°±ì‹ ìš© ì›”ë“œ ì¢Œí‘œ ì €ì¥ì€ ì•„ë˜ì—ì„œ ì¼ê´„ ì²˜ë¦¬
             }
 
-            // 2) µ¥¹ÌÁö ´©Àû (DPS * dt * ºñÀ²)
+            // 2) ë°ë¯¸ì§€ ëˆ„ì  (DPS * dt * ë¹„ìœ¨)
             float dt = Time.deltaTime;
             foreach (var kv in perColliderWeight)
             {
@@ -151,7 +151,7 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
             }
             DictionaryPool<Collider2D, float>.Release(perColliderWeight);
 
-            // 3) tick¿¡ ¸ÂÃç ½ÇÁ¦ µ¥¹ÌÁö Àû¿ë
+            // 3) tickì— ë§ì¶° ì‹¤ì œ ë°ë¯¸ì§€ ì ìš©
             bool doTick = tick <= 0f;
             if (!doTick)
             {
@@ -160,7 +160,7 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
             }
             if (doTick && accum.Count > 0) FlushDamage();
 
-            // 4) ¸Ş½¬ ¹öÅØ½º °»½Å(2N)
+            // 4) ë©”ì‰¬ ë²„í…ìŠ¤ ê°±ì‹ (2N)
             UpdateStripVertices(origin, nrm, sampleEnds);
 
             timer += dt;
@@ -169,14 +169,14 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
 
         if (accum.Count > 0) FlushDamage();
 
-        // Ç® ¹İ³³ or ºñÈ°¼ºÈ­
+        // í’€ ë°˜ë‚© or ë¹„í™œì„±í™”
         ObjectPoolManager.Instance.ReturnObject(gameObject);
     }
 
     // ---- Damage helpers ----
     void FlushDamage()
     {
-        // Á¤¼ö·Î ³»¸®°í ¼Ò¼ö´Â º¸Á¸
+        // ì •ìˆ˜ë¡œ ë‚´ë¦¬ê³  ì†Œìˆ˜ëŠ” ë³´ì¡´
         var keys = ListPool<Collider2D>.Get();
         keys.AddRange(accum.Keys);
         foreach (var c in keys)
@@ -186,14 +186,14 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
             if (dmg > 0)
             {
                 accum[c] = f - dmg;
-                c.GetComponentInParent<IDamageable>()?.TakeDamage(new DamageData
+                c.GetComponentInParent<IDamageable>()?.ApplyDamage(new DamageData
                 {
                     Amount = dmg,
                     Type = DamageType.ENERGY
                 });
 
-                // 2) FCT´Â "½ÇÁ¦ µ¥¹ÌÁö" ±âÁØÀ¸·Î 1¹ø Ãâ·Â
-                var pos = (Vector2)c.bounds.center; // È¤Àº Äİ¶óÀÌ´õ ¿ùµå Áß½É
+                // 2) FCTëŠ” "ì‹¤ì œ ë°ë¯¸ì§€" ê¸°ì¤€ìœ¼ë¡œ 1ë²ˆ ì¶œë ¥
+                var pos = (Vector2)c.bounds.center; // í˜¹ì€ ì½œë¼ì´ë” ì›”ë“œ ì¤‘ì‹¬
                 FCTManager.Instance.SpawnFCT(new FCTInfo
                 {
                     Position = pos,
@@ -207,12 +207,12 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
     // ---- Mesh strip ----
     void BuildStripBuffersIfNeeded(int N)
     {
-        // ¹öÅØ½º: 2N (i¸¶´Ù start, end)
+        // ë²„í…ìŠ¤: 2N (ië§ˆë‹¤ start, end)
         int vCount = 2 * N;
         if (verts == null || verts.Length != vCount) verts = new Vector3[vCount];
         if (uvs == null || uvs.Length != vCount) uvs = new Vector2[vCount];
 
-        // ÀÎµ¦½º: (N-1) ±¸°£ ¡¿ 2»ï°¢Çü ¡¿ 3 = 6(N-1)
+        // ì¸ë±ìŠ¤: (N-1) êµ¬ê°„ Ã— 2ì‚¼ê°í˜• Ã— 3 = 6(N-1)
         int iCount = (N - 1) * 6;
         if (indices == null || indices.Length != iCount)
         {
@@ -220,19 +220,19 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
             int k = 0;
             for (int i = 0; i < N - 1; i++)
             {
-                // ÇöÀç ½Ö(2i, 2i+1), ´ÙÀ½ ½Ö(2i+2, 2i+3)
+                // í˜„ì¬ ìŒ(2i, 2i+1), ë‹¤ìŒ ìŒ(2i+2, 2i+3)
                 int a0 = 2 * i;
                 int a1 = 2 * i + 1;
                 int b0 = 2 * (i + 1);
                 int b1 = 2 * (i + 1) + 1;
 
-                // quad = (a0,a1,b1) + (a0,b1,b0)  (¼¼·Î ½ºÆ®¸³)
+                // quad = (a0,a1,b1) + (a0,b1,b0)  (ì„¸ë¡œ ìŠ¤íŠ¸ë¦½)
                 indices[k++] = a0; indices[k++] = a1; indices[k++] = b1;
                 indices[k++] = a0; indices[k++] = b1; indices[k++] = b0;
             }
         }
 
-        // ÃÊ±â UV: u´Â Æø ¹æÇâ(0~1), v´Â 0(start) / 1(end)
+        // ì´ˆê¸° UV: uëŠ” í­ ë°©í–¥(0~1), vëŠ” 0(start) / 1(end)
         for (int i = 0; i < N; i++)
         {
             float u = (N == 1) ? 0f : (float)i / (N - 1);
@@ -241,7 +241,7 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
         }
 
         mesh.Clear();
-        mesh.vertices = verts;      // ÁÂÇ¥´Â ¸Å ÇÁ·¹ÀÓ UpdateStripVertices¿¡¼­ °»½Å
+        mesh.vertices = verts;      // ì¢Œí‘œëŠ” ë§¤ í”„ë ˆì„ UpdateStripVerticesì—ì„œ ê°±ì‹ 
         mesh.uv = uvs;
         mesh.triangles = indices;
         mesh.RecalculateBounds();
@@ -249,10 +249,10 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
 
     void UpdateStripVertices(Vector2 origin, Vector2 nrm, Vector3[] ends)
     {
-        // (¼±ÅÃ) UV ½ºÅ©·Ñ
+        // (ì„ íƒ) UV ìŠ¤í¬ë¡¤
         if (uvScrollSpeedV != 0f && mr != null)
         {
-            // ¸ÓÆ¼¸®¾ó ÀÎ½ºÅÏ½º¿¡ Àû¿ë (°øÀ¯ ¸ÓÆ¼¸®¾ó ¿À¿° ¹æÁö)
+            // ë¨¸í‹°ë¦¬ì–¼ ì¸ìŠ¤í„´ìŠ¤ì— ì ìš© (ê³µìœ  ë¨¸í‹°ë¦¬ì–¼ ì˜¤ì—¼ ë°©ì§€)
             var mat = mr.material;
             var off = mat.mainTextureOffset;
             off.y += uvScrollSpeedV * Time.deltaTime;
@@ -260,27 +260,27 @@ public class LaserProjectile : MonoBehaviour, ILaserProjectile
         }
 
         float halfW = width * 0.5f;
-        var tp = transform; // ·ÎÄÃ º¯È¯¿ë
+        var tp = transform; // ë¡œì»¬ ë³€í™˜ìš©
 
         for (int i = 0; i < N; i++)
         {
             float t = (i + 0.5f) / N;
             float off = Mathf.Lerp(-halfW, halfW, t);
-            Vector3 start = origin + nrm * off;   // ½ÃÀÛ¼±(ÃÑ±¸ ÂÊ)
-            Vector3 end = ends[i];                // »ùÇÃ ³¡¼±
+            Vector3 start = origin + nrm * off;   // ì‹œì‘ì„ (ì´êµ¬ ìª½)
+            Vector3 end = ends[i];                // ìƒ˜í”Œ ëì„ 
 
-            // ¡Ú ·ÎÄÃ ÁÂÇ¥·Î º¯È¯ÇØ¼­ ¸Ş½¬¿¡ ³Ö±â
+            // â˜… ë¡œì»¬ ì¢Œí‘œë¡œ ë³€í™˜í•´ì„œ ë©”ì‰¬ì— ë„£ê¸°
             int a = 2 * i;
             verts[a] = tp.InverseTransformPoint(start);
             verts[a + 1] = tp.InverseTransformPoint(end);
         }
 
         mesh.vertices = verts;
-        mesh.RecalculateBounds(); // ÇÊ¿ä ½Ã¸¸ È£Ãâ(Ä«¸Ş¶ó ¹Û¿¡¼­µµ Ä¿Áö¸é »ı·« ±İÁö)
-        // ³ë¸Ö/ÅÊÁ¨Æ® ºÒÇÊ¿ä. ¼ÎÀÌ´õ°¡ ÇÊ¿äÇÏ¸é ÀûÀıÈ÷ Ãß°¡ »ı¼º
+        mesh.RecalculateBounds(); // í•„ìš” ì‹œë§Œ í˜¸ì¶œ(ì¹´ë©”ë¼ ë°–ì—ì„œë„ ì»¤ì§€ë©´ ìƒëµ ê¸ˆì§€)
+        // ë…¸ë©€/íƒ±ì  íŠ¸ ë¶ˆí•„ìš”. ì…°ì´ë”ê°€ í•„ìš”í•˜ë©´ ì ì ˆíˆ ì¶”ê°€ ìƒì„±
     }
 
-    // ---- Pools (°¡ºñÁö ÁÙÀÌ±â¿ë °£´Ü Ç®) ----
+    // ---- Pools (ê°€ë¹„ì§€ ì¤„ì´ê¸°ìš© ê°„ë‹¨ í’€) ----
     static class DictionaryPool<K, V>
     {
         static readonly Stack<Dictionary<K, V>> pool = new();

@@ -8,7 +8,7 @@ using System.Linq;
 public class Connection : MonoBehaviour
 {
     public Transform ClosestConnector { get; private set; }
-    [SerializeField] float sizeOffset = 0.9f; // ºÎÂøµÉ Å©±â Á¶Àı °è¼ö, 0.9
+    [SerializeField] float sizeOffset = 0.97f; // ë¶€ì°©ë  í¬ê¸° ì¡°ì ˆ ê³„ìˆ˜, 0.9
 
     HashSet<Collider2D> moduleColliders;
     Transform anchor;
@@ -18,9 +18,29 @@ public class Connection : MonoBehaviour
     Vector2 circleCenter;
     float circleRadius;
 
+    [SerializeField] int bufferSize = 64;
+    private static Collider2D[] overlapBuffer;
+    private static int overlapBuffersize;
+    private ContactFilter2D filter;
+
     private void Awake()
     {
-        layermask = LayerMask.GetMask("Module");
+        layermask = LayerMask.GetMask("Module"); 
+        
+        filter = new ContactFilter2D();
+        filter.useLayerMask = true;
+        filter.SetLayerMask(layermask);
+        filter.useTriggers = false; // Module ë ˆì´ì–´ì— Triggerê°€ ìˆìœ¼ë©´ ì œì™¸(ì›í•˜ë©´ trueë¡œ)
+
+        EnsureSharedBuffer(bufferSize);
+    }
+    private static void EnsureSharedBuffer(int requestedSize)
+    {
+        if (requestedSize <= 0) requestedSize = 32;
+        if (overlapBuffer != null && overlapBuffersize >= requestedSize) return;
+
+        overlapBuffersize = requestedSize;
+        overlapBuffer = new Collider2D[overlapBuffersize];
     }
     public void SetColliderAndAnchor(Collider2D[] col, Transform anchorTransform)
     {
@@ -86,7 +106,8 @@ public class Connection : MonoBehaviour
     float angle;
     private bool HasEnoughPlace(Transform closestConnector)
     {
-        List<Collider2D> collidedList = new();
+        EnsureSharedBuffer(bufferSize);
+
         foreach (var collider in moduleColliders)
         {
             if (collider is BoxCollider2D boxCollider)
@@ -97,17 +118,13 @@ public class Connection : MonoBehaviour
                 Vector2 boxSize = sizeOffset * new Vector2(boxCollider.size.x, boxCollider.size.y);
                 float boxAngle = closestConnector.eulerAngles.z;
 
-                var collisions = Physics2D.OverlapBoxAll(boxCenter, boxSize, boxAngle, layermask);
-
-                // µğ¹ö±× Ç¥½Ã¿ë (³×°¡ ¾²´ø ÇÊµå)
+                // ë””ë²„ê·¸ í‘œì‹œìš©
                 center = boxCenter;
                 size = boxSize;
                 angle = boxAngle;
 
-                foreach (var c in collisions)
-                {
-                    if (!IsSelfCollider(c)) collidedList.Add(c); // ¡Ú ¿©±â¸¸ ¹Ù²Ş
-                }
+                int count = Physics2D.OverlapBox(boxCenter, boxSize, boxAngle, filter, overlapBuffer);
+                if (HasBlockingCollider(count)) return false;
             }
             else if (collider is CircleCollider2D circleCollider)
             {
@@ -116,33 +133,43 @@ public class Connection : MonoBehaviour
 
                 float radius = sizeOffset * circleCollider.radius;
 
-                var collisions = Physics2D.OverlapCircleAll(cCenter, radius, layermask);
-
-                // µğ¹ö±×¿ë: ¿ø ±×¸®±â ¿øÇÏ¸é ÇÊµå¿¡ ÀúÀåÇØ µÎ°í OnDrawGizmos¿¡¼­ ±×·Á
+                // ë””ë²„ê·¸ìš©: ì› ê·¸ë¦¬ê¸° ì›í•˜ë©´ í•„ë“œì— ì €ì¥í•´ ë‘ê³  OnDrawGizmosì—ì„œ ê·¸ë ¤
                 circleCenter = cCenter;
                 circleRadius = radius;
 
-                foreach (var c in collisions)
-                {
-                    if (!IsSelfCollider(c)) collidedList.Add(c);
-                }
+                int count = Physics2D.OverlapCircle(cCenter, radius, filter, overlapBuffer); // âœ… results ì˜¤ë²„ë¡œë“œ
+                if (HasBlockingCollider(count)) return false;
             }
         }
 
-        return collidedList.Count == 0;
+        return true;
     }
+    private bool HasBlockingCollider(int count)
+    {
+        // ë°°ì—´ì´ ê½‰ ì°¼ìœ¼ë©´ ë” ìˆì—ˆì„ ìˆ˜ë„ ìˆìŒ -> ë³´ìˆ˜ì ìœ¼ë¡œ ë§‰ê¸°
+        if (count >= overlapBuffersize) return true;
 
+        for (int i = 0; i < count; i++)
+        {
+            Collider2D c = overlapBuffer[i];
+            if (c == null) continue;
+
+            if (!IsSelfCollider(c))
+                return true;
+        }
+        return false;
+    }
     private bool IsSelfCollider(Collider2D other)
     {
         if (other == null) return false;
 
-        // ³»°¡ °¡Áø Äİ¶óÀÌ´õ Áß ÇÏ³ªÀÎ°¡?
+        // ë‚´ê°€ ê°€ì§„ ì½œë¼ì´ë” ì¤‘ í•˜ë‚˜ì¸ê°€?
         if (moduleColliders != null && moduleColliders.Contains(other))
             return true;
 
         return false;
     }
-        private void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
         if (moduleColliders == null) return;
 
@@ -156,24 +183,24 @@ public class Connection : MonoBehaviour
             }
             else if (collider is CircleCollider2D)
             {
-                DrawWireCircle2D(circleCenter, circleRadius, 32); // ºĞÇÒ ¼ö´Â ÃëÇâ²¯                
+                DrawWireCircle2D(circleCenter, circleRadius, 32); // ë¶„í•  ìˆ˜ëŠ” ì·¨í–¥ê»                
             }
         }
     }
 
-    // 2D È¸Àü ¹Ú½º ±×¸®±â
+    // 2D íšŒì „ ë°•ìŠ¤ ê·¸ë¦¬ê¸°
     private void DrawWireBox2D(Vector2 center, Vector2 size, float angle)
     {
         Vector2 half = size * 0.5f;
 
-        // ·ÎÄÃ ÁÂÇ¥ÀÇ ²ÀÁşÁ¡
+        // ë¡œì»¬ ì¢Œí‘œì˜ ê¼­ì§“ì 
         Vector2[] corners = new Vector2[4];
         corners[0] = new Vector2(-half.x, -half.y);
         corners[1] = new Vector2(-half.x, half.y);
         corners[2] = new Vector2(half.x, half.y);
         corners[3] = new Vector2(half.x, -half.y);
 
-        // È¸Àü º¯È¯
+        // íšŒì „ ë³€í™˜
         float rad = angle * Mathf.Deg2Rad;
         float cos = Mathf.Cos(rad);
         float sin = Mathf.Sin(rad);
@@ -188,7 +215,7 @@ public class Connection : MonoBehaviour
             ) + center;
         }
 
-        // ³× º¯ ±×¸®±â
+        // ë„¤ ë³€ ê·¸ë¦¬ê¸°
         for (int i = 0; i < 4; i++)
         {
             Gizmos.DrawLine(corners[i], corners[(i + 1) % 4]);

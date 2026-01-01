@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class CoreModule : Module
 {
-    protected List<IWeapon> weapons = new List<IWeapon>();
+    protected List<IWeapon> weapons = new();
     protected override void Awake()
     {
         base.Awake();
@@ -11,8 +11,10 @@ public class CoreModule : Module
     }
     public virtual void Attack()
     {
-        foreach (var weapon in weapons)
+        for (int i = weapons.Count - 1; i >= 0; i--)
         {
+            var weapon = weapons[i];
+            if (weapon == null) { weapons.RemoveAt(i); continue; }
             weapon.Attack();
         }
     }

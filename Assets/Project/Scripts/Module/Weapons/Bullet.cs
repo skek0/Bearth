@@ -7,6 +7,8 @@ public class Bullet : MonoBehaviour
     public float lifetime = 2f; // 몇 초 후 반환할지
     public GameObject trailEmitterPrefab;
     public GameObject hitEffectPrefab;
+    [SerializeField] LayerMask hitMask;
+    float radius; // 총알 반지름(콜라이더 크기랑 맞추기)
 
     int damage;
     float speed;
@@ -22,11 +24,41 @@ public class Bullet : MonoBehaviour
         this.speed = speed;
     }
 
-
     private void Update()
     {
         prevPos = transform.position;
-        transform.Translate(speed * Time.deltaTime * Vector2.up);
+
+        Vector2 step = (Vector2)transform.up * (speed * Time.deltaTime);
+        Vector2 nextPos = (Vector2)transform.position + step;
+
+        // 스윕(프레임 사이 통과 방지)
+        float dist = step.magnitude;
+        if (dist > 0f)
+        {
+            RaycastHit2D hit = Physics2D.CircleCast(prevPos, radius, step.normalized, dist, hitMask);
+            if (hit.collider != null)
+            {
+                // 충돌 지점으로 스냅
+                transform.position = hit.point;
+
+                if (hit.collider.TryGetComponent(out IDamageable damageable))
+                {
+                    damageable.ApplyDamage(new DamageData { Amount = damage });
+
+                    if (trailEmitter != null)
+                        trailEmitter.AssignLastPos(transform.position);
+
+                    Vector2 dir = (prevPos - hit.point).normalized;
+                    HitEffectManager.Instance.SpawnHitEffect(new HitEffectInfo { Direction = dir, Position = hit.point });
+                    FCTManager.Instance.SpawnFCT(new FCTInfo { Position = hit.point, Amount = damage });
+
+                    ReturnBullet();
+                    return;
+                }
+            }
+        }
+
+        transform.position = nextPos;
     }
 
     private void OnEnable()
@@ -55,26 +87,6 @@ public class Bullet : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out IDamageable damageable))
-        {
-            damageable.TakeDamage(new DamageData { Amount = damage });
-
-            if (trailEmitter != null)
-            {
-                trailEmitter.AssignLastPos(transform.position);
-            }
-
-            Vector2 closestPoint = collision.ClosestPoint(prevPos);
-            Vector2 dir = (prevPos - closestPoint).normalized;
-
-            HitEffectManager.Instance.SpawnHitEffect(new HitEffectInfo { Direction = dir, Position = closestPoint });
-            FCTManager.Instance.SpawnFCT(new FCTInfo { Position = closestPoint, Amount = damage });
-
-            ReturnBullet();
-        }
-    }
     private IEnumerator AutoReturn()
     {
         yield return CoroutineCache.WaitforSeconds(lifetime);
@@ -94,5 +106,9 @@ public class Bullet : MonoBehaviour
         }
         // 2) 총알은 즉시 풀 복귀
         ObjectPoolManager.Instance.ReturnObject(gameObject);
+    }
+    private void Awake()
+    {
+        radius = GetComponent<CircleCollider2D>().radius;
     }
 }
