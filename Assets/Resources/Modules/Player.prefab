@@ -303,7 +303,7 @@ MonoBehaviour:
   proportionalGain: 2
   derivativeGain: 0.7
   maxTorque: 15
-  angleThreshold: 0.2
+  angleThreshold: 0.02
 --- !u!114 &9000367102488048170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,7 +340,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDamping: 0.2
   m_AngularDamping: 0
   m_GravityScale: 0

@@ -1,0 +1,14 @@
+﻿{
+  "Modules": [
+    {
+      "ModuleID": "Basic_mk1",
+      "Type": "Basic",
+      "Tier": 1,
+      "Rarity": "Common",
+      "Mass": 1.0,
+      "MaxHp": 100,
+      "Price": 10,
+      "PrefabPath": "Modules/Basic_mk1"
+    }
+  ]
+}

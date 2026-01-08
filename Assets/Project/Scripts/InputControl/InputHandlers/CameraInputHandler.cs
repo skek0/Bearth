@@ -1,7 +1,7 @@
 using UnityEngine.InputSystem;
 using UnityEngine;
 
-public class CameraInputHandler : S_Singleton<CameraInputHandler>
+public class CameraInputHandler : SceneSingleton<CameraInputHandler>
 {
     private PlayerInputActions.CameraActions cameraAction;
     private ICamera curCamera;

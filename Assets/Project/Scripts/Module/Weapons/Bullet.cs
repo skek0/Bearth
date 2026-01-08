@@ -13,52 +13,101 @@ public class Bullet : MonoBehaviour
     int damage;
     float speed;
 
-    private Coroutine returnRoutine;
+    Coroutine returnRoutine;
     TrailEmitter trailEmitter;  // 충돌 후 이펙트 삭제되는 문제로 궤적을 따로 둠
     bool returned;
     Vector2 prevPos;
 
-    public void SetBulletInfo(int damage, float speed)
+    string ownerGuid = "";
+
+    public void SetBulletInfo(int damage, float speed, string guid)
     {
         this.damage = damage;
         this.speed = speed;
+        this.ownerGuid = guid;
     }
 
     private void Update()
     {
+        ProceedBullet();
+    }
+
+    private void ProceedBullet()
+    {
         prevPos = transform.position;
 
         Vector2 step = (Vector2)transform.up * (speed * Time.deltaTime);
-        Vector2 nextPos = (Vector2)transform.position + step;
-
-        // 스윕(프레임 사이 통과 방지)
         float dist = step.magnitude;
-        if (dist > 0f)
+        if (dist <= 0f)
+            return;
+
+        RaycastHit2D hit = Physics2D.CircleCast(prevPos, radius, step.normalized, dist, hitMask);
+        if (hit.collider == null)
         {
-            RaycastHit2D hit = Physics2D.CircleCast(prevPos, radius, step.normalized, dist, hitMask);
-            if (hit.collider != null)
-            {
-                // 충돌 지점으로 스냅
-                transform.position = hit.point;
-
-                if (hit.collider.TryGetComponent(out IDamageable damageable))
-                {
-                    damageable.ApplyDamage(new DamageData { Amount = damage });
-
-                    if (trailEmitter != null)
-                        trailEmitter.AssignLastPos(transform.position);
-
-                    Vector2 dir = (prevPos - hit.point).normalized;
-                    HitEffectManager.Instance.SpawnHitEffect(new HitEffectInfo { Direction = dir, Position = hit.point });
-                    FCTManager.Instance.SpawnFCT(new FCTInfo { Position = hit.point, Amount = damage });
-
-                    ReturnBullet();
-                    return;
-                }
-            }
+            transform.position = (Vector2)transform.position + step;
+            return;
         }
 
-        transform.position = nextPos;
+        if (ShouldIgnoreHit(hit.collider))
+        {
+            transform.position = (Vector2)transform.position + step;
+            return;
+        }
+
+        if (!hit.collider.TryGetComponent(out IDamageable damageable))
+        {
+            transform.position = (Vector2)transform.position + step;
+            return;
+        }
+
+        transform.position = hit.point;
+        HandleDamageHit(damageable, hit.point, prevPos);
+    }
+
+    private bool ShouldIgnoreHit(Collider2D col)
+    {
+        if (string.IsNullOrEmpty(ownerGuid))
+            return false;
+
+        // ModuleGuid를 직접 찍는게 가장 안전/가벼움 (Module GetComponent NRE 방지)
+        if (col.TryGetComponent(out ModuleGuid mg) && mg.Guid == ownerGuid)
+            return true;
+
+
+        return false;
+    }
+
+    private void HandleDamageHit(IDamageable damageable, Vector2 hitPoint, Vector2 fromPos)
+    {
+        // 데미지
+        damageable.ApplyDamage(new DamageData { Amount = damage });
+
+        // 궤적 마감
+        if (trailEmitter != null)
+            trailEmitter.AssignLastPos(hitPoint);
+
+        // 이펙트/FCT
+        SpawnHitFx(hitPoint, fromPos);
+
+        // 반환
+        ReturnBullet();
+    }
+
+    private void SpawnHitFx(Vector2 hitPoint, Vector2 fromPos)
+    {
+        HitEffectManager.Instance.SpawnHitEffect(
+            new HitEffectInfo
+            {
+                Direction = (fromPos - hitPoint).normalized,
+                Position = hitPoint
+            });
+
+        FCTManager.Instance.SpawnFCT(
+            new FCTInfo
+            {
+                Position = hitPoint,
+                Amount = damage
+            });
     }
 
     private void OnEnable()

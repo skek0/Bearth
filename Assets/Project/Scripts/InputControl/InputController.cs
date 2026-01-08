@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InputController : G_Singleton<InputController>
+public class InputController : GlobalSingleton<InputController>
 {
     //public static InputController Instance { get; private set; }
     public PlayerInputActions Actions { get; private set; }

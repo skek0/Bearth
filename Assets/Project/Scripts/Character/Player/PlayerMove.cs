@@ -5,16 +5,16 @@ using UnityEngine;
 public class PlayerMove : MonoBehaviour
 {
     [Header("Movement")]
-    public float maxForwardSpeed = 14f; // transform.up ¹æÇâ
-    public float maxSideSpeed = 8f;  // transform.right ¹æÇâ
+    public float maxForwardSpeed = 14f; // transform.up ë°©í–¥
+    public float maxSideSpeed = 8f;  // transform.right ë°©í–¥
     [SerializeField] private float accelRate = 2f;
 
     [Header("Rotation")]
-    [SerializeField] private float proportionalGain = 2.0f;     // P °ÔÀÎ
-    [SerializeField] private float derivativeGain = 0.7f;       // D °ÔÀÎ
-    [SerializeField] private float maxTorque = 15f;             // ÃÖ´ë ÅäÅ© Á¦ÇÑ
+    [SerializeField] private float proportionalGain = 2.0f;     // P ê²Œì¸
+    [SerializeField] private float derivativeGain = 0.7f;       // D ê²Œì¸
+    [SerializeField] private float maxTorque = 15f;             // ìµœëŒ€ í† í¬ ì œí•œ
     [Tooltip("Rotate stopping difference")]
-    [SerializeField] float angleThreshold = 0.2f;               // ¸ñÇ¥°ª¿¡ Çã¿ëµÇ´Â ¿ÀÂ÷ (0.1~0.5 Á¤µµ ±ÇÀå)
+    [SerializeField] float angleThreshold = 0.2f;               // ëª©í‘œê°’ì— í—ˆìš©ë˜ëŠ” ì˜¤ì°¨ (0.1~0.5 ì •ë„ ê¶Œì¥)
 
     private Rigidbody2D rb;
 
@@ -37,7 +37,7 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // ÀÌµ¿ Ã³¸®
+        // ì´ë™ ì²˜ë¦¬
         Vector2 thrust = maxForwardSpeed * accelRate * Time.fixedDeltaTime * moveInput.y * transform.up;
         Vector2 throttle = maxSideSpeed * accelRate * Time.fixedDeltaTime * moveInput.x * transform.right;
         rb.AddForce(thrust + throttle);
@@ -49,42 +49,38 @@ public class PlayerMove : MonoBehaviour
     void AdjustLocalSpeeds()
     {
         Vector2 v = rb.linearVelocity;
-        // ·ÎÄÃ Ãà ºĞÇØ
+        // ë¡œì»¬ ì¶• ë¶„í•´
         float vForward = Vector2.Dot(v, transform.up);
         float vStrafe = Vector2.Dot(v, transform.right);
 
-        // Ãàº° Å¬·¥ÇÁ
+        // ì¶•ë³„ í´ë¨í”„
         vForward = Mathf.Clamp(vForward, -maxForwardSpeed/2, maxForwardSpeed);
         vStrafe = Mathf.Clamp(vStrafe, -maxSideSpeed, maxSideSpeed);
 
-        // ¿ùµå º¤ÅÍ·Î ÀçÇÕ¼º
+        // ì›”ë“œ ë²¡í„°ë¡œ ì¬í•©ì„±
         rb.linearVelocity = transform.up * vForward + transform.right * vStrafe;
     }
 
     private void AdjustLocalRotates()
     {
-        // È¸Àü Ã³¸® (PD Á¦¾î ±â¹İ)
         if (rotationInput != Vector2.zero)
         {
-            // ¸ñÇ¥ °¢µµ °è»ê
             Vector2 dir = (Vector2)Camera.main.ScreenToWorldPoint(rotationInput) - rb.position;
             float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 
-            // ÇöÀç °¢µµ¿Í ¿ÀÂ÷
             float currentAngle = rb.rotation;
             float angleDiff = Mathf.DeltaAngle(currentAngle, targetAngle);
 
-            // ¿ÀÂ÷°¡ ¸Å¿ì ÀÛÀ¸¸é (¿¹: 0.2µµ ÀÌÇÏ) È¸Àü Á¤Áö
             if (Mathf.Abs(angleDiff) < angleThreshold)
             {
-                rb.angularVelocity = 0f; // °¢¼Óµµ ¿ÏÀü Á¤Áö
-                return;                  // PD Á¦¾î »ı·«
+                rb.angularVelocity = 0f;
+                return;
             }
 
-            // PD Á¦¾î
+            // PD ì œì–´
             float torque = angleDiff * proportionalGain - rb.angularVelocity * derivativeGain;
 
-            // ÅäÅ© Á¦ÇÑ
+            // í† í¬ ì œí•œ
             torque = Mathf.Clamp(torque, -maxTorque, maxTorque);
 
             rb.AddTorque(torque);

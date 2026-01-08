@@ -4,10 +4,23 @@ using System.Collections.Generic;
 public class CoreModule : Module
 {
     protected List<IWeapon> weapons = new();
+    public float Mass
+    {
+        get
+        {
+            return rigid.mass;
+        }
+        set
+        {
+            rigid.mass += Mass;
+            Debug.Log(rigid.mass);
+        }
+    }
     protected override void Awake()
     {
         base.Awake();
         connectable = true;
+        rigid = GetComponent<Rigidbody2D>();
     }
     public virtual void Attack()
     {

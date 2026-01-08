@@ -17,13 +17,17 @@ public abstract class Module : MonoBehaviour, IDamageable
     [SerializeField] protected FactionType faction = FactionType.Neutral;
     [SerializeField] protected BasicInfo baseStat;  // 캐싱용 serializefield
     [SerializeField] protected int hp = 5;
+
+    protected Rigidbody2D rigid;
     public IReadOnlyList<BaseModule> ConnectedModules => connectedModules;
     public bool Connectable => connectable;
+    public ModuleGuid ModuleGuid { get; private set; }
 
     protected virtual void Awake()
     {
         //gameObject.layer = LayerMask.NameToLayer("Module");
         hp = baseStat.MaxHp;
+        ModuleGuid = GetComponent<ModuleGuid>();
     }
     public void ApplyDamage(DamageData damage)
     {

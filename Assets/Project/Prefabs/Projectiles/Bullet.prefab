@@ -51,7 +51,7 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 64
-  radius: 0.05
+  ignoreTime: 0.2
 --- !u!58 &4545657487391682089
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -6,18 +7,14 @@ public class BaseModule : Module, IControllable
 {
     [SerializeField] Transform senderTransform;
 
-    // 현재 소속 코어(있을 때만)
     public CoreModule BelongedCore { get; private set; }
 
-    // 모듈 라이프사이클 이벤트
     public event Action<BaseModule, CoreModule> AttachedToCore;      // (self, core)
     public event Action<BaseModule, CoreModule> DetachedFromCore;     // (self, oldCore)
     public event Action<BaseModule> Selected;
     public event Action<BaseModule> Deselected;
     public event Action<BaseModule> Died;
 
-    protected Connection connection;
-    protected Rigidbody2D rigid;
     protected float dragSpeed;
     protected Module attachedTo;
     protected float torqueOnExplosion = 0f;
@@ -32,12 +29,18 @@ public class BaseModule : Module, IControllable
 
     public Module AttachedTo => attachedTo;
     public string AttachedParentPortId => attachedParentPortId;
+    public Transform SenderTransform => senderTransform;
+    public IReadOnlyCollection<Collider2D> SelfColliders => selfColliders;
+    private HashSet<Collider2D> selfColliders;
 
     protected override void Awake()
     {
         base.Awake();
         rigid = GetComponent<Rigidbody2D>();
         cam = Camera.main;
+
+        var cols = GetComponents<Collider2D>();
+        selfColliders = new HashSet<Collider2D>(cols);
     }
 
     protected virtual void Start()
@@ -45,19 +48,12 @@ public class BaseModule : Module, IControllable
         if (senderTransform == null)
         {
             senderTransform = transform.Find("Sender");
-            Debug.Log("Sender assigned automatically, recommend cache");
         }
-
-        connection = GetComponentInChildren<Connection>(true);
-        connection.SetColliderAndAnchor(GetComponents<Collider2D>(), senderTransform);
 
         dragSpeed = GameManager.Instance.moduleDragSpeed;
         torqueOnExplosion = GameManager.Instance.moduleTorqueOnExplosion;
     }
-
-    // =========================
-    // Core attach/detach notify
-    // =========================
+    
     private void NotifyDetached()
     {
         var old = BelongedCore;
@@ -79,17 +75,16 @@ public class BaseModule : Module, IControllable
         AttachedToCore?.Invoke(this, newCore);
     }
 
-    // =========================
 
-    public virtual void OnDrag(Vector2 pos)
+    public void OnDrag(Vector2 pos)
     {
         var sp = new Vector2(pos.x, pos.y);
         targetWorldPos = cam.ScreenToWorldPoint(sp);
 
-        var closest = connection.ClosestConnector;
-        if (closest != null)
+        var cand = ConnectionManager.Instance.QueryCandidate(this);
+        if (cand != null)
         {
-            Vector2 dir = closest.position - transform.position;
+            Vector2 dir = cand.position - transform.position;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
         }
@@ -112,18 +107,17 @@ public class BaseModule : Module, IControllable
         rigid.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         connectable = false;
-        connection.gameObject.SetActive(true);
 
         Selected?.Invoke(this);
     }
 
-    public virtual void OnDeselected()
+    public void OnDeselected()
     {
         hasDragTarget = false;
-        TryAttach();
+
+        ConnectionManager.Instance.RequestAttach(this);
 
         rigid.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
-        connection.gameObject.SetActive(false);
 
         Deselected?.Invoke(this);
     }
@@ -180,32 +174,43 @@ public class BaseModule : Module, IControllable
         Died?.Invoke(this);
     }
 
-    private void TryAttach()
+    public void CommitAttach(Transform closestConnector)
     {
-        Transform closestConnector = connection.ClosestConnector;
-        if (closestConnector != null)
+        if (closestConnector == null)
         {
-            var port = closestConnector.GetComponent<ConnectorPort>();
-            attachedParentPortId = port != null ? port.PortId : null;
-
-            SetPositionAndRotationByConnector(closestConnector);
-            SetParent(closestConnector);
-
-            if (TryGetComponent<Rigidbody2D>(out var rb))
-                Destroy(rb);
-
-            connectable = true;
-            faction = FactionType.Mine;
-
-            // 여기서 새 코어 확정 → NotifyAttached로 통보
-            var newCore = AddThisToAttachedModuleAndGetCore(closestConnector);
-            NotifyAttached(newCore);
-
+            FallbackDetachState();
             return;
         }
 
+        // 어떤 포트에 붙었는지 저장용으로 기록
+        var port = closestConnector.GetComponent<ConnectorPort>();
+        attachedParentPortId = port != null ? port.PortId : null;
+
+        SetPositionAndRotationByConnector(closestConnector);
+        SetParent(closestConnector);
+
+        if (TryGetComponent<Rigidbody2D>(out var rb))
+            Destroy(rb);
+
+        connectable = true;
+        faction = FactionType.Mine;
+
+        var newCore = AddThisToAttachedModuleAndGetCore(closestConnector);
+        NotifyAttached(newCore);
+    }
+    public void FallbackDetachState()
+    {
         transform.SetParent(ModulesContainer.Instance.transform);
-        rigid.mass = 1f;
+
+        // 선택 상태에서 mass를 0으로 만들었으니, 원래값 복구 정책이 필요함.
+        // 기존 코드가 rigid.mass = 1f 였으니 일단 동일하게.
+        if (rigid != null) rigid.mass = 1f;
+
+        attachedParentPortId = null;
+
+        // connectable/faction 정책도 여기서 통일
+        connectable = false;
+        faction = FactionType.Neutral;
     }
 
     private CoreModule AddThisToAttachedModuleAndGetCore(Transform closestConnector)
@@ -287,9 +292,6 @@ public class BaseModule : Module, IControllable
         var newCore = AddThisToAttachedModuleAndGetCore(parentConnector);
         NotifyAttached(newCore);
 
-        // 로드 중 Connection은 꺼두는게 안전
-        if (connection != null)
-            connection.gameObject.SetActive(false);
 
         return true;
     }
@@ -298,12 +300,6 @@ public class BaseModule : Module, IControllable
     {
         if (senderTransform == null)
             senderTransform = transform.Find("Sender");
-
-        if (connection == null)
-            connection = GetComponentInChildren<Connection>(true);
-
-        if (connection != null && senderTransform != null)
-            connection.SetColliderAndAnchor(GetComponents<Collider2D>(), senderTransform);
 
         if (cam == null)
             cam = Camera.main;

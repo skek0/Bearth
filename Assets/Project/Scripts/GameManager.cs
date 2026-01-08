@@ -1,4 +1,4 @@
-public class GameManager : G_Singleton<GameManager>
+public class GameManager : GlobalSingleton<GameManager>
 {
     public float moduleDragSpeed;
     public Rigidbody2DSettings Rigidbody2DSettings;

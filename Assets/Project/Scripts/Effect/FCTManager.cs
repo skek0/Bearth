@@ -7,7 +7,7 @@ public struct FCTInfo
 }
 
 /// <summary> Floating Combat Text Manager </summary>
-public class FCTManager : S_Singleton<FCTManager>
+public class FCTManager : SceneSingleton<FCTManager>
 {
     [SerializeField] GameObject damageSkinPrefab;
     

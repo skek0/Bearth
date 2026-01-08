@@ -6,7 +6,7 @@ public struct HitEffectInfo
     public bool isCritical;
 
 }
-public class HitEffectManager : S_Singleton<HitEffectManager>
+public class HitEffectManager : SceneSingleton<HitEffectManager>
 {
     public GameObject hitEffectPrefab;
     

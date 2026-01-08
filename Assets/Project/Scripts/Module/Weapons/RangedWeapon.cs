@@ -1,9 +1,10 @@
 using UnityEngine;
 
-[DisallowMultipleComponent]
 [RequireComponent(typeof(BaseModule))]
 public class RangedWeapon : MonoBehaviour, IWeapon
 {
+    public Transform AttackPoint => firePoint;
+    
     [Header("Refs")]
     [SerializeField] Transform firePoint;
     [SerializeField] RangedBehavior rangedBehavior;
@@ -11,27 +12,35 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     [SerializeField] FireBehavior fireBehavior;
     [SerializeField] GameObject projectile;
 
-    [SerializeField]
     BaseModule module;
-    [SerializeField]
     CoreModule belongedCore;
-    [SerializeField]
     bool attackable;
 
     readonly RangedFireController fireController = new();
+
 
     void Awake()
     {
         module = GetComponent<BaseModule>();
 
-        // firePoint 자동 할당(원하면 제거)
+        // firePoint 자동 할당
         if (firePoint == null)
         {
             var t = transform.Find("FirePoint");
             if (t != null) firePoint = t;
         }
-
-        fireController.Bind(this, firePoint, rangedBehavior, rangedStat, projectile);
+    }
+    private void Start()
+    {
+        fireController.Bind(
+            this, 
+            firePoint, 
+            rangedBehavior, 
+            rangedStat, 
+            projectile, 
+            module.ModuleGuid.Guid
+            );
+        
     }
 
     void OnEnable()
@@ -88,7 +97,6 @@ public class RangedWeapon : MonoBehaviour, IWeapon
 
     void OnDead(BaseModule _)
     {
-        // 죽으면 무조건 정리
         fireController.StopAll();
         attackable = false;
         UnregisterFromCore();

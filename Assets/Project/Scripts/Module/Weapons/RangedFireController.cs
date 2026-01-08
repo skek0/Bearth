@@ -10,6 +10,7 @@ public class RangedFireController
     RangedBehavior rangedBehavior;
     RangedWeaponStat stat;
     GameObject projectilePrefab;
+    string ownerGuid; 
 
     bool isReady;
     Coroutine readyCo;
@@ -18,12 +19,15 @@ public class RangedFireController
     // GC 방지: 재사용 리스트
     readonly List<Shot> shots = new(32);
 
+    FireContext ctx;
+
     public void Bind(
         MonoBehaviour runner,
         Transform firePoint,
         RangedBehavior rangedBehavior,
         RangedWeaponStat stat,
-        GameObject projectilePrefab
+        GameObject projectilePrefab,
+        string ownerGuid
     )
     {
         this.runner = runner;
@@ -31,6 +35,7 @@ public class RangedFireController
         this.rangedBehavior = rangedBehavior;
         this.stat = stat;
         this.projectilePrefab = projectilePrefab;
+        this.ownerGuid = ownerGuid;
     }
 
     public void RebindProjectile(GameObject prefab) => this.projectilePrefab = prefab;
@@ -86,13 +91,16 @@ public class RangedFireController
             if (d > 0f)
                 yield return CoroutineCache.WaitforSeconds(d);
 
-            rangedBehavior.Fire(
-                firePoint,
-                stat,
-                stat.damage,
-                shots[i].angleDeg,
-                projectilePrefab
+            ctx = new FireContext(
+            firePoint,
+            stat,
+            stat.damage,
+            shots[i].angleDeg,
+            projectilePrefab,
+            ownerGuid
             );
+
+            rangedBehavior.Fire(ctx);
         }
 
         isReady = false;

@@ -133,8 +133,7 @@ public static class ShipSaveLoad
             }
 
             // guid 주입
-            var guid = module.GetComponent<ModuleGuid>();
-            if (guid == null) guid = module.gameObject.AddComponent<ModuleGuid>();
+            if (!module.TryGetComponent<ModuleGuid>(out var guid)) guid = module.gameObject.AddComponent<ModuleGuid>();
             guid.SetGuid(m.guid);
 
             SetPhysicsEnabled(go, false);

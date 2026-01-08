@@ -1,6 +1,3 @@
 using UnityEngine;
 
-public class ModulesContainer : S_Singleton<ModulesContainer>
-{
-
-}
+public class ModulesContainer : SceneSingleton<ModulesContainer>{}
