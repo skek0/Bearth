@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+#region Ship Save (single ship)
+
 [Serializable]
 public class ShipSaveData
 {
@@ -31,3 +33,5 @@ public class LinkSaveData
     public string parentGuid;    // Module(코어 포함)
     public string parentPortId;  // 부모 커넥터 portId
 }
+
+#endregion
