@@ -54,29 +54,6 @@ public class BaseModule : Module, IControllable
         torqueOnExplosion = GameManager.Instance.moduleTorqueOnExplosion;
     }
     
-    private void NotifyDetached()
-    {
-        var old = BelongedCore;
-        BelongedCore = null;
-        if (old != null)
-            DetachedFromCore?.Invoke(this, old);
-    }
-
-    private void NotifyAttached(CoreModule newCore)
-    {
-        if (newCore == null) return;
-        if (BelongedCore == newCore) return;
-
-        // 다른 코어였다면 먼저 detach 통보
-        if (BelongedCore != null)
-            NotifyDetached();
-
-        BelongedCore = newCore;
-        AttachedToCore?.Invoke(this, newCore);
-        Debug.Log("Invoked");
-    }
-
-
     public void OnDrag(Vector2 pos)
     {
         var sp = new Vector2(pos.x, pos.y);
@@ -213,6 +190,27 @@ public class BaseModule : Module, IControllable
         connectable = false;
         faction = FactionType.Neutral;
     }
+    private void NotifyDetached()
+    {
+        var old = BelongedCore;
+        BelongedCore = null;
+        if (old != null)
+            DetachedFromCore?.Invoke(this, old);
+    }
+
+    private void NotifyAttached(CoreModule newCore)
+    {
+        if (newCore == null) return;
+        if (BelongedCore == newCore) return;
+
+        // 다른 코어였다면 먼저 detach 통보
+        if (BelongedCore != null)
+            NotifyDetached();
+
+        BelongedCore = newCore;
+        AttachedToCore?.Invoke(this, newCore);
+    }
+
 
     private CoreModule AddThisToAttachedModuleAndGetCore(Transform closestConnector)
     {

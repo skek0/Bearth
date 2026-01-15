@@ -1,10 +1,5 @@
 using UnityEngine;
 
-/*
- 
-로드할 때 모듈의 belongedCore가 무기에게 적용되지 않음. 타이밍문제인데.. 
- 
- */
 [RequireComponent(typeof(BaseModule))]
 public class RangedWeapon : MonoBehaviour, IWeapon
 {
@@ -74,7 +69,6 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         if (core == null) return;
         if (belongedCore == core && attackable) return;
 
-        Debug.Log("Attach called");
         belongedCore = core;
         belongedCore.AddWeapon(this);
         attackable = true;

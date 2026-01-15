@@ -20,6 +20,9 @@ public class ShipInstanceSaveData
     public Vector2 worldPos;       // 우주선 루트(코어) 월드 위치
     public float worldRotZ;        // 우주선 루트(코어) 월드 회전
     public ShipSaveData ship;      // 기존 단일 우주선 저장 데이터
+
+    public Vector2 vel;
+    public float angVel;
 }
 
 [Serializable]
@@ -33,6 +36,9 @@ public class WorldModuleSaveData
 
     public int hp;
     public FactionType faction;
+
+    public Vector2 vel;
+    public float angVel;
 }
 
 #endregion

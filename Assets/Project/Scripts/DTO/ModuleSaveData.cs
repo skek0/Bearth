@@ -24,6 +24,9 @@ public class ModuleSaveData
 
     public int hp;
     public FactionType faction;
+
+    public Vector2 vel;
+    public float angVel;
 }
 
 [Serializable]

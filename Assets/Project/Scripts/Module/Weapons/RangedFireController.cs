@@ -47,7 +47,6 @@ public class RangedFireController
             isReady = false;
             return;
         }
-        Debug.Log("onenable");
         StartPreDelay(stat.preDelay);
     }
 
@@ -68,20 +67,18 @@ public class RangedFireController
     public bool TryAttack(bool attackable, FireBehavior fireBehavior)
     {
         if (!attackable) return false;
-        if (!isReady) { Debug.Log(" "); return false; }
+        if (!isReady) { return false; }
         if (fireBehavior == null) return false;
-        if (firingCo != null) {Debug.Log(" "); return false; }
+        if (firingCo != null) {return false; }
 
         // 의존성 체크
         if (runner == null || firePoint == null || rangedBehavior == null || stat == null || projectilePrefab == null)
         {
-            Debug.Log("Something null");
             return false;
 
         }
 
         firingCo = runner.StartCoroutine(FireRoutine(fireBehavior));
-        Debug.Log("started fire Routine");
         return true;
     }
 
@@ -116,7 +113,6 @@ public class RangedFireController
 
     void StartPreDelay(float preDelay)
     {
-        Debug.Log("starting predelay");
         isReady = false;
         RestartTimer(preDelay);
     }

@@ -32,6 +32,15 @@ public abstract class Module : MonoBehaviour, IDamageable
         set => faction = value;
     }
     protected Rigidbody2D rigid;
+
+    public Rigidbody2D Rigid {
+        get
+        {
+            if (rigid == null)
+                rigid = GetComponent<Rigidbody2D>();
+            return rigid;
+        }
+    }
     public IReadOnlyList<BaseModule> ConnectedModules => connectedModules;
     public bool Connectable => connectable;
     public ModuleGuid ModuleGuid { get; private set; }

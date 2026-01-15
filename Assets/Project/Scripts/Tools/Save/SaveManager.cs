@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public static class SceneSaveLoad
 {
-    public static string DefaultPath => Path.Combine(Application.persistentDataPath, "scene_save.json");
+    public static string DefaultPath =>
+        Path.Combine(Application.persistentDataPath, "scene_save.json");
 
     public static void SaveToFile(string path = null)
     {
@@ -39,51 +41,47 @@ public static class SceneSaveLoad
     }
 
     // =========================
-    // Pure logic
+    // SAVE: 씬 전체
     // =========================
     public static SceneSaveData SaveSceneData()
     {
         var scene = new SceneSaveData();
 
-        // 1) 씬의 모든 코어(= 우주선들)
         var cores = Object.FindObjectsByType<CoreModule>(FindObjectsSortMode.None);
 
-        // ship 소속 모듈 판정용
+        // ship 소속 판정용
         var inAnyShip = new HashSet<Module>();
 
         foreach (var core in cores)
         {
             if (core == null) continue;
 
-            var shipData = ShipSaveLoad.SaveFromCore(core);
+            var ship = ShipSaveLoad.SaveFromCore(core);
 
-            // 소속 마킹
             foreach (var m in core.GetComponentsInChildren<Module>(true))
                 inAnyShip.Add(m);
 
             scene.ships.Add(new ShipInstanceSaveData
             {
-                shipId = shipData.coreGuid,
+                shipId = ship.coreGuid,
                 worldPos = core.transform.position,
                 worldRotZ = core.transform.eulerAngles.z,
-                ship = shipData
+                ship = ship,
+                vel = core.Rigid.linearVelocity,
+                angVel = core.Rigid.angularVelocity
             });
         }
 
-        // 2) 루즈 모듈(어떤 코어 자식도 아닌 Module)
+        // 루즈 모듈
         var allModules = Object.FindObjectsByType<Module>(FindObjectsSortMode.None);
 
         foreach (var m in allModules)
         {
             if (m == null) continue;
 
-            // ship에 속한 애들은 제외
             if (inAnyShip.Contains(m)) continue;
-
-            // 코어는 제외(일반적으로 위에서 걸러지지만 안전 처리)
             if (m is CoreModule) continue;
 
-            // guid/typeId 보장
             var g = m.GetComponent<ModuleGuid>();
             if (g == null) g = m.gameObject.AddComponent<ModuleGuid>();
 
@@ -91,6 +89,7 @@ public static class SceneSaveLoad
             if (t == null || string.IsNullOrWhiteSpace(t.TypeId))
                 Debug.LogError($"[SceneSave] ModuleTypeId missing/empty on {m.name}", m);
 
+            var rb = m.GetComponent<Rigidbody2D>();
             scene.looseModules.Add(new WorldModuleSaveData
             {
                 guid = g.Guid,
@@ -98,13 +97,18 @@ public static class SceneSaveLoad
                 worldPos = m.transform.position,
                 worldRotZ = m.transform.eulerAngles.z,
                 hp = m.Hp,
-                faction = m.Faction
+                faction = m.Faction,
+                vel = rb ? rb.linearVelocity : Vector2.zero,
+                angVel = rb ? rb.angularVelocity : 0f,
             });
         }
 
         return scene;
     }
 
+    // =========================
+    // LOAD: 씬 전체
+    // =========================
     public static void LoadSceneData(
         Transform shipsRoot,
         Transform looseRoot,
@@ -116,27 +120,16 @@ public static class SceneSaveLoad
         if (resolver == null) { Debug.LogError("[SceneLoad] resolver is null"); return; }
         if (data == null) { Debug.LogError("[SceneLoad] data is null"); return; }
 
-        // 0) 기존 삭제
         ClearChildren(shipsRoot);
         ClearChildren(looseRoot);
 
-        // 1) 우주선들 로드
+        // 1) ships
         foreach (var shipInst in data.ships)
         {
-            var shipRoot = new GameObject($"Ship_{shipInst.shipId}").transform;
-            shipRoot.SetParent(shipsRoot, false);
-
-            // 내부 모듈 로드(로컬 배치)
-            ShipSaveLoad.LoadToContainer(shipRoot, shipInst.ship, resolver);
-
-            // 우주선 루트 월드 포즈
-            shipRoot.SetPositionAndRotation(
-                new Vector3(shipInst.worldPos.x, shipInst.worldPos.y, 0f), 
-                Quaternion.Euler(0, 0, shipInst.worldRotZ)
-                );
+            ShipSaveLoad.LoadShipToFleetRoot(shipsRoot, shipInst, resolver);
         }
 
-        // 2) 루즈 모듈 로드
+        // 2) loose
         foreach (var m in data.looseModules)
         {
             var prefab = resolver.Resolve(m.typeId);
@@ -155,22 +148,22 @@ public static class SceneSaveLoad
                 continue;
             }
 
-            // guid 주입
             if (!module.TryGetComponent<ModuleGuid>(out var guid)) guid = module.gameObject.AddComponent<ModuleGuid>();
             guid.SetGuid(m.guid);
 
-            // 포즈/상태
-            module.transform.position = new Vector3(m.worldPos.x, m.worldPos.y, 0f);
-            module.transform.rotation = Quaternion.Euler(0, 0, m.worldRotZ);
-
+            module.transform.SetPositionAndRotation(
+                new Vector3(m.worldPos.x, m.worldPos.y, 0f), 
+                Quaternion.Euler(0, 0, m.worldRotZ));
             module.Hp = m.hp;
-            module.Faction = m.faction;
+            module.Faction = m.faction; 
+            if(module.TryGetComponent<Rigidbody2D>(out var rb))
+            {
+                rb.linearVelocity = m.vel;
+                rb.angularVelocity = m.angVel;
+            }
         }
     }
 
-    // =========================
-    // Helpers
-    // =========================
     private static void ClearChildren(Transform root)
     {
         for (int i = root.childCount - 1; i >= 0; i--)
