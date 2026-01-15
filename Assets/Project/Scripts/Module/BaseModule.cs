@@ -25,7 +25,7 @@ public class BaseModule : Module, IControllable
     private Vector2 targetWorldPos;
     private bool hasDragTarget;
 
-    private string attachedParentPortId; // 저장/로드용
+    private string attachedParentPortId;
 
     public Module AttachedTo => attachedTo;
     public string AttachedParentPortId => attachedParentPortId;
@@ -73,6 +73,7 @@ public class BaseModule : Module, IControllable
 
         BelongedCore = newCore;
         AttachedToCore?.Invoke(this, newCore);
+        Debug.Log("Invoked");
     }
 
 

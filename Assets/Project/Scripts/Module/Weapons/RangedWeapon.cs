@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/*
+ 
+로드할 때 모듈의 belongedCore가 무기에게 적용되지 않음. 타이밍문제인데.. 
+ 
+ */
 [RequireComponent(typeof(BaseModule))]
 public class RangedWeapon : MonoBehaviour, IWeapon
 {
@@ -12,11 +17,12 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     [SerializeField] FireBehavior fireBehavior;
     [SerializeField] GameObject projectile;
 
-    BaseModule module;
-    CoreModule belongedCore;
-    bool attackable;
+    [Header("디버깅용")]
+    [SerializeField]BaseModule module;
+    [SerializeField]CoreModule belongedCore;
+    [SerializeField]bool attackable;
 
-    readonly RangedFireController fireController = new();
+    RangedFireController fireController = new();
 
 
     void Awake()
@@ -29,18 +35,17 @@ public class RangedWeapon : MonoBehaviour, IWeapon
             var t = transform.Find("FirePoint");
             if (t != null) firePoint = t;
         }
-    }
-    private void Start()
-    {
-        fireController.Bind(
-            this, 
-            firePoint, 
-            rangedBehavior, 
-            rangedStat, 
-            projectile, 
-            module.ModuleGuid.Guid
-            );
         
+        var guid = GetComponent<ModuleGuid>();
+        fireController.Bind(
+            this,
+            firePoint,
+            rangedBehavior,
+            rangedStat,
+            projectile,
+            guid.Guid
+            );
+
     }
 
     void OnEnable()
@@ -49,12 +54,6 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         module.AttachedToCore += OnAttach;
         module.DetachedFromCore += OnDetach;
         module.Died += OnDead;
-
-        // 이미 코어에 붙어있는 상태로 Enable 될 수도 있으니 반영
-        if (module.BelongedCore != null)
-            OnAttach(module, module.BelongedCore);
-        else
-            fireController.OnDisable();
     }
 
     void OnDisable()
@@ -75,6 +74,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         if (core == null) return;
         if (belongedCore == core && attackable) return;
 
+        Debug.Log("Attach called");
         belongedCore = core;
         belongedCore.AddWeapon(this);
         attackable = true;
