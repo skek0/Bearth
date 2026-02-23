@@ -3,12 +3,12 @@ using UnityEngine.InputSystem;
 
 public class ObjectInputHandler : MonoBehaviour
 {
-    [SerializeField] LayerMask layerMask; // 클릭가능한 모듈
+    [SerializeField] LayerMask layerMask;
 
     private PlayerInputActions.ObjectControlActions objectControl;
 
     private bool dragging = false;
-    IControllable controllingObj;
+    private IControllable controllingObj;
 
     private void OnEnable()
     {
@@ -16,6 +16,8 @@ public class ObjectInputHandler : MonoBehaviour
 
         objectControl.SelectHold.performed += OnSelectHoldStart;
         objectControl.SelectHold.canceled += OnSelectHoldEnd;
+
+        objectControl.Enable();
     }
 
     private void OnDisable()
@@ -23,74 +25,77 @@ public class ObjectInputHandler : MonoBehaviour
         objectControl.SelectHold.performed -= OnSelectHoldStart;
         objectControl.SelectHold.canceled -= OnSelectHoldEnd;
 
-        if (controllingObj != null)
-        {
-            controllingObj.OnDestroyed -= OnControllableDestroyed;
-            controllingObj = null;
-        }
+        objectControl.Disable();
+
+        ClearCurrentControl();
     }
 
     private void Update()
     {
-        if (dragging)
+        if (dragging && controllingObj != null)
         {
-            controllingObj?.OnDrag(objectControl.Drag.ReadValue<Vector2>());
+            Vector2 delta = objectControl.Drag.ReadValue<Vector2>();
+            controllingObj.OnDrag(delta);
         }
     }
 
     private void OnSelectHoldStart(InputAction.CallbackContext ctx)
     {
-        dragging = true; 
-        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        RaycastHit2D hit = Physics2D.Raycast(mouseWorldPos, Vector2.zero, 100f, layerMask);
+        dragging = true;
 
-        if (controllingObj != null)
-        {
-            controllingObj.OnDestroyed -= OnControllableDestroyed;
-            controllingObj = null;
-        }
+        Vector2 screenPos = objectControl.PointerPos.ReadValue<Vector2>();
+        Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
 
-        if (hit.collider != null)
-        {
-            var controllable = hit.collider.GetComponent<IControllable>();
-            if (controllable != null)
-            {
-                controllingObj = controllable;
-                controllingObj.OnDestroyed += OnControllableDestroyed;
-                controllingObj.OnSelected();
-            }
-            else
-            {
-                // IControllable이 아니면 드래그 취소
-                dragging = false;
-            }
-        }
-        else
+        RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero, 100f, layerMask);
+
+        ClearCurrentControl();
+
+        if (hit.collider == null)
         {
             dragging = false;
+            return;
         }
+
+        var controllable = hit.collider.GetComponent<IControllable>();
+        if (controllable == null)
+        {
+            dragging = false;
+            return;
+        }
+
+        controllingObj = controllable;
+        controllingObj.OnDestroyed += OnControllableDestroyed;
+        controllingObj.OnSelected();
     }
 
     private void OnSelectHoldEnd(InputAction.CallbackContext ctx)
     {
         dragging = false;
 
-        if(controllingObj != null)
+        if (controllingObj != null)
+        {
+            controllingObj.OnDeselected();
+        }
+
+        ClearCurrentControl();
+    }
+
+    private void ClearCurrentControl()
+    {
+        if (controllingObj != null)
         {
             controllingObj.OnDestroyed -= OnControllableDestroyed;
-            controllingObj?.OnDeselected();
             controllingObj = null;
         }
     }
 
-    void OnControllableDestroyed(IControllable obj)
+    private void OnControllableDestroyed(IControllable obj)
     {
         if (controllingObj == obj)
         {
-            controllingObj.OnDestroyed -= OnControllableDestroyed;
-            controllingObj = null;
+            ClearCurrentControl();
         }
 
         dragging = false;
-    }    
+    }
 }

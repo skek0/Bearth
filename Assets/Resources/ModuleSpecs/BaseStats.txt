@@ -1,0 +1,46 @@
+﻿[
+  {
+    "ModuleID": "100001",
+    "TypeID": "Core",
+    "Type": "Core",
+    "Tier": 1,
+    "Rarity": "Common",
+    "Mass": 5.0,
+    "MaxHp": 100,
+    "Price": 10,
+    "PrefabPath": "Modules/Core"
+  },
+  {
+    "ModuleID": "201001",
+    "TypeID": "Beam",
+    "Type": "Beam",
+    "Tier": 1,
+    "Rarity": "Common",
+    "Mass": 5.0,
+    "MaxHp": 100,
+    "Price": 10,
+    "PrefabPath": "Modules/Beam"
+  },
+  {
+    "ModuleID": "301001",
+    "TypeID": "RangedWeapon",
+    "Type": "Weapon",
+    "Tier": 1,
+    "Rarity": "Common",
+    "Mass": 5.0,
+    "MaxHp": 50,
+    "Price": 10,
+    "PrefabPath": "Modules/Weapon"
+  },
+  {
+    "ModuleID": "301002",
+    "TypeID": "RangedWeapon",
+    "Type": "Weapon",
+    "Tier": 1,
+    "Rarity": "Common",
+    "Mass": 5.0,
+    "MaxHp": 200,
+    "Price": 10,
+    "PrefabPath": "Modules/Weapon"
+  }
+]

@@ -18,6 +18,7 @@ public class ModuleSaveData
 {
     public string guid;
     public string typeId;
+    public string moduleId;
 
     public Vector2 localPos;
     public float localRotZ;

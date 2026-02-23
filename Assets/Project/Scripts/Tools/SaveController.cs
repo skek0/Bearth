@@ -8,12 +8,13 @@ public interface IModulePrefabResolver
 public sealed class ResourcesModulePrefabResolver : IModulePrefabResolver
 {
     private readonly string root;
-    public ResourcesModulePrefabResolver(string root = "Modules/") => this.root = root;
+    public ResourcesModulePrefabResolver(string root = "BaseStat/") => this.root = root;
     public GameObject Resolve(string typeId) => Resources.Load<GameObject>(root + typeId);
 }
 
 public class SaveController : MonoBehaviour
 {
+    [SerializeField] string PrefabsPath;
     [SerializeField] Transform shipsRoot;
     [SerializeField] Transform looseRoot;
 
@@ -21,7 +22,7 @@ public class SaveController : MonoBehaviour
 
     private void Awake()
     {
-        resolver = new ResourcesModulePrefabResolver("Modules/");
+        resolver = new ResourcesModulePrefabResolver(PrefabsPath);
     }
 
     public void Save()

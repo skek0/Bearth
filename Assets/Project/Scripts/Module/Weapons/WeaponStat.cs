@@ -6,9 +6,8 @@ public enum DamageType
     ENERGY 
 }
 
-public abstract class WeaponStat : ScriptableObject
+public abstract class WeaponStat
 {
-    [Tooltip("is Dps for laser")]
     public int damage;
     public DamageType damageType;
 }

@@ -1,0 +1,28 @@
+﻿[
+  {
+    "ModuleID": "301001",
+    "FireType": "Projectile",
+    "FireMode": "Single",
+    "Damage": 20,
+    "Speed": 10.0,
+    "Interval": 1.0,
+    "PreDelay": 2.0,
+    "Accuracy": 0,
+    "Penetration": 0,
+    "ProjectileID": "Projectiles/Bullet",
+    "PelletAmount": 0
+  },
+  {
+    "ModuleID": "301002",
+    "FireType": "Projectile",
+    "FireMode": "Shotgun",
+    "Damage": 20,
+    "Speed": 20.0,
+    "Interval": 1.0,
+    "PreDelay": 2.0,
+    "Accuracy": 30,
+    "Penetration": 0,
+    "ProjectileID": "Projectiles/Bullet",
+    "PelletAmount": 5
+  }
+]

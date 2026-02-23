@@ -7,15 +7,15 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     
     [Header("Refs")]
     [SerializeField] Transform firePoint;
-    [SerializeField] RangedBehavior rangedBehavior;
-    [SerializeField] RangedWeaponStat rangedStat;
-    [SerializeField] FireBehavior fireBehavior;
+    IRangedBehavior rangedBehavior;
+    RangedWeaponStat rangedStat = new();
+    IFireBehavior fireBehavior;
     [SerializeField] GameObject projectile;
 
     [Header("디버깅용")]
     [SerializeField]BaseModule module;
     [SerializeField]CoreModule belongedCore;
-    [SerializeField]bool attackable;
+    [SerializeField]bool attackable;        // is attached to somewhere
 
     RangedFireController fireController = new();
 
@@ -30,19 +30,11 @@ public class RangedWeapon : MonoBehaviour, IWeapon
             var t = transform.Find("FirePoint");
             if (t != null) firePoint = t;
         }
-        
-        var guid = GetComponent<ModuleGuid>();
-        fireController.Bind(
-            this,
-            firePoint,
-            rangedBehavior,
-            rangedStat,
-            projectile,
-            guid.Guid
-            );
-
     }
-
+    private void Start()
+    {
+        Initialize();
+    }
     void OnEnable()
     {
         // 모듈 이벤트 구독
@@ -108,6 +100,40 @@ public class RangedWeapon : MonoBehaviour, IWeapon
 
     public void Attack()
     {
-        fireController.TryAttack(attackable, fireBehavior);
+        if(attackable) fireController.TryAttack(fireBehavior);
+    }
+
+    void Initialize()
+    {
+        if (ModuleSpecDB.WeaponRangedStats[module.ModuleId] == null) return;
+
+        var stat = ModuleSpecDB.WeaponRangedStats[module.ModuleId];
+        rangedBehavior = stat.FireType switch
+        {
+            "Projectile" => new ProjectileFiring(),
+            "Hitscan" => new HitscanFiring(),
+            _ => null
+        };
+        fireBehavior = stat.FireMode switch
+        {
+            "Single" => new SingleFire(),
+            "Shotgun" => new ShotgunFire(stat.PelletAmount, stat.Accuracy),
+            "Burst" => new BurstFire(stat.PelletAmount, stat.Accuracy),
+            _ => null
+        };
+        rangedStat.damage   = stat.Damage;
+        rangedStat.speed    = stat.Speed;
+        rangedStat.accuracy = stat.Accuracy;
+        rangedStat.interval = stat.Interval;
+        rangedStat.preDelay = stat.PreDelay;
+
+        fireController.Bind(
+            this,
+            firePoint,
+            rangedBehavior,
+            rangedStat,
+            projectile,
+            module.ModuleGuid.Guid
+            );
     }
 }

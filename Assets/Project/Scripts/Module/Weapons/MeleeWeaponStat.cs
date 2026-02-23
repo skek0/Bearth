@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// 근접
-[CreateAssetMenu(menuName = "ModuleStat/Weapon/MeleeStat")]
 public class MeleeWeaponStat : WeaponStat
 {
     // displayName, damage, damageType

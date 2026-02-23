@@ -82,25 +82,22 @@ public static class SceneSaveLoad
             if (inAnyShip.Contains(m)) continue;
             if (m is CoreModule) continue;
 
-            var g = m.GetComponent<ModuleGuid>();
-            if (g == null) g = m.gameObject.AddComponent<ModuleGuid>();
+            if (m == null || string.IsNullOrWhiteSpace(m.TypeId))
+                Debug.LogError($"[SceneSave] TypeId missing/empty on {m.name}", m);
 
-            var t = m.GetComponent<ModuleTypeId>();
-            if (t == null || string.IsNullOrWhiteSpace(t.TypeId))
-                Debug.LogError($"[SceneSave] ModuleTypeId missing/empty on {m.name}", m);
-
-            var rb = m.GetComponent<Rigidbody2D>();
             scene.looseModules.Add(new WorldModuleSaveData
             {
-                guid = g.Guid,
-                typeId = t?.TypeId ?? "",
+                guid = m.ModuleGuid.Guid,
+                typeId = m.TypeId ?? "",
+                moduleId = m.ModuleId,
                 worldPos = m.transform.position,
                 worldRotZ = m.transform.eulerAngles.z,
                 hp = m.Hp,
                 faction = m.Faction,
-                vel = rb ? rb.linearVelocity : Vector2.zero,
-                angVel = rb ? rb.angularVelocity : 0f,
+                vel = m.Rigid ? m.Rigid.linearVelocity : Vector2.zero,
+                angVel = m ? m.Rigid.angularVelocity : 0f,
             });
+            Debug.Log(m.TypeId);
         }
 
         return scene;
@@ -154,9 +151,11 @@ public static class SceneSaveLoad
             module.transform.SetPositionAndRotation(
                 new Vector3(m.worldPos.x, m.worldPos.y, 0f), 
                 Quaternion.Euler(0, 0, m.worldRotZ));
-            module.Hp = m.hp;
             module.Faction = m.faction; 
-            if(module.TryGetComponent<Rigidbody2D>(out var rb))
+            module.SetModuleId(m.moduleId);
+            module.ApplyBaseStat(ModuleSpecDB.BaseStats[m.moduleId]);
+
+            if (module.TryGetComponent<Rigidbody2D>(out var rb))
             {
                 rb.linearVelocity = m.vel;
                 rb.angularVelocity = m.angVel;

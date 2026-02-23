@@ -157,6 +157,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &559163683075675854
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -202,6 +203,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -712631045867808456, guid: b670ab75dde984907b8570040daa08c5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -211,7 +213,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &2292849553599074121
 GameObject:
@@ -257,7 +258,6 @@ GameObject:
   - component: {fileID: 7949291714425953105}
   - component: {fileID: 2181713331285625010}
   - component: {fileID: 6363903585793560521}
-  - component: {fileID: 5501613446926048642}
   - component: {fileID: 529675693583402877}
   - component: {fileID: 6100180952659896903}
   m_Layer: 6
@@ -299,10 +299,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24bf6cf631e12b846a535db052ae197f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moduleId: 201001
   connectedModules: []
   faction: 0
-  baseStat: {fileID: 11400000, guid: bf7b1aded8812ba46b897863b993fe52, type: 2}
+  maxHp: 1
   hp: 5
+  mass: 0
   senderTransform: {fileID: 8119899153667138822}
 --- !u!114 &6363903585793560521
 MonoBehaviour:
@@ -316,19 +318,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa84044b99b4335469fb38e1754aaafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModuleGuid
---- !u!114 &5501613446926048642
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2785998390510127149}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2906e590d50c84348837f51081bf84c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ModuleTypeId
-  typeId: Module
 --- !u!61 &529675693583402877
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -528,6 +517,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6010364877613104244
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -573,6 +563,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -582,7 +573,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &5587466078817160768
 GameObject:

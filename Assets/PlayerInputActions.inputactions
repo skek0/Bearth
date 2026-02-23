@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "PlayerInputActions",
     "maps": [
         {
@@ -147,6 +148,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "PointerPos",
+                    "type": "Value",
+                    "id": "4e19de9c-64cb-4416-bcf0-2aeb7edc62fc",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Drag",
                     "type": "Value",
                     "id": "c3352ff2-0da4-4d8d-8c45-ee7ae0ac6e11",
@@ -176,6 +186,17 @@
                     "processors": "",
                     "groups": ";PC",
                     "action": "Drag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "018a18fb-4614-4fa8-bcc6-300cda3ecea3",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC;MOBILE",
+                    "action": "PointerPos",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

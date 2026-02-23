@@ -7,24 +7,35 @@ public class RangedFireController
     MonoBehaviour runner;
 
     Transform firePoint;
-    RangedBehavior rangedBehavior;
+    IRangedBehavior rangedBehavior;
     RangedWeaponStat stat;
     GameObject projectilePrefab;
-    string ownerGuid; 
+    string ownerGuid;
 
     bool isReady;
     Coroutine readyCo;
     Coroutine firingCo;
+
+    bool enableRequested;
+    bool requestedAttackable;
 
     // GC 방지: 재사용 리스트
     readonly List<Shot> shots = new(32);
 
     FireContext ctx;
 
+    bool IsBound =>
+        runner != null &&
+        firePoint != null &&
+        rangedBehavior != null &&
+        stat != null &&
+        projectilePrefab != null &&
+        !string.IsNullOrEmpty(ownerGuid);
+
     public void Bind(
         MonoBehaviour runner,
         Transform firePoint,
-        RangedBehavior rangedBehavior,
+        IRangedBehavior rangedBehavior,
         RangedWeaponStat stat,
         GameObject projectilePrefab,
         string ownerGuid
@@ -36,22 +47,54 @@ public class RangedFireController
         this.stat = stat;
         this.projectilePrefab = projectilePrefab;
         this.ownerGuid = ownerGuid;
-    }
 
-    public void RebindProjectile(GameObject prefab) => this.projectilePrefab = prefab;
+        // Bind가 늦게 들어온 경우: 이전 enable 요청을 반영
+        if (enableRequested)
+        {
+            ApplyEnable(requestedAttackable);
+        }
+    }
 
     public void OnEnable(bool attackable)
     {
-        if (!attackable || stat == null)
+        enableRequested = true;
+        requestedAttackable = attackable;
+
+        if (!IsBound)
         {
             isReady = false;
             return;
         }
+
+        ApplyEnable(attackable);
+    }
+
+    void ApplyEnable(bool attackable)
+    {
+        // 이전 타이머/발사 정리 (중복 enable 호출 대비)
+        StopAll();
+
+        if (!attackable)
+        {
+            isReady = false;
+            return;
+        }
+
+        // stat이 null이면 IsBound에서 걸러지지만, 방어적으로
+        if (stat == null)
+        {
+            isReady = false;
+            return;
+        }
+
         StartPreDelay(stat.preDelay);
     }
 
     public void OnDisable()
     {
+        enableRequested = false;
+        requestedAttackable = false;
+
         StopAll();
         isReady = false;
     }
@@ -64,25 +107,17 @@ public class RangedFireController
         if (firingCo != null) { runner.StopCoroutine(firingCo); firingCo = null; }
     }
 
-    public bool TryAttack(bool attackable, FireBehavior fireBehavior)
+    public void TryAttack(IFireBehavior fireBehavior)
     {
-        if (!attackable) return false;
-        if (!isReady) { return false; }
-        if (fireBehavior == null) return false;
-        if (firingCo != null) {return false; }
-
-        // 의존성 체크
-        if (runner == null || firePoint == null || rangedBehavior == null || stat == null || projectilePrefab == null)
-        {
-            return false;
-
-        }
+        if (!isReady) return;
+        if (fireBehavior == null) return;
+        if (firingCo != null) return;
+        if (!IsBound) return;
 
         firingCo = runner.StartCoroutine(FireRoutine(fireBehavior));
-        return true;
     }
 
-    IEnumerator FireRoutine(FireBehavior fireBehavior)
+    IEnumerator FireRoutine(IFireBehavior fireBehavior)
     {
         shots.Clear();
         fireBehavior.BuildShots(shots);
@@ -94,16 +129,15 @@ public class RangedFireController
                 yield return CoroutineCache.WaitforSeconds(d);
 
             ctx = new FireContext(
-            firePoint,
-            stat,
-            stat.damage,
-            shots[i].angleDeg,
-            projectilePrefab,
-            ownerGuid
+                firePoint,
+                stat,
+                stat.damage,
+                shots[i].angleDeg,
+                projectilePrefab,
+                ownerGuid
             );
 
             rangedBehavior.Fire(ctx);
-            Debug.Log("fired successfully");
         }
 
         isReady = false;

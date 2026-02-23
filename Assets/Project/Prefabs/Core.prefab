@@ -34,6 +34,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4992618847739030265
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -79,6 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 0.95856124, b: 0, a: 1}
   m_FlipX: 0
@@ -88,7 +90,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3091535544408406432
 GameObject:
@@ -101,7 +102,6 @@ GameObject:
   - component: {fileID: 9020772995629999136}
   - component: {fileID: 8746751372186499811}
   - component: {fileID: 3573932122285064689}
-  - component: {fileID: 4762037240805064925}
   - component: {fileID: 5961520597401139872}
   - component: {fileID: 2066598799140786475}
   m_Layer: 6
@@ -143,10 +143,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92fb8edb286645c429fa214005409862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoreModule
+  moduleId: 100001
   connectedModules: []
   faction: 0
-  baseStat: {fileID: 11400000, guid: bf7b1aded8812ba46b897863b993fe52, type: 2}
+  maxHp: 1
   hp: 5
+  mass: 0
 --- !u!114 &3573932122285064689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -159,19 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa84044b99b4335469fb38e1754aaafb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ModuleGuid
---- !u!114 &4762037240805064925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3091535544408406432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2906e590d50c84348837f51081bf84c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ModuleTypeId
-  typeId: Core
 --- !u!50 &5961520597401139872
 Rigidbody2D:
   serializedVersion: 5

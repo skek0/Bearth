@@ -28,10 +28,8 @@ public static class ShipSaveLoad
         foreach (var m in allModules)
         {
             var g = m.GetComponent<ModuleGuid>();
-            if (g == null) g = m.gameObject.AddComponent<ModuleGuid>();
 
-            var t = m.GetComponent<ModuleTypeId>();
-            if (t == null || string.IsNullOrWhiteSpace(t.TypeId))
+            if (m == null || string.IsNullOrWhiteSpace(m.TypeId))
                 Debug.LogError($"[Save] ModuleTypeId missing/empty on {m.name}", m);
 
             guidByModule[m] = g.Guid;
@@ -41,11 +39,11 @@ public static class ShipSaveLoad
 
         var coreT = core.transform;
 
-        // modules 저장 (✅ 코어 기준 로컬로 강제 변환)
+        // modules 저장
         foreach (var m in allModules)
         {
             var guid = guidByModule[m];
-            var typeId = m.GetComponent<ModuleTypeId>()?.TypeId ?? "";
+            var typeId = m.GetComponent<Module>()?.TypeId ?? "";
 
             Vector2 localPos = coreT.InverseTransformPoint(m.transform.position);
             float localRotZ = (Quaternion.Inverse(coreT.rotation) * m.transform.rotation).eulerAngles.z;
@@ -54,6 +52,7 @@ public static class ShipSaveLoad
             {
                 guid = guid,
                 typeId = typeId,
+                moduleId = m.ModuleId,
                 localPos = localPos,
                 localRotZ = localRotZ,
                 hp = m.Hp,
@@ -84,7 +83,7 @@ public static class ShipSaveLoad
     }
 
     // =========================
-    // LOAD (코어부터 시작, ShipRoot 없음)
+    // LOAD
     // =========================
     public static CoreModule LoadShipToFleetRoot(
         Transform fleetRoot,
@@ -110,7 +109,7 @@ public static class ShipSaveLoad
         var corePrefab = resolver.Resolve(coreEntry.typeId);
         if (corePrefab == null)
         {
-            Debug.LogError($"[Load] Core prefab not found typeId='{coreEntry.typeId}'");
+            Debug.LogError($"[Load] Core prefab not found moduleId='{coreEntry.typeId}'");
             return null;
         }
 
@@ -118,12 +117,11 @@ public static class ShipSaveLoad
         var core = coreGo.GetComponent<CoreModule>();
         if (core == null)
         {
-            Debug.LogError($"[Load] CoreModule missing on prefab typeId='{coreEntry.typeId}'");
+            Debug.LogError($"[Load] CoreModule missing on prefab moduleId='{coreEntry.typeId}'");
             Object.Destroy(coreGo);
             return null;
         }
 
-        // guid 주입
         if (!core.TryGetComponent<ModuleGuid>(out var coreGuid)) coreGuid = core.gameObject.AddComponent<ModuleGuid>();
         coreGuid.SetGuid(coreEntry.guid);
 
@@ -132,10 +130,13 @@ public static class ShipSaveLoad
         // 상태
         core.Hp = coreEntry.hp;
         core.Faction = coreEntry.faction;
+        core.SetModuleId(coreEntry.moduleId);
+        core.ApplyBaseStat(ModuleSpecDB.BaseStats[coreEntry.moduleId]);
+
 
         if (core.CompareTag("Player")) CameraRebinder.BindTo(core.transform);
 
-        // 3) 나머지 모듈 스폰(일단 fleetRoot 밑)
+        // 3) 나머지 모듈 스폰
         var map = new Dictionary<string, Module>(data.modules.Count)
         {
             [coreEntry.guid] = core
@@ -151,7 +152,7 @@ public static class ShipSaveLoad
             var prefab = resolver.Resolve(m.typeId);
             if (prefab == null)
             {
-                Debug.LogError($"[Load] Prefab not found typeId='{m.typeId}'");
+                Debug.LogError($"[Load] Prefab not found moduleId='{m.typeId}'");
                 continue;
             }
 
@@ -159,7 +160,7 @@ public static class ShipSaveLoad
             var module = go.GetComponent<Module>();
             if (module == null)
             {
-                Debug.LogError($"[Load] Module missing on prefab typeId='{m.typeId}'");
+                Debug.LogError($"[Load] Module missing on prefab moduleId='{m.typeId}'");
                 Object.Destroy(go);
                 continue;
             }
@@ -167,8 +168,9 @@ public static class ShipSaveLoad
             // guid 주입
             if (!module.TryGetComponent<ModuleGuid>(out var guid)) guid = module.gameObject.AddComponent<ModuleGuid>();
             guid.SetGuid(m.guid);
+            Debug.Log(m.guid);
 
-            // ✅ 코어 기준 로컬 -> 월드로 환산해서 임시 배치
+            // 코어 기준 로컬 -> 월드로 환산해서 임시 배치
             Vector3 worldPos = core.transform.TransformPoint(m.localPos);
             Quaternion worldRot = core.transform.rotation * Quaternion.Euler(0, 0, m.localRotZ);
 
@@ -176,6 +178,8 @@ public static class ShipSaveLoad
 
             module.Hp = m.hp;
             module.Faction = m.faction;
+            module.SetModuleId(m.moduleId);
+            module.ApplyBaseStat(ModuleSpecDB.BaseStats[m.moduleId]);
 
             SetPhysicsEnabled(go, false);
 
@@ -195,11 +199,10 @@ public static class ShipSaveLoad
         {
             yield return new WaitForFixedUpdate();
             if (core == null) yield break;
-            var rb = core.Rigid;
-            if (rb == null) yield break;
+            if (core.Rigid == null) yield break;
 
-            rb.linearVelocity = shipInst.vel;
-            rb.angularVelocity = shipInst.angVel;
+            core.Rigid.linearVelocity = shipInst.vel;
+            core.Rigid.angularVelocity = shipInst.angVel;
         }
 
         return core;

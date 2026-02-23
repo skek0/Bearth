@@ -43,8 +43,9 @@ public class BaseModule : Module, IControllable
         selfColliders = new HashSet<Collider2D>(cols);
     }
 
-    protected virtual void Start()
+    protected override void Start()
     {
+        base.Start();
         if (senderTransform == null)
         {
             senderTransform = transform.Find("Sender");
@@ -62,9 +63,8 @@ public class BaseModule : Module, IControllable
         var cand = ConnectionManager.Instance.QueryCandidate(this);
         if (cand != null)
         {
-            Vector2 dir = cand.position - transform.position;
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
+            AimToTransform(cand);
+
         }
     }
 
@@ -93,18 +93,24 @@ public class BaseModule : Module, IControllable
     {
         hasDragTarget = false;
 
-        ConnectionManager.Instance.RequestAttach(this);
+        TryAttach();
 
         rigid.collisionDetectionMode = CollisionDetectionMode2D.Discrete;
 
         Deselected?.Invoke(this);
     }
 
+    private void TryAttach()
+    {
+        var targetConnector = ConnectionManager.Instance.RequestAttach(this);
+        if (targetConnector == null) return;
+        Attach(targetConnector);
+    }
+
     public virtual void Detach(Vector3 detachedFromPos, bool byDemolition = false)
     {
         attachedParentPortId = null;
 
-        // 코어 소속 끊기 + 이벤트
         if (BelongedCore != null)
             NotifyDetached();
 
@@ -151,8 +157,14 @@ public class BaseModule : Module, IControllable
         Detach(transform.position);
         Died?.Invoke(this);
     }
+    private void AimToTransform(Transform target)
+    {
+        Vector2 dir = target.position - transform.position;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
+    }
 
-    public void CommitAttach(Transform closestConnector)
+    public void Attach(Transform closestConnector)
     {
         if (closestConnector == null)
         {
@@ -160,7 +172,7 @@ public class BaseModule : Module, IControllable
             return;
         }
 
-        // 어떤 포트에 붙었는지 저장용으로 기록
+        // 세이브용
         var port = closestConnector.GetComponent<ConnectorPort>();
         attachedParentPortId = port != null ? port.PortId : null;
 
@@ -180,8 +192,6 @@ public class BaseModule : Module, IControllable
     {
         transform.SetParent(ModulesContainer.Instance.transform);
 
-        // 선택 상태에서 mass를 0으로 만들었으니, 원래값 복구 정책이 필요함.
-        // 기존 코드가 rigid.mass = 1f 였으니 일단 동일하게.
         if (rigid != null) rigid.mass = 1f;
 
         attachedParentPortId = null;

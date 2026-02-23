@@ -5,7 +5,6 @@ public class ConnectionManager : MonoBehaviour
 {
     public static ConnectionManager Instance { get; private set; }
 
-    [Header("Scan (Connector)")]
     [SerializeField] private float scanRadius = 2.0f;
     [SerializeField] private int connectorBufferSize = 64;
 
@@ -50,7 +49,6 @@ public class ConnectionManager : MonoBehaviour
             ? (Vector2)module.SenderTransform.position
             : (Vector2)module.transform.position;
 
-        // ✅ NonAlloc 대신: OverlapCircle + results 배열 오버로드
         int hitCount = Physics2D.OverlapCircle(scanCenter, scanRadius, connectorFilter, connectorBuffer);
         if (hitCount <= 0) return null;
 
@@ -80,16 +78,16 @@ public class ConnectionManager : MonoBehaviour
         return best;
     }
 
-    public void RequestAttach(BaseModule module)
+    public Transform RequestAttach(BaseModule module)
     {
-        if (module == null) return;
+        if (module == null) return null;
 
         var cand = QueryCandidate(module);
         if (cand != null && !HasEnoughPlace(module, cand))
             cand = null;
 
-        if (cand != null) module.CommitAttach(cand);
-        else module.FallbackDetachState();
+        if (cand != null) return cand;
+        else return null;
     }
 
     private bool IsConnectableConnector(Transform connector)

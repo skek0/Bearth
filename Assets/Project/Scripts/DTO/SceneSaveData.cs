@@ -2,9 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-#region Scene Save (whole scene)
-
 [Serializable]
 public class SceneSaveData
 {
@@ -30,6 +27,7 @@ public class WorldModuleSaveData
 {
     public string guid;
     public string typeId;
+    public string moduleId;
 
     public Vector2 worldPos;
     public float worldRotZ;
@@ -40,5 +38,3 @@ public class WorldModuleSaveData
     public Vector2 vel;
     public float angVel;
 }
-
-#endregion
