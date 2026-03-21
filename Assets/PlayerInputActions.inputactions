@@ -135,11 +135,11 @@
             ]
         },
         {
-            "name": "ObjectControl",
+            "name": "PointerControl",
             "id": "3f669cc9-ea91-47a3-8be7-51625952594d",
             "actions": [
                 {
-                    "name": "SelectHold",
+                    "name": "Select",
                     "type": "Button",
                     "id": "fb06b2b3-5789-42c5-929f-a3685b931aee",
                     "expectedControlType": "",
@@ -155,15 +155,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
-                },
-                {
-                    "name": "Drag",
-                    "type": "Value",
-                    "id": "c3352ff2-0da4-4d8d-8c45-ee7ae0ac6e11",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -174,18 +165,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "SelectHold",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "5e6432e4-43f3-439b-9267-c6b1cf86e9c1",
-                    "path": "<Mouse>/position",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";PC",
-                    "action": "Drag",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

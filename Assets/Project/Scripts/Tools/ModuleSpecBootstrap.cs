@@ -14,18 +14,19 @@ public static class ModuleSpecBootstrap
         if (initialized) return;
         initialized = true;
 
-        LoadAndInject(BaseStatPath, ModuleSpecDB.LoadBaseStats, "BaseStats");
-        LoadAndInject(RangedWeaponPath, ModuleSpecDB.LoadWeaponRangedStats, "WeaponRangedStats");
+        TempLoad_BeforeScene(BaseStatPath, ModuleSpecDB.LoadBaseStats);
+        TempLoad_BeforeScene(RangedWeaponPath, ModuleSpecDB.LoadWeaponRangedStats);
+        ModuleSpecDB.LoadSchematics();
 
         Debug.Log("ModuleSpecDB initialized before scene");
     }
 
-    static void LoadAndInject(string path, System.Action<string> load, string tableName)
+    static void TempLoad_BeforeScene(string path, System.Action<string> load)
     {
         var ta = Resources.Load<TextAsset>(path);
         if (ta == null)
         {
-            Debug.LogError($"[ModuleSpecBootstrap] {tableName}: TextAsset not found: Resources/{path}.json");
+            Debug.LogError($"Asset not found: Resources/{path}.json");
             return;
         }
 

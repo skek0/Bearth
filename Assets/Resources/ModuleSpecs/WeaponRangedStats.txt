@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "ModuleID": "301001",
     "FireType": "Projectile",
@@ -8,9 +8,9 @@
     "Interval": 1.0,
     "PreDelay": 2.0,
     "Accuracy": 0,
-    "Penetration": 0,
     "ProjectileID": "Projectiles/Bullet",
-    "PelletAmount": 0
+    "PelletAmount": 0,
+    "BurstInterval": 0.0
   },
   {
     "ModuleID": "301002",
@@ -21,8 +21,21 @@
     "Interval": 1.0,
     "PreDelay": 2.0,
     "Accuracy": 30,
-    "Penetration": 0,
     "ProjectileID": "Projectiles/Bullet",
-    "PelletAmount": 5
+    "PelletAmount": 5,
+    "BurstInterval": 0.0
+  },
+  {
+    "ModuleID": "301003",
+    "FireType": "Projectile",
+    "FireMode": "Burst",
+    "Damage": 10,
+    "Speed": 20.0,
+    "Interval": 1.0,
+    "PreDelay": 2.0,
+    "Accuracy": 20,
+    "ProjectileID": "Projectiles/Bullet",
+    "PelletAmount": 3,
+    "BurstInterval": 0.1
   }
 ]

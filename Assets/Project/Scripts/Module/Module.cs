@@ -9,7 +9,7 @@ public enum FactionType
 }
 
 [RequireComponent(typeof(ModuleGuid))]
-public abstract class Module : MonoBehaviour, IDamageable
+public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleInfoSource
 {
     protected bool connectable = false;
 
@@ -58,6 +58,12 @@ public abstract class Module : MonoBehaviour, IDamageable
     public string ModuleId => moduleId;
     public string TypeId { get => typeId; }
 
+    public string DisplayName => moduleId;
+
+    public int CurrentHp => hp;
+
+    public int MaxHp => maxHp;
+
     public void SetModuleId(string id) => moduleId = id;
     protected virtual void Awake()
     {
@@ -67,7 +73,7 @@ public abstract class Module : MonoBehaviour, IDamageable
 
     protected virtual void Start()
     {
-        /// 임시 주입 : 원래는 로드를 통한 주입
+        // 임시 주입 : 원래는 로드를 통한 주입
         ApplyBaseStat(ModuleSpecDB.BaseStats[ModuleId]);
     }
 
@@ -108,4 +114,24 @@ public abstract class Module : MonoBehaviour, IDamageable
     {
         connectedModules.Remove(module);
     }
+
+    public void OnHoverEnter()
+    {
+
+    }
+    public void OnHoverStay()
+    {
+
+    }
+    public void OnHoverExit()
+    {
+
+    }
+
+    public virtual bool TryGetSpecialStat(out string none)
+    {
+        none = null;
+        return false;
+    }
+
 }

@@ -221,11 +221,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""ObjectControl"",
+            ""name"": ""PointerControl"",
             ""id"": ""3f669cc9-ea91-47a3-8be7-51625952594d"",
             ""actions"": [
                 {
-                    ""name"": ""SelectHold"",
+                    ""name"": ""Select"",
                     ""type"": ""Button"",
                     ""id"": ""fb06b2b3-5789-42c5-929f-a3685b931aee"",
                     ""expectedControlType"": """",
@@ -241,15 +241,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
-                },
-                {
-                    ""name"": ""Drag"",
-                    ""type"": ""Value"",
-                    ""id"": ""c3352ff2-0da4-4d8d-8c45-ee7ae0ac6e11"",
-                    ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -260,18 +251,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PC"",
-                    ""action"": ""SelectHold"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5e6432e4-43f3-439b-9267-c6b1cf86e9c1"",
-                    ""path"": ""<Mouse>/position"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";PC"",
-                    ""action"": ""Drag"",
+                    ""action"": ""Select"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -353,11 +333,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_LookHold = m_Player.FindAction("LookHold", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
-        // ObjectControl
-        m_ObjectControl = asset.FindActionMap("ObjectControl", throwIfNotFound: true);
-        m_ObjectControl_SelectHold = m_ObjectControl.FindAction("SelectHold", throwIfNotFound: true);
-        m_ObjectControl_PointerPos = m_ObjectControl.FindAction("PointerPos", throwIfNotFound: true);
-        m_ObjectControl_Drag = m_ObjectControl.FindAction("Drag", throwIfNotFound: true);
+        // PointerControl
+        m_PointerControl = asset.FindActionMap("PointerControl", throwIfNotFound: true);
+        m_PointerControl_Select = m_PointerControl.FindAction("Select", throwIfNotFound: true);
+        m_PointerControl_PointerPos = m_PointerControl.FindAction("PointerPos", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Zoom = m_Camera.FindAction("Zoom", throwIfNotFound: true);
@@ -366,7 +345,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     ~@PlayerInputActions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_ObjectControl.enabled, "This will cause a leak and performance issues, PlayerInputActions.ObjectControl.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_PointerControl.enabled, "This will cause a leak and performance issues, PlayerInputActions.PointerControl.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Camera.enabled, "This will cause a leak and performance issues, PlayerInputActions.Camera.Disable() has not been called.");
     }
 
@@ -569,39 +548,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public PlayerActions @Player => new PlayerActions(this);
 
-    // ObjectControl
-    private readonly InputActionMap m_ObjectControl;
-    private List<IObjectControlActions> m_ObjectControlActionsCallbackInterfaces = new List<IObjectControlActions>();
-    private readonly InputAction m_ObjectControl_SelectHold;
-    private readonly InputAction m_ObjectControl_PointerPos;
-    private readonly InputAction m_ObjectControl_Drag;
+    // PointerControl
+    private readonly InputActionMap m_PointerControl;
+    private List<IPointerControlActions> m_PointerControlActionsCallbackInterfaces = new List<IPointerControlActions>();
+    private readonly InputAction m_PointerControl_Select;
+    private readonly InputAction m_PointerControl_PointerPos;
     /// <summary>
-    /// Provides access to input actions defined in input action map "ObjectControl".
+    /// Provides access to input actions defined in input action map "PointerControl".
     /// </summary>
-    public struct ObjectControlActions
+    public struct PointerControlActions
     {
         private @PlayerInputActions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public ObjectControlActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public PointerControlActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "ObjectControl/SelectHold".
+        /// Provides access to the underlying input action "PointerControl/Select".
         /// </summary>
-        public InputAction @SelectHold => m_Wrapper.m_ObjectControl_SelectHold;
+        public InputAction @Select => m_Wrapper.m_PointerControl_Select;
         /// <summary>
-        /// Provides access to the underlying input action "ObjectControl/PointerPos".
+        /// Provides access to the underlying input action "PointerControl/PointerPos".
         /// </summary>
-        public InputAction @PointerPos => m_Wrapper.m_ObjectControl_PointerPos;
-        /// <summary>
-        /// Provides access to the underlying input action "ObjectControl/Drag".
-        /// </summary>
-        public InputAction @Drag => m_Wrapper.m_ObjectControl_Drag;
+        public InputAction @PointerPos => m_Wrapper.m_PointerControl_PointerPos;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_ObjectControl; }
+        public InputActionMap Get() { return m_Wrapper.m_PointerControl; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -609,9 +583,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="ObjectControlActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="PointerControlActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(ObjectControlActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(PointerControlActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -619,20 +593,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="ObjectControlActions" />
-        public void AddCallbacks(IObjectControlActions instance)
+        /// <seealso cref="PointerControlActions" />
+        public void AddCallbacks(IPointerControlActions instance)
         {
-            if (instance == null || m_Wrapper.m_ObjectControlActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_ObjectControlActionsCallbackInterfaces.Add(instance);
-            @SelectHold.started += instance.OnSelectHold;
-            @SelectHold.performed += instance.OnSelectHold;
-            @SelectHold.canceled += instance.OnSelectHold;
+            if (instance == null || m_Wrapper.m_PointerControlActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PointerControlActionsCallbackInterfaces.Add(instance);
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
             @PointerPos.started += instance.OnPointerPos;
             @PointerPos.performed += instance.OnPointerPos;
             @PointerPos.canceled += instance.OnPointerPos;
-            @Drag.started += instance.OnDrag;
-            @Drag.performed += instance.OnDrag;
-            @Drag.canceled += instance.OnDrag;
         }
 
         /// <summary>
@@ -641,27 +612,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="ObjectControlActions" />
-        private void UnregisterCallbacks(IObjectControlActions instance)
+        /// <seealso cref="PointerControlActions" />
+        private void UnregisterCallbacks(IPointerControlActions instance)
         {
-            @SelectHold.started -= instance.OnSelectHold;
-            @SelectHold.performed -= instance.OnSelectHold;
-            @SelectHold.canceled -= instance.OnSelectHold;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
             @PointerPos.started -= instance.OnPointerPos;
             @PointerPos.performed -= instance.OnPointerPos;
             @PointerPos.canceled -= instance.OnPointerPos;
-            @Drag.started -= instance.OnDrag;
-            @Drag.performed -= instance.OnDrag;
-            @Drag.canceled -= instance.OnDrag;
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="ObjectControlActions.UnregisterCallbacks(IObjectControlActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="PointerControlActions.UnregisterCallbacks(IPointerControlActions)" />.
         /// </summary>
-        /// <seealso cref="ObjectControlActions.UnregisterCallbacks(IObjectControlActions)" />
-        public void RemoveCallbacks(IObjectControlActions instance)
+        /// <seealso cref="PointerControlActions.UnregisterCallbacks(IPointerControlActions)" />
+        public void RemoveCallbacks(IPointerControlActions instance)
         {
-            if (m_Wrapper.m_ObjectControlActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_PointerControlActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -671,21 +639,21 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="ObjectControlActions.AddCallbacks(IObjectControlActions)" />
-        /// <seealso cref="ObjectControlActions.RemoveCallbacks(IObjectControlActions)" />
-        /// <seealso cref="ObjectControlActions.UnregisterCallbacks(IObjectControlActions)" />
-        public void SetCallbacks(IObjectControlActions instance)
+        /// <seealso cref="PointerControlActions.AddCallbacks(IPointerControlActions)" />
+        /// <seealso cref="PointerControlActions.RemoveCallbacks(IPointerControlActions)" />
+        /// <seealso cref="PointerControlActions.UnregisterCallbacks(IPointerControlActions)" />
+        public void SetCallbacks(IPointerControlActions instance)
         {
-            foreach (var item in m_Wrapper.m_ObjectControlActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_PointerControlActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_ObjectControlActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_PointerControlActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="ObjectControlActions" /> instance referencing this action map.
+    /// Provides a new <see cref="PointerControlActions" /> instance referencing this action map.
     /// </summary>
-    public ObjectControlActions @ObjectControl => new ObjectControlActions(this);
+    public PointerControlActions @PointerControl => new PointerControlActions(this);
 
     // Camera
     private readonly InputActionMap m_Camera;
@@ -845,19 +813,19 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "ObjectControl" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "PointerControl" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="ObjectControlActions.AddCallbacks(IObjectControlActions)" />
-    /// <seealso cref="ObjectControlActions.RemoveCallbacks(IObjectControlActions)" />
-    public interface IObjectControlActions
+    /// <seealso cref="PointerControlActions.AddCallbacks(IPointerControlActions)" />
+    /// <seealso cref="PointerControlActions.RemoveCallbacks(IPointerControlActions)" />
+    public interface IPointerControlActions
     {
         /// <summary>
-        /// Method invoked when associated input action "SelectHold" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Select" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSelectHold(InputAction.CallbackContext context);
+        void OnSelect(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "PointerPos" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -865,13 +833,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPointerPos(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "Drag" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnDrag(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Camera" which allows adding and removing callbacks.

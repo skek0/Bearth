@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class BaseModule : Module, IControllable
+public class BaseModule : Module, ISelectable
 {
     [SerializeField] Transform senderTransform;
 
@@ -19,10 +19,8 @@ public class BaseModule : Module, IControllable
     protected Module attachedTo;
     protected float torqueOnExplosion = 0f;
 
-    public event Action<IControllable> OnDestroyed; // 드래그 입력 중단을 위한 이벤트
-
     Camera cam;
-    private Vector2 targetWorldPos;
+    private Vector2 targetWorldPos = Vector2.zero;
     private bool hasDragTarget;
 
     private string attachedParentPortId;
@@ -54,23 +52,11 @@ public class BaseModule : Module, IControllable
         dragSpeed = GameManager.Instance.moduleDragSpeed;
         torqueOnExplosion = GameManager.Instance.moduleTorqueOnExplosion;
     }
-    
-    public void OnDrag(Vector2 pos)
-    {
-        var sp = new Vector2(pos.x, pos.y);
-        targetWorldPos = cam.ScreenToWorldPoint(sp);
-
-        var cand = ConnectionManager.Instance.QueryCandidate(this);
-        if (cand != null)
-        {
-            AimToTransform(cand);
-
-        }
-    }
 
     private void FixedUpdate()
     {
         if (!hasDragTarget || rigid == null) return;
+        if (targetWorldPos == Vector2.zero) return;
 
         Vector2 newPos = Vector2.Lerp(rigid.position, targetWorldPos, dragSpeed * Time.fixedDeltaTime);
         rigid.MovePosition(newPos);
@@ -78,7 +64,6 @@ public class BaseModule : Module, IControllable
 
     public virtual void OnSelected()
     {
-        hasDragTarget = true;
         Detach(transform.position);
 
         rigid.mass = 0f;
@@ -87,6 +72,18 @@ public class BaseModule : Module, IControllable
         connectable = false;
 
         Selected?.Invoke(this);
+    }
+    
+    public void OnDrag(Vector2 pos)
+    {
+        hasDragTarget = true;
+        targetWorldPos = cam.ScreenToWorldPoint(pos);
+
+        var cand = ConnectionManager.Instance.QueryCandidate(this);
+        if (cand != null)
+        {
+            AimToTransform(cand);
+        }
     }
 
     public void OnDeselected()
@@ -149,7 +146,6 @@ public class BaseModule : Module, IControllable
     protected override void OnDeath()
     {
         base.OnDeath();
-        OnDestroyed?.Invoke(this);
 
         if (BelongedCore != null)
             NotifyDetached();

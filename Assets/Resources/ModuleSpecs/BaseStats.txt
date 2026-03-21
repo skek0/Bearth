@@ -42,5 +42,16 @@
     "MaxHp": 200,
     "Price": 10,
     "PrefabPath": "Modules/Weapon"
+  },
+  {
+    "ModuleID": "301003",
+    "TypeID": "RangedWeapon",
+    "Type": "Weapon",
+    "Tier": 1,
+    "Rarity": "Common",
+    "Mass": 5.0,
+    "MaxHp": 100,
+    "Price": 10,
+    "PrefabPath": "Modules/Weapon"
   }
 ]

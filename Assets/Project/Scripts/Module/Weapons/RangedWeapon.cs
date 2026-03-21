@@ -105,7 +105,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
 
     void Initialize()
     {
-        if (ModuleSpecDB.WeaponRangedStats[module.ModuleId] == null) return;
+        if (ModuleSpecDB.WeaponRangedStats[module.ModuleId] == null) return;    
 
         var stat = ModuleSpecDB.WeaponRangedStats[module.ModuleId];
         rangedBehavior = stat.FireType switch
@@ -118,7 +118,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         {
             "Single" => new SingleFire(),
             "Shotgun" => new ShotgunFire(stat.PelletAmount, stat.Accuracy),
-            "Burst" => new BurstFire(stat.PelletAmount, stat.Accuracy),
+            "Burst" => new BurstFire(stat.PelletAmount, stat.BurstInterval),
             _ => null
         };
         rangedStat.damage   = stat.Damage;
