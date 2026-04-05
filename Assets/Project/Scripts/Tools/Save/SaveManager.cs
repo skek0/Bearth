@@ -97,7 +97,6 @@ public static class SceneSaveLoad
                 vel = m.Rigid ? m.Rigid.linearVelocity : Vector2.zero,
                 angVel = m ? m.Rigid.angularVelocity : 0f,
             });
-            Debug.Log(m.TypeId);
         }
 
         return scene;
