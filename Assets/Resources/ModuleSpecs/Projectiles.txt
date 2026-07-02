@@ -1,0 +1,10 @@
+﻿[
+  {
+    "ProjectileID": "Basic",
+    "TrailID": "Basic",
+    "ShotSfxID": "Basic",
+    "HitEffectID": "Basic",
+    "HitSfxID": "Basic",
+    "PrewarmCount": 10
+  }
+]

@@ -3,7 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(BaseModule))]
 public class RangedWeapon : MonoBehaviour, IWeapon
 {
-    public Transform AttackPoint => firePoint;
+    [Tooltip("공격이 발사되는 위치")]
+    public Transform FirePoint => firePoint;
     
     [Header("Refs")]
     [SerializeField] Transform firePoint;
@@ -62,7 +63,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         if (belongedCore == core && attackable) return;
 
         belongedCore = core;
-        belongedCore.AddWeapon(this);
+        belongedCore.OnAttackCommand += Attack;
         attackable = true;
         fireController.OnEnable(true);
     }
@@ -73,11 +74,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         // 발사 중단 + 등록 해제
         fireController.StopAll();
         attackable = false;
-
-        if (oldCore != null)
-            oldCore.RemoveWeapon(this);
-
-        belongedCore = null;
+        UnregisterFromCore();
         fireController.OnDisable();
     }
 
@@ -93,7 +90,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     {
         if (belongedCore != null)
         {
-            belongedCore.RemoveWeapon(this);
+            belongedCore.OnAttackCommand -= Attack;
             belongedCore = null;
         }
     }

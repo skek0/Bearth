@@ -9,8 +9,8 @@ public class BaseModule : Module, ISelectable
 
     public CoreModule BelongedCore { get; private set; }
 
-    public event Action<BaseModule, CoreModule> AttachedToCore;      // (self, core)
-    public event Action<BaseModule, CoreModule> DetachedFromCore;     // (self, oldCore)
+    public event Action<BaseModule, CoreModule> AttachedToCore;
+    public event Action<BaseModule, CoreModule> DetachedFromCore;
     public event Action<BaseModule> Selected;
     public event Action<BaseModule> Deselected;
     public event Action<BaseModule> Died;
@@ -100,7 +100,11 @@ public class BaseModule : Module, ISelectable
     private void TryAttach()
     {
         var targetConnector = ConnectionManager.Instance.RequestAttach(this);
-        if (targetConnector == null) return;
+        if (targetConnector == null)
+        {
+            rigid.mass = mass; // 원래 질량으로 복구
+            return;
+        }
         Attach(targetConnector);
     }
 
@@ -115,6 +119,7 @@ public class BaseModule : Module, ISelectable
         {
             rigid = gameObject.AddComponent<Rigidbody2D>();
             GameManager.Instance.Rigidbody2DSettings.ApplyTo(rigid);
+            rigid.mass = mass;
         }
 
         connectable = false;
@@ -164,7 +169,7 @@ public class BaseModule : Module, ISelectable
     {
         if (closestConnector == null)
         {
-            FallbackDetachState();
+            rigid.mass = mass;
             return;
         }
 
@@ -182,23 +187,13 @@ public class BaseModule : Module, ISelectable
         faction = FactionType.Mine;
 
         var newCore = AddThisToAttachedModuleAndGetCore(closestConnector);
+        newCore.AddMass(mass);
         NotifyAttached(newCore);
-    }
-    public void FallbackDetachState()
-    {
-        transform.SetParent(ModulesContainer.Instance.transform);
-
-        if (rigid != null) rigid.mass = 1f;
-
-        attachedParentPortId = null;
-
-        // connectable/faction 정책도 여기서 통일
-        connectable = false;
-        faction = FactionType.Neutral;
     }
     private void NotifyDetached()
     {
         var old = BelongedCore;
+        BelongedCore.AddMass(-mass);
         BelongedCore = null;
         if (old != null)
             DetachedFromCore?.Invoke(this, old);

@@ -1970,7 +1970,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1082917487
 Transform:
   m_ObjectHideFlags: 0
@@ -2088,10 +2088,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2780e83e230923f4585d4c2c84f04097, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeAI
-  speedV: 10
-  speedH: 10
+  speedV: 1
+  speedH: 1
   speedR: 10
-  accelRate: 10
+  accelRate: 2
+  approachDist: 1
 --- !u!114 &1082917492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2119,8 +2120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoreModule
   moduleId: 100001
-  connectedModules: []
-  faction: 0
+  faction: 1
   maxHp: 1
   hp: 1
   mass: 0
@@ -3297,7 +3297,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2038278680}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ef5cbb2521dea143bde717826645a0c, type: 3}
   m_Name: 
@@ -4603,8 +4603,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoreModule
   moduleId: 100001
-  connectedModules: []
-  faction: 0
+  faction: 1
   maxHp: 1
   hp: 1
   mass: 0
@@ -4624,6 +4623,7 @@ MonoBehaviour:
   speedH: 1
   speedR: 10
   accelRate: 2
+  approachDist: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

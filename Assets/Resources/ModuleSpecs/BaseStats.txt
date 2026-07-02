@@ -1,57 +1,52 @@
 ﻿[
   {
-    "ModuleID": "100001",
-    "TypeID": "Core",
-    "Type": "Core",
-    "Tier": 1,
-    "Rarity": "Common",
+    "ModuleId": "core_mk1",
     "Mass": 5.0,
     "MaxHp": 100,
     "Price": 10,
-    "PrefabPath": "Modules/Core"
+    "PrefabPath": "Module/Square11",
+    "ModuleType": "CoreModule",
+    "Components": null,
+    "Tags": null
   },
   {
-    "ModuleID": "201001",
-    "TypeID": "Beam",
-    "Type": "Beam",
-    "Tier": 1,
-    "Rarity": "Common",
+    "ModuleId": "beam_mk1",
     "Mass": 5.0,
     "MaxHp": 100,
     "Price": 10,
-    "PrefabPath": "Modules/Beam"
+    "PrefabPath": "Module/Square11",
+    "ModuleType": "BaseModule",
+    "Components": null,
+    "Tags": null
   },
   {
-    "ModuleID": "301001",
-    "TypeID": "RangedWeapon",
-    "Type": "Weapon",
-    "Tier": 1,
-    "Rarity": "Common",
+    "ModuleId": "gun_mk1",
     "Mass": 5.0,
     "MaxHp": 50,
     "Price": 10,
-    "PrefabPath": "Modules/Weapon"
+    "PrefabPath": "Module/Square11",
+    "ModuleType": "BaseModule",
+    "Components": "RangedWeapon",
+    "Tags": null
   },
   {
-    "ModuleID": "301002",
-    "TypeID": "RangedWeapon",
-    "Type": "Weapon",
-    "Tier": 1,
-    "Rarity": "Common",
+    "ModuleId": "shotgun_mk1",
     "Mass": 5.0,
     "MaxHp": 200,
     "Price": 10,
-    "PrefabPath": "Modules/Weapon"
+    "PrefabPath": "Module/Square11",
+    "ModuleType": "BaseModule",
+    "Components": "RangedWeapon",
+    "Tags": null
   },
   {
-    "ModuleID": "301003",
-    "TypeID": "RangedWeapon",
-    "Type": "Weapon",
-    "Tier": 1,
-    "Rarity": "Common",
+    "ModuleId": "burst_mk1",
     "Mass": 5.0,
     "MaxHp": 100,
     "Price": 10,
-    "PrefabPath": "Modules/Weapon"
+    "PrefabPath": "Module/Square11",
+    "ModuleType": "BaseModule",
+    "Components": "RangedWeapon",
+    "Tags": null
   }
 ]

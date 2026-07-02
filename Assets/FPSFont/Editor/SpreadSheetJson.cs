@@ -18,6 +18,7 @@ public class SpreadSheetJson : EditorWindow
         public int typesX;
         public int typesY;
         public string spreadsheetId;
+        public string gid;
         public int startX;
         public int startY;
 
@@ -36,6 +37,7 @@ public class SpreadSheetJson : EditorWindow
     private int typesX = 0;
     private int typesY = 0;
     private string spreadsheetId = "";
+    private string gid = "";
     private int startX = 0;
     private int startY = 0;
 
@@ -66,6 +68,7 @@ public class SpreadSheetJson : EditorWindow
         typesX = EditorPrefs.GetInt("ss_json_typesX", typesX);
         typesY = EditorPrefs.GetInt("ss_json_typesY", typesY);
         spreadsheetId = EditorPrefs.GetString("ss_json_spreadsheetId", spreadsheetId);
+        gid = EditorPrefs.GetString("ss_json_gid", gid);
         startX = EditorPrefs.GetInt("ss_json_startX", startX);
         startY = EditorPrefs.GetInt("ss_json_startY", startY);
 
@@ -83,6 +86,7 @@ public class SpreadSheetJson : EditorWindow
         EditorPrefs.SetInt("ss_json_typesX", typesX);
         EditorPrefs.SetInt("ss_json_typesY", typesY);
         EditorPrefs.SetString("ss_json_spreadsheetId", spreadsheetId);
+        EditorPrefs.SetString("ss_json_gid", gid);
         EditorPrefs.SetInt("ss_json_startX", startX);
         EditorPrefs.SetInt("ss_json_startY", startY);
 
@@ -135,6 +139,7 @@ public class SpreadSheetJson : EditorWindow
                 typesX = typesX,
                 typesY = typesY,
                 spreadsheetId = spreadsheetId,
+                gid = gid,
                 startX = startX,
                 startY = startY,
                 saveFileName = saveFileName,
@@ -154,6 +159,7 @@ public class SpreadSheetJson : EditorWindow
         GUILayout.Label("Spreadsheet 설정", EditorStyles.boldLabel);
 
         spreadsheetId = EditorGUILayout.TextField("스프레드시트 ID", spreadsheetId);
+        gid = EditorGUILayout.TextField("스프레드시트 GID", gid);
 
         EditorGUILayout.LabelField("타입명 위치 ( 0 ~ )");
         EditorGUILayout.BeginHorizontal();
@@ -235,6 +241,7 @@ public class SpreadSheetJson : EditorWindow
         typesX = t.typesX;
         typesY = t.typesY;
         spreadsheetId = t.spreadsheetId;
+        gid = t.gid;
 
         // startX는 typesX로 고정
         startX = typesX;
@@ -281,8 +288,13 @@ public class SpreadSheetJson : EditorWindow
             Debug.LogError("Spreadsheet ID를 입력하세요.");
             return;
         }
+        if (string.IsNullOrWhiteSpace(gid))
+        {
+            Debug.LogError("GID를 입력하세요.");
+            return;
+        }
 
-        string url = $"https://docs.google.com/spreadsheets/d/{spreadsheetId}/export?format=csv";
+        string url = $"https://docs.google.com/spreadsheets/d/{spreadsheetId}/export?format=csv&gid={gid}";
 
         try
         {
@@ -320,7 +332,7 @@ public class SpreadSheetJson : EditorWindow
             List<string> names = grid[namesRow].Skip(typesX).ToList();
             int fieldCount = Mathf.Min(types.Count, names.Count);
 
-            // ✅ (변경) name/type + 실제 컬럼 인덱스(colIndex) 같이 저장
+            // name/type + 실제 컬럼 인덱스(colIndex) 같이 저장
             var fields = new List<(string name, string type, int colIndex)>(fieldCount);
             for (int i = 0; i < fieldCount; i++)
             {
@@ -338,7 +350,7 @@ public class SpreadSheetJson : EditorWindow
                 var columns = grid[y];
                 var row = new Dictionary<string, object>();
 
-                // ✅ (변경) startX+i 대신, 헤더에서 확보한 실제 colIndex로 접근
+                // startX+i 대신, 헤더에서 확보한 실제 colIndex로 접근
                 for (int i = 0; i < fields.Count; i++)
                 {
                     int colIndex = fields[i].colIndex;

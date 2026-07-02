@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,25 +15,19 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
     protected bool connectable = false;
 
     [SerializeField] protected string moduleId = "Module";
-    [Header("디버깅용")]
-    [SerializeField] private List<BaseModule> connectedModules = new();
+    private List<BaseModule> connectedModules = new();
     [SerializeField] protected FactionType faction = FactionType.Neutral;
 
+    [Header("Temp Serialize")]
     [SerializeField]protected int maxHp = 1;
-    [SerializeField]protected int hp = 1;
-    string typeId;
-    string type;
-    int tier;
-    string rarity;
-    float Mass;
-    int price;
-    string prefabPath;
+    [SerializeField]protected int currentHp = 1;
+    [SerializeField]protected SpriteRenderer spriteRenderer = null;
 
     /// <summary>For saves</summary>
     public int Hp
     {
-        get => hp;
-        set => hp = value;
+        get => currentHp;
+        set => currentHp = value;
     }
     public FactionType Faction
     {
@@ -56,14 +51,14 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
     public bool Connectable => connectable;
     public ModuleGuid ModuleGuid { get; private set; }
     public string ModuleId => moduleId;
-    public string TypeId { get => typeId; }
 
     public string DisplayName => moduleId;
 
-    public int CurrentHp => hp;
+    public int CurrentHp => currentHp;
 
     public int MaxHp => maxHp;
 
+    HashSet<string> tags;
     public void SetModuleId(string id) => moduleId = id;
     protected virtual void Awake()
     {
@@ -74,28 +69,40 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
     protected virtual void Start()
     {
         // 임시 주입 : 원래는 로드를 통한 주입
-        ApplyBaseStat(ModuleSpecDB.BaseStats[ModuleId]);
+        //ApplyBaseStat(ModuleSpecDB.BaseStats[ModuleId]);
+        spriteRenderer = transform.Find("Skin").GetComponent<SpriteRenderer>();
     }
 
     public void ApplyBaseStat(BaseStat s)
     {
-        typeId = s.TypeID;
-        type = s.Type;
-        tier = s.Tier;
-        rarity = s.Rarity;
+        moduleId = s.ModuleID;
         mass = s.Mass;
         maxHp = s.MaxHp;
-        price = s.Price;
-        prefabPath = s.PrefabPath;
+        tags = SplitToHashset(s.Tags);
+    }
+
+    private HashSet<string> SplitToHashset(string tags)
+    {
+        HashSet<string> tagsHashSet = new();
+
+        if (string.IsNullOrWhiteSpace(tags))
+            return tagsHashSet;
+        foreach (var item in tags.Split(","))
+        {
+            string trimmedTag = item.Trim();
+            if (!string.IsNullOrEmpty(trimmedTag))
+                tagsHashSet.Add(trimmedTag);
+        }
+        return tagsHashSet;
     }
 
     public void ApplyDamage(DamageData damage)
     {
-        hp -= damage.Amount;
+        currentHp -= damage.Amount;
         
-        if(hp <= 0)
+        if(currentHp <= 0)
         {
-            hp = 0;
+            currentHp = 0;
             OnDeath();
 
             for(int i = ConnectedModules.Count - 1; i >= 0; i--)
@@ -105,7 +112,10 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
             Destroy(gameObject);
         }
     }
-    protected virtual void OnDeath() {}
+    protected virtual void OnDeath() 
+    {
+        Destroy(spriteRenderer.material);
+    }
     public void AddConnectedModule(BaseModule module)
     {
         connectedModules.Add(module);

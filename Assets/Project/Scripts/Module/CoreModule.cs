@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class CoreModule : Module
 {
-    protected List<IWeapon> weapons = new();
+    public event Action OnAttackCommand;
+
     protected override void Awake()
     {
         base.Awake();
@@ -12,20 +15,10 @@ public class CoreModule : Module
     }
     public virtual void Attack()
     {
-        for (int i = weapons.Count - 1; i >= 0; i--)
-        {
-            var weapon = weapons[i];
-            if (weapon == null) { weapons.RemoveAt(i); continue; }
-            weapon.Attack();
-        }
+        OnAttackCommand?.Invoke();
     }
-
-    public void AddWeapon(IWeapon weapon)
+    public void AddMass(float mass)
     {
-        weapons.Add(weapon);
-    }
-    public void RemoveWeapon(IWeapon weapon)
-    {
-        weapons.Remove(weapon);
+        rigid.mass += mass;
     }
 }

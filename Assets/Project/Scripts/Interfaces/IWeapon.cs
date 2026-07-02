@@ -2,6 +2,6 @@ using UnityEngine;
 
 public interface IWeapon
 {
-    Transform AttackPoint { get; }
+    Transform FirePoint { get; }
     void Attack();
 }

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class InputController : GlobalSingleton<InputController>
 {
-    //public static InputController Instance { get; private set; }
     public PlayerInputActions Actions { get; private set; }
 
     protected override void Awake()

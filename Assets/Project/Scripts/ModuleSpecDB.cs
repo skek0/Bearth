@@ -16,14 +16,13 @@ public class BaseStatRoot
 public class BaseStat
 {
     public string ModuleID;
-    public string TypeID;
-    public string Type;
-    public int Tier;
-    public string Rarity;
     public float Mass;
     public int MaxHp;
     public int Price;
     public string PrefabPath;
+    public string ModuleType;
+    public string Components;
+    public string Tags;
 }
 
 [Serializable]
@@ -50,17 +49,6 @@ public class WeaponRangedStat
     public int PelletAmount;
     public float BurstInterval;
 }
-public class SchematicRoot
-{
-    public List<Schematic> Schematics;
-}
-[Serializable]
-public class Schematic
-{
-    public string ModuleID;
-    public Sprite Sprite;
-}
-
 [Serializable]
 public class ProjectileInfo
 {
@@ -76,51 +64,34 @@ public static class ModuleSpecDB
 {
     private static Dictionary<string, BaseStat> _baseStats = new();
     private static Dictionary<string, WeaponRangedStat> _weaponRangedStats = new();
-    private static Dictionary<string, Sprite> _schematics = new();
 
 
     public static IReadOnlyDictionary<string, BaseStat> BaseStats => _baseStats;
     public static IReadOnlyDictionary<string, WeaponRangedStat> WeaponRangedStats => _weaponRangedStats;
-    public static IReadOnlyDictionary<string, Sprite> Schematics => _schematics;
 
     public static void LoadBaseStats(string json)
     {
-        _baseStats = JsonLoader.LoadDictionary<BaseStat>(
-            json,
-            row => row.ModuleID,
-            tableName: "BaseStats"
-        );
+        _baseStats.Clear();
+
+        foreach (var pair in JsonLoader.LoadDictionary<BaseStat>(
+                     json,
+                     row => row.ModuleID,
+                     "BaseStats"))
+        {
+            _baseStats.Add(pair.Key, pair.Value);
+        }
     }
 
     public static void LoadWeaponRangedStats(string json)
     {
-        _weaponRangedStats = JsonLoader.LoadDictionary<WeaponRangedStat>(
-            json,
-            row => row.ModuleID, 
-            tableName: "WeaponRangedStats"
-        );
-    }
-    public static void LoadSchematics(string resourcePath = "Schematics")
-    {
-        var textures = Resources.LoadAll<Texture2D>(resourcePath);
+        _weaponRangedStats.Clear();
 
-        _schematics = new Dictionary<string, Sprite>(textures.Length);
-
-        foreach (var tex in textures)
+        foreach (var pair in JsonLoader.LoadDictionary<WeaponRangedStat>(
+                     json,
+                     row => row.ModuleID,
+                     "WeaponRangedStats"))
         {
-            if (tex == null)
-                continue;
-
-            var sprite = Resources.Load<Sprite>($"{resourcePath}/{tex.name}");
-
-            if (sprite == null)
-            {
-                Debug.LogWarning($"[ModuleSpecDB] Failed to load sprite: {tex.name}");
-                continue;
-            }
-
-            _schematics[tex.name] = sprite; // 파일명 기반
+            _weaponRangedStats.Add(pair.Key, pair.Value);
         }
-
     }
 }

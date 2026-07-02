@@ -16,7 +16,6 @@ public static class ModuleSpecBootstrap
 
         TempLoad_BeforeScene(BaseStatPath, ModuleSpecDB.LoadBaseStats);
         TempLoad_BeforeScene(RangedWeaponPath, ModuleSpecDB.LoadWeaponRangedStats);
-        ModuleSpecDB.LoadSchematics();
 
         Debug.Log("ModuleSpecDB initialized before scene");
     }

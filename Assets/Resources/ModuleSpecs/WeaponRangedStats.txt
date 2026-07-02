@@ -1,6 +1,6 @@
-[
+﻿[
   {
-    "ModuleID": "301001",
+    "ModuleID": "gun_mk1",
     "FireType": "Projectile",
     "FireMode": "Single",
     "Damage": 20,
@@ -8,12 +8,12 @@
     "Interval": 1.0,
     "PreDelay": 2.0,
     "Accuracy": 0,
-    "ProjectileID": "Projectiles/Bullet",
+    "ProjectileID": "Basic",
     "PelletAmount": 0,
     "BurstInterval": 0.0
   },
   {
-    "ModuleID": "301002",
+    "ModuleID": "shotgun_mk1",
     "FireType": "Projectile",
     "FireMode": "Shotgun",
     "Damage": 20,
@@ -21,12 +21,12 @@
     "Interval": 1.0,
     "PreDelay": 2.0,
     "Accuracy": 30,
-    "ProjectileID": "Projectiles/Bullet",
+    "ProjectileID": "Basic",
     "PelletAmount": 5,
     "BurstInterval": 0.0
   },
   {
-    "ModuleID": "301003",
+    "ModuleID": "burst_mk1",
     "FireType": "Projectile",
     "FireMode": "Burst",
     "Damage": 10,
@@ -34,8 +34,8 @@
     "Interval": 1.0,
     "PreDelay": 2.0,
     "Accuracy": 20,
-    "ProjectileID": "Projectiles/Bullet",
+    "ProjectileID": "Basic",
     "PelletAmount": 3,
-    "BurstInterval": 0.1
+    "BurstInterval": 0.5
   }
 ]

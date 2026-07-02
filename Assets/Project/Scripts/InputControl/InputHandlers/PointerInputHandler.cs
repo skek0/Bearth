@@ -28,7 +28,9 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
 
     private void OnEnable()
     {
-        pointerControl = InputController.Instance.Actions.PointerControl;
+        //pointerControl = InputController.Instance.Actions.PointerControl;
+        pointerControl = new PlayerInputActions().PointerControl;
+        pointerControl.Enable();
 
         pointerControl.Select.performed += OnSelectStart;
         pointerControl.Select.canceled += OnSelectEnd;
@@ -36,6 +38,7 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
 
     private void OnDisable()
     {
+        pointerControl.Disable();
         pointerControl.Select.performed -= OnSelectStart;
         pointerControl.Select.canceled -= OnSelectEnd;
         

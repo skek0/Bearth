@@ -82,13 +82,11 @@ public static class SceneSaveLoad
             if (inAnyShip.Contains(m)) continue;
             if (m is CoreModule) continue;
 
-            if (m == null || string.IsNullOrWhiteSpace(m.TypeId))
                 Debug.LogError($"[SceneSave] TypeId missing/empty on {m.name}", m);
 
             scene.looseModules.Add(new WorldModuleSaveData
             {
                 guid = m.ModuleGuid.Guid,
-                typeId = m.TypeId ?? "",
                 moduleId = m.ModuleId,
                 worldPos = m.transform.position,
                 worldRotZ = m.transform.eulerAngles.z,

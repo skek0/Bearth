@@ -19,11 +19,6 @@ public class InfoPanel : MonoBehaviour
     {
         if(panellableObject.TryGetComponent<IModuleInfoSource>(out var moduleInfo))
         {
-            Sprite modulesprite = ModuleSpecDB.Schematics[moduleInfo.DisplayName];
-            if(modulesprite != null)
-            {
-                moduleImage.sprite = modulesprite;
-            }
 
             moduleName.text = moduleInfo.DisplayName;
             moduleHp.text = $"{moduleInfo.CurrentHp} / {moduleInfo.MaxHp}";

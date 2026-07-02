@@ -23,14 +23,12 @@ public static class ShipSaveLoad
             .ThenBy(m => m.name)
             .ToList();
 
-        // guid/typeId 보장
+        // guid 보장
         var guidByModule = new Dictionary<Module, string>(allModules.Count);
         foreach (var m in allModules)
         {
             var g = m.GetComponent<ModuleGuid>();
 
-            if (m == null || string.IsNullOrWhiteSpace(m.TypeId))
-                Debug.LogError($"[Save] ModuleTypeId missing/empty on {m.name}", m);
 
             guidByModule[m] = g.Guid;
         }
@@ -43,7 +41,6 @@ public static class ShipSaveLoad
         foreach (var m in allModules)
         {
             var guid = guidByModule[m];
-            var typeId = m.GetComponent<Module>()?.TypeId ?? "";
 
             Vector2 localPos = coreT.InverseTransformPoint(m.transform.position);
             float localRotZ = (Quaternion.Inverse(coreT.rotation) * m.transform.rotation).eulerAngles.z;
@@ -51,7 +48,6 @@ public static class ShipSaveLoad
             data.modules.Add(new ModuleSaveData
             {
                 guid = guid,
-                typeId = typeId,
                 moduleId = m.ModuleId,
                 localPos = localPos,
                 localRotZ = localRotZ,
