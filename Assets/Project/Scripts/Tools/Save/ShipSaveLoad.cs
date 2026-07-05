@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,24 +11,19 @@ public static class ShipSaveLoad
     {
         var data = new ShipSaveData();
 
-        // 코어 포함 전체 모듈 수집
         var allModules = core.GetComponentsInChildren<Module>(true).ToList();
         if (!allModules.Contains(core))
             allModules.Insert(0, core);
 
-        // 코어 먼저
         allModules = allModules
             .OrderByDescending(m => m is CoreModule)
             .ThenBy(m => m.name)
             .ToList();
 
-        // guid 보장
         var guidByModule = new Dictionary<Module, string>(allModules.Count);
         foreach (var m in allModules)
         {
             var g = m.GetComponent<ModuleGuid>();
-
-
             guidByModule[m] = g.Guid;
         }
 
@@ -37,7 +31,6 @@ public static class ShipSaveLoad
 
         var coreT = core.transform;
 
-        // modules 저장
         foreach (var m in allModules)
         {
             var guid = guidByModule[m];
@@ -56,7 +49,6 @@ public static class ShipSaveLoad
             });
         }
 
-        // links 저장: BaseModule 기준, AttachedTo 기반
         foreach (var m in allModules)
         {
             if (m is not BaseModule child) continue;
@@ -79,21 +71,20 @@ public static class ShipSaveLoad
     }
 
     // =========================
-    // LOAD
+    // LOAD (리스폰 지점 기준)
     // =========================
-    public static CoreModule LoadShipToFleetRoot(
-        Transform fleetRoot,
-        ShipInstanceSaveData shipInst,
-        IModulePrefabResolver resolver)
+    public static CoreModule LoadShipToRoot(
+        Transform root,
+        ShipSaveData data,
+        Vector3 spawnPos,
+        float spawnRotZ)
     {
-        var data = shipInst.ship;
         if (data == null || data.modules == null || data.modules.Count == 0)
         {
             Debug.LogError("[Load] ShipSaveData empty");
             return null;
         }
 
-        // 1) 코어 엔트리 찾기
         var coreEntry = data.modules.FirstOrDefault(m => m.guid == data.coreGuid);
         if (coreEntry == null)
         {
@@ -101,112 +92,86 @@ public static class ShipSaveLoad
             return null;
         }
 
-        // 2) 코어 스폰
-        var corePrefab = resolver.Resolve(coreEntry.typeId);
-        if (corePrefab == null)
+        var coreGo = ModuleMaker.CreateModule(coreEntry.moduleId);
+        if (coreGo == null)
         {
-            Debug.LogError($"[Load] Core prefab not found moduleId='{coreEntry.typeId}'");
+            Debug.LogError($"[Load] Failed to create core moduleId='{coreEntry.moduleId}'");
             return null;
         }
 
-        var coreGo = Object.Instantiate(corePrefab, fleetRoot);
         var core = coreGo.GetComponent<CoreModule>();
         if (core == null)
         {
-            Debug.LogError($"[Load] CoreModule missing on prefab moduleId='{coreEntry.typeId}'");
+            Debug.LogError($"[Load] CoreModule missing on created object moduleId='{coreEntry.moduleId}'");
             Object.Destroy(coreGo);
             return null;
         }
 
+        coreGo.transform.SetParent(root);
+
         if (!core.TryGetComponent<ModuleGuid>(out var coreGuid)) coreGuid = core.gameObject.AddComponent<ModuleGuid>();
         coreGuid.SetGuid(coreEntry.guid);
 
-        core.transform.SetPositionAndRotation(new Vector3(shipInst.worldPos.x, shipInst.worldPos.y, 0f), Quaternion.Euler(0, 0, shipInst.worldRotZ));
+        core.transform.SetPositionAndRotation(spawnPos, Quaternion.Euler(0, 0, spawnRotZ));
 
-        // 상태
         core.Hp = coreEntry.hp;
         core.Faction = coreEntry.faction;
-        core.SetModuleId(coreEntry.moduleId);
-        core.ApplyBaseStat(ModuleSpecDB.BaseStats[coreEntry.moduleId]);
 
+        CameraRebinder.BindTo(core.transform);
 
-        if (core.CompareTag("Player")) CameraRebinder.BindTo(core.transform);
-
-        // 3) 나머지 모듈 스폰
         var map = new Dictionary<string, Module>(data.modules.Count)
         {
             [coreEntry.guid] = core
         };
 
-        // physics off (로드 중 충돌/튜닝 방지)
         SetPhysicsEnabled(core.gameObject, false);
 
         foreach (var m in data.modules)
         {
             if (m.guid == data.coreGuid) continue;
 
-            var prefab = resolver.Resolve(m.typeId);
-            if (prefab == null)
+            var go = ModuleMaker.CreateModule(m.moduleId);
+            if (go == null)
             {
-                Debug.LogError($"[Load] Prefab not found moduleId='{m.typeId}'");
+                Debug.LogError($"[Load] Failed to create moduleId='{m.moduleId}'");
                 continue;
             }
 
-            var go = Object.Instantiate(prefab, fleetRoot);
             var module = go.GetComponent<Module>();
             if (module == null)
             {
-                Debug.LogError($"[Load] Module missing on prefab moduleId='{m.typeId}'");
+                Debug.LogError($"[Load] Module missing on created object moduleId='{m.moduleId}'");
                 Object.Destroy(go);
                 continue;
             }
 
-            // guid 주입
+            go.transform.SetParent(root);
+
             if (!module.TryGetComponent<ModuleGuid>(out var guid)) guid = module.gameObject.AddComponent<ModuleGuid>();
             guid.SetGuid(m.guid);
-            Debug.Log(m.guid);
 
-            // 코어 기준 로컬 -> 월드로 환산해서 임시 배치
             Vector3 worldPos = core.transform.TransformPoint(m.localPos);
             Quaternion worldRot = core.transform.rotation * Quaternion.Euler(0, 0, m.localRotZ);
-
             module.transform.SetPositionAndRotation(worldPos, worldRot);
 
             module.Hp = m.hp;
             module.Faction = m.faction;
-            module.SetModuleId(m.moduleId);
-            module.ApplyBaseStat(ModuleSpecDB.BaseStats[m.moduleId]);
 
             SetPhysicsEnabled(go, false);
 
             map[m.guid] = module;
         }
 
-        // 4) 링크 복원: 코어 -> 바깥 BFS (부모 먼저)
         RestoreLinksBfs(data, map);
 
-        // 5) physics on
         foreach (var kv in map)
             SetPhysicsEnabled(kv.Value.gameObject, true);
-        
-        core.StartCoroutine(Co());
-
-        IEnumerator Co()
-        {
-            yield return new WaitForFixedUpdate();
-            if (core == null) yield break;
-            if (core.Rigid == null) yield break;
-
-            core.Rigid.linearVelocity = shipInst.vel;
-            core.Rigid.angularVelocity = shipInst.angVel;
-        }
 
         return core;
     }
 
     private static void RestoreLinksBfs(ShipSaveData data, Dictionary<string, Module> map)
     {
-        // parentGuid -> children links
         var childrenByParent = new Dictionary<string, List<LinkSaveData>>();
         foreach (var link in data.links)
         {

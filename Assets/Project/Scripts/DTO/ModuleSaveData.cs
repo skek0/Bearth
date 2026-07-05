@@ -8,7 +8,7 @@ using UnityEngine;
 public class ShipSaveData
 {
     public int version = 1;
-    public string coreGuid;               // 코어 guid
+    public string coreGuid;
     public List<ModuleSaveData> modules = new();
     public List<LinkSaveData> links = new();
 }
@@ -17,7 +17,6 @@ public class ShipSaveData
 public class ModuleSaveData
 {
     public string guid;
-    public string typeId;
     public string moduleId;
 
     public Vector2 localPos;
@@ -25,17 +24,14 @@ public class ModuleSaveData
 
     public int hp;
     public FactionType faction;
-
-    public Vector2 vel;
-    public float angVel;
 }
 
 [Serializable]
 public class LinkSaveData
 {
-    public string childGuid;     // BaseModule
-    public string parentGuid;    // Module(코어 포함)
-    public string parentPortId;  // 부모 커넥터 portId
+    public string childGuid;
+    public string parentGuid;
+    public string parentPortId;
 }
 
 #endregion

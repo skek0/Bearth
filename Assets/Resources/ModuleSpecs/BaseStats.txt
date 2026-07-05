@@ -1,5 +1,15 @@
 ﻿[
   {
+    "ModuleId": "player_mk1",
+    "Mass": 5.0,
+    "MaxHp": 100,
+    "Price": 10,
+    "PrefabPath": "Module/Square11",
+    "ModuleType": "CoreModule",
+    "Components": null,
+    "Tags": null
+  },
+  {
     "ModuleId": "core_mk1",
     "Mass": 5.0,
     "MaxHp": 100,

@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(CoreWeapon))]
 public class CoreModule : Module
 {
     public event Action OnAttackCommand;

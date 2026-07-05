@@ -64,13 +64,11 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
     {
         //gameObject.layer = LayerMask.NameToLayer("Module");
         ModuleGuid = GetComponent<ModuleGuid>();
+        spriteRenderer = transform.Find("Skin").GetComponent<SpriteRenderer>();
     }
 
     protected virtual void Start()
     {
-        // 임시 주입 : 원래는 로드를 통한 주입
-        //ApplyBaseStat(ModuleSpecDB.BaseStats[ModuleId]);
-        spriteRenderer = transform.Find("Skin").GetComponent<SpriteRenderer>();
     }
 
     public void ApplyBaseStat(BaseStat s)

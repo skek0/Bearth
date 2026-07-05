@@ -15,18 +15,21 @@ public class ModuleMaker
         }
 
         // Core/Base 컴포넌트 추가
-        prefab = Object.Instantiate(prefab);
+        GameObject _prefab = Object.Instantiate(prefab);
         switch(baseStat.ModuleType)
         {
             case "CoreModule":
-                prefab.AddComponent<CoreModule>();
+                _prefab.AddComponent<CoreModule>();
                 break;
             case "BaseModule":
-                prefab.AddComponent<BaseModule>();
+                _prefab.AddComponent<BaseModule>();
+                break;
+            case "PlayerModule":
+                _prefab.AddComponent<PlayerModule>();
                 break;
             default:
                 Debug.LogError($"알 수 없는 모듈 타입입니다: {baseStat.ModuleType}");
-                Object.Destroy(prefab);
+                Object.Destroy(_prefab);
                 return null;
         }
 
@@ -44,16 +47,16 @@ public class ModuleMaker
                     Debug.LogError($"컴포넌트 타입을 찾을 수 없습니다: {componentName}");
                     continue;
                 }
-                prefab.AddComponent(componentType);
+                _prefab.AddComponent(componentType);
             }
         }
 
         // 스프라이트 설정
-        var spriteTransform = prefab.transform.Find("Skin");
+        var spriteTransform = _prefab.transform.Find("Skin");
         if (spriteTransform == null || !spriteTransform.TryGetComponent<SpriteRenderer>(out var spriteRenderer))
         {
             Debug.LogError($"스프라이트 렌더러를 찾을 수 없습니다: {baseStat.ModuleID}");
-            Object.Destroy(prefab);
+            Object.Destroy(_prefab);
             return null;
         }
         spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/" + baseStat.ModuleID);
@@ -69,9 +72,11 @@ public class ModuleMaker
             Debug.LogError("ModuleGlow 머티리얼을 찾을 수 없습니다.");
         }
         // 모듈 기본스탯 적용
-        Module module = prefab.GetComponent<Module>();
+        Module module = _prefab.GetComponent<Module>();
         module.ApplyBaseStat(baseStat);
 
-        return prefab;
+        _prefab.name = baseStat.ModuleID;
+
+        return _prefab;
     }
 }
