@@ -1,5 +1,8 @@
 using UnityEngine;
 
+
+[RequireComponent(typeof(PlayerMove))]
+[RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerModule : CoreModule, IPlayerControl
 {
     PlayerMove moveComponent;

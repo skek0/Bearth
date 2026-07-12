@@ -80,10 +80,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
 
     void OnDead(BaseModule _)
     {
-        fireController.StopAll();
-        attackable = false;
-        UnregisterFromCore();
-        fireController.OnDisable();
+        OnDetach(_, belongedCore);
     }
 
     void UnregisterFromCore()

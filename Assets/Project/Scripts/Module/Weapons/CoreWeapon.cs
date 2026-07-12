@@ -1,34 +1,36 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-
 
 public class CoreWeapon : MonoBehaviour
 {
-    Transform firePoint;
-    GameObject projectilePrefab;
-    List<ConnectorPort> frontConnectors = new();
+    [SerializeField] ConnectorPort frontConnector;
+    [SerializeField] Transform firePoint;
+    [SerializeField] GameObject projectile;
 
     RangedWeaponStat rangedStat = new();
-    IRangedBehavior rangedBehavior;
-    IFireBehavior fireBehavior;
+    IRangedBehavior rangedBehavior = new ProjectileFiring();
+    IFireBehavior fireBehavior = new SingleFire();
     RangedFireController fireController = new();
 
     CoreModule core;
 
-    void Awake()
+    private void Awake()
+    {
+        if (firePoint == null)
+        {
+            var t = transform.Find("FirePoint");
+            if (t != null) firePoint = t;
+        }
+    }
+    public void Initialize()
     {
         core = GetComponent<CoreModule>();
-
-        var t = transform.Find("FirePoint");
-        if (t != null) firePoint = t;
-
-        foreach (var port in GetComponentsInChildren<ConnectorPort>(true))
-            if (port.IsCoreWeaponPort) frontConnectors.Add(port);
+        core.OnAttackCommand += Attack;
+        if (frontConnector == null) frontConnector = FindFrontConnector();
+        InitWeapon();
     }
 
-    void Start() => Initialize();
 
-    void OnEnable() => core.OnAttackCommand += Attack;
     void OnDisable()
     {
         core.OnAttackCommand -= Attack;
@@ -44,12 +46,26 @@ public class CoreWeapon : MonoBehaviour
     bool IsFrontConnectorEmpty()
     {
         foreach (var m in core.ConnectedModules)
-            foreach (var front in frontConnectors)
-                if (m.AttachedParentPortId == front.PortId)
-                    return false;
+        {
+            if (m.AttachedParentPortId == frontConnector.PortId)
+                return false;
+        }
         return true;
     }
-    void Initialize()
+    private ConnectorPort FindFrontConnector()
+    {
+        foreach (Transform child in transform)
+        {
+            if (child.TryGetComponent<ConnectorPort>(out var port) && port.IsCoreWeaponPort)
+            {
+                return port;
+            }
+        }
+        Debug.LogWarning($"[CoreModule] IsCoreWeaponPort로 지정된 커넥터를 찾지 못했습니다: {name}", this);
+        return null;
+    }
+
+    void InitWeapon()
     {
         if (!ModuleSpecDB.WeaponRangedStats.TryGetValue(core.ModuleId, out var stat)) return;
 
@@ -72,7 +88,9 @@ public class CoreWeapon : MonoBehaviour
         rangedStat.interval = stat.Interval;
         rangedStat.preDelay = stat.PreDelay;
 
-        fireController.Bind(this, firePoint, rangedBehavior, rangedStat, projectilePrefab, core.ModuleGuid.Guid);
+        projectile = Resources.Load("Projectiles/" + stat.ProjectileID) as GameObject;
+
+        fireController.Bind(this, firePoint, rangedBehavior, rangedStat, projectile, core.ModuleGuid.Guid);
         fireController.OnEnable(true); // 항상 준비 상태 — 실제 발사 가능 여부는 Attack()에서 판정
     }
 }

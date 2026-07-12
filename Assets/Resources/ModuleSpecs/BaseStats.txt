@@ -1,18 +1,15 @@
 ﻿[
   {
-<<<<<<< Updated upstream
-=======
     "ModuleId": "player_mk1",
     "Mass": 5.0,
     "MaxHp": 100,
     "Price": 10,
-    "PrefabPath": "Module/Square11",
+    "PrefabPath": "Module/Core11",
     "ModuleType": "PlayerModule",
     "Components": null,
     "Tags": null
   },
   {
->>>>>>> Stashed changes
     "ModuleId": "core_mk1",
     "Mass": 5.0,
     "MaxHp": 100,
