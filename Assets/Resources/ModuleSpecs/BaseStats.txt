@@ -1,10 +1,23 @@
 ﻿[
   {
-    "ModuleId": "core_mk1",
+<<<<<<< Updated upstream
+=======
+    "ModuleId": "player_mk1",
     "Mass": 5.0,
     "MaxHp": 100,
     "Price": 10,
     "PrefabPath": "Module/Square11",
+    "ModuleType": "PlayerModule",
+    "Components": null,
+    "Tags": null
+  },
+  {
+>>>>>>> Stashed changes
+    "ModuleId": "core_mk1",
+    "Mass": 5.0,
+    "MaxHp": 100,
+    "Price": 10,
+    "PrefabPath": "Module/Core11",
     "ModuleType": "CoreModule",
     "Components": null,
     "Tags": null
@@ -24,7 +37,7 @@
     "Mass": 5.0,
     "MaxHp": 50,
     "Price": 10,
-    "PrefabPath": "Module/Square11",
+    "PrefabPath": "Module/Weapon11",
     "ModuleType": "BaseModule",
     "Components": "RangedWeapon",
     "Tags": null
@@ -34,7 +47,7 @@
     "Mass": 5.0,
     "MaxHp": 200,
     "Price": 10,
-    "PrefabPath": "Module/Square11",
+    "PrefabPath": "Module/Weapon11",
     "ModuleType": "BaseModule",
     "Components": "RangedWeapon",
     "Tags": null
@@ -44,7 +57,7 @@
     "Mass": 5.0,
     "MaxHp": 100,
     "Price": 10,
-    "PrefabPath": "Module/Square11",
+    "PrefabPath": "Module/Weapon11",
     "ModuleType": "BaseModule",
     "Components": "RangedWeapon",
     "Tags": null

@@ -7,7 +7,8 @@ public static class CameraRebinder
     {
         var cam = Object.FindFirstObjectByType<CinemachineCamera>();
         if (cam == null || followTarget == null)
-        { 
+        {
+            Debug.LogWarning("Camera or follow target is null. Cannot bind camera.");
             return;
         }
 

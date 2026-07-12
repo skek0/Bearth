@@ -280,6 +280,10 @@ PrefabInstance:
       propertyPath: portId
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: -8576974925921894147, guid: 6c28d619e12b777438f6e242d8539f78, type: 3}
+      propertyPath: isCoreWeaponPort
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 626485942792438493, guid: 6c28d619e12b777438f6e242d8539f78, type: 3}
       propertyPath: m_Name
       value: Receiver (3)

@@ -124,6 +124,8 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         rangedStat.interval = stat.Interval;
         rangedStat.preDelay = stat.PreDelay;
 
+        projectile = Resources.Load("Projectiles/" + stat.ProjectileID) as GameObject;
+
         fireController.Bind(
             this,
             firePoint,

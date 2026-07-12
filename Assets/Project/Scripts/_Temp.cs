@@ -11,5 +11,9 @@ public class Temp : MonoBehaviour
         ModuleMaker.CreateModule("shotgun_mk1");
 
         ModuleMaker.CreateModule("gun_mk1");
+
+        GameObject player = ModuleMaker.CreateModule("player_mk1");
+
+        CameraRebinder.BindTo(player.transform);
     }
 }

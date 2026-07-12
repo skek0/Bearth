@@ -1,5 +1,31 @@
 ﻿[
   {
+    "ModuleID": "player_mk1",
+    "FireType": "Projectile",
+    "FireMode": "Single",
+    "Damage": 10,
+    "Speed": 10.0,
+    "Interval": 1.0,
+    "PreDelay": 0.0,
+    "Accuracy": 10,
+    "ProjectileID": "Basic",
+    "PelletAmount": 0,
+    "BurstInterval": 0.0
+  },
+  {
+    "ModuleID": "core_mk1",
+    "FireType": "Projectile",
+    "FireMode": "Single",
+    "Damage": 10,
+    "Speed": 10.0,
+    "Interval": 1.0,
+    "PreDelay": 0.0,
+    "Accuracy": 10,
+    "ProjectileID": "Basic",
+    "PelletAmount": 0,
+    "BurstInterval": 0.0
+  },
+  {
     "ModuleID": "gun_mk1",
     "FireType": "Projectile",
     "FireMode": "Single",
