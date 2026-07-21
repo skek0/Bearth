@@ -37,7 +37,6 @@ public class CoreModule : Module
         {
             if (child.TryGetComponent<ConnectorPort>(out var port) && port.IsCoreWeaponPort)
             {
-                Debug.Log(child.name);
                 return child;
             }
         }

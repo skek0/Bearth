@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [System.Serializable]
-public class Rigidbody2DSettings
+public class ModuleRigidSettings
 {
     public float mass;
     public float gravityScale;
@@ -26,9 +26,9 @@ public class Rigidbody2DSettings
         //rb.constraints = constraints;
     }
 
-    public static Rigidbody2DSettings From(Rigidbody2D rb)
+    public static ModuleRigidSettings From(Rigidbody2D rb)
     {
-        return new Rigidbody2DSettings
+        return new ModuleRigidSettings
         {
             mass = rb.mass,
             gravityScale = rb.gravityScale,

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SaveController : MonoBehaviour
+public class SaveController : SceneSingleton<SaveController>
 {
     [SerializeField] Transform playerRoot;
     [SerializeField] Transform respawnPoint;

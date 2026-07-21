@@ -16,9 +16,7 @@ public static class SceneSaveLoad
         }
 
         var data = new PlayerSaveData { ship = ShipSaveLoad.SaveFromCore(playerCore) };
-        var json = JsonUtility.ToJson(data, true);
-
-        File.WriteAllText(path ?? DefaultPath, json);
+        File.WriteAllText(path ?? DefaultPath, JsonUtility.ToJson(data, true));
         Debug.Log($"[PlayerSave] Saved: {path ?? DefaultPath}");
     }
 
@@ -32,11 +30,10 @@ public static class SceneSaveLoad
             return;
         }
 
-        var json = File.ReadAllText(path);
-        var data = JsonUtility.FromJson<PlayerSaveData>(json);
+        var data = JsonUtility.FromJson<PlayerSaveData>(File.ReadAllText(path));
 
         ClearChildren(playerRoot);
-        ShipSaveLoad.LoadShipToRoot(playerRoot, data.ship, respawnPoint.position, respawnPoint.eulerAngles.z);
+        ShipSaveLoad.LoadShipToRoot(playerRoot, data.ship, respawnPoint.position);
 
         Debug.Log($"[PlayerLoad] Loaded: {path}");
     }

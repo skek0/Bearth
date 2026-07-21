@@ -22,10 +22,7 @@ public static class ShipSaveLoad
 
         var guidByModule = new Dictionary<Module, string>(allModules.Count);
         foreach (var m in allModules)
-        {
-            var g = m.GetComponent<ModuleGuid>();
-            guidByModule[m] = g.Guid;
-        }
+            guidByModule[m] = m.GetComponent<ModuleGuid>().Guid;
 
         data.coreGuid = guidByModule[core];
 
@@ -71,13 +68,12 @@ public static class ShipSaveLoad
     }
 
     // =========================
-    // LOAD (리스폰 지점 기준)
+    // LOAD (리스폰 지점 기준, ModuleMaker 경유)
     // =========================
     public static CoreModule LoadShipToRoot(
         Transform root,
         ShipSaveData data,
-        Vector3 spawnPos,
-        float spawnRotZ)
+        Vector3 spawnPos)
     {
         if (data == null || data.modules == null || data.modules.Count == 0)
         {
@@ -109,11 +105,8 @@ public static class ShipSaveLoad
 
         coreGo.transform.SetParent(root);
 
-        if (!core.TryGetComponent<ModuleGuid>(out var coreGuid)) coreGuid = core.gameObject.AddComponent<ModuleGuid>();
-        coreGuid.SetGuid(coreEntry.guid);
-
-        core.transform.SetPositionAndRotation(spawnPos, Quaternion.Euler(0, 0, spawnRotZ));
-
+        core.ModuleGuid.SetGuid(coreEntry.guid);
+        coreGo.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
         core.Hp = coreEntry.hp;
         core.Faction = coreEntry.faction;
 
@@ -146,9 +139,7 @@ public static class ShipSaveLoad
             }
 
             go.transform.SetParent(root);
-
-            if (!module.TryGetComponent<ModuleGuid>(out var guid)) guid = module.gameObject.AddComponent<ModuleGuid>();
-            guid.SetGuid(m.guid);
+            module.ModuleGuid.SetGuid(m.guid);
 
             Vector3 worldPos = core.transform.TransformPoint(m.localPos);
             Quaternion worldRot = core.transform.rotation * Quaternion.Euler(0, 0, m.localRotZ);
@@ -192,7 +183,6 @@ public static class ShipSaveLoad
             {
                 if (!map.TryGetValue(link.childGuid, out var childModule)) continue;
                 if (!map.TryGetValue(link.parentGuid, out var parentModule)) continue;
-
                 if (childModule is not BaseModule child) continue;
 
                 var parentConnector = FindConnectorByPortId(parentModule.transform, link.parentPortId);

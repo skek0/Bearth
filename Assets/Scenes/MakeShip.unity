@@ -151,7 +151,7 @@ MonoBehaviour:
   mainCam: {fileID: 792926952}
   layerMask:
     serializedVersion: 2
-    m_Bits: 96
+    m_Bits: 64
 --- !u!4 &57334571
 Transform:
   m_ObjectHideFlags: 0
@@ -909,7 +909,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1856960957}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &759777369
@@ -2219,6 +2220,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1620450552}
   m_CullTransparentMesh: 1
+--- !u!1 &1856960956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1856960957}
+  m_Layer: 0
+  m_Name: RespawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1856960957
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856960956}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 706016923}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1898969289
 GameObject:
   m_ObjectHideFlags: 0
@@ -2228,11 +2260,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1898969295}
-  - component: {fileID: 1898969294}
   - component: {fileID: 1898969293}
   - component: {fileID: 1898969292}
   - component: {fileID: 1898969290}
   - component: {fileID: 1898969291}
+  - component: {fileID: 1898969296}
   m_Layer: 0
   m_Name: GameControllers
   m_TagString: Untagged
@@ -2252,8 +2284,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3afdf7f7fb00a442aa7d4d3cb056301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveController
-  playerRoot: {fileID: 0}
-  respawnPoint: {fileID: 0}
+  playerRoot: {fileID: 759777370}
+  respawnPoint: {fileID: 1856960957}
 --- !u!114 &1898969291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2296,25 +2328,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ModuleSpecsLoader
   baseStatPath: ModuleSpecs/BaseStats
   rangedWeaponPath: ModuleSpecs/WeaponRangedStats
---- !u!114 &1898969294
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1898969289}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0d8577248ba03d4b957101607d5cbce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moduleDragSpeed: 10
-  Rigidbody2DSettings:
-    mass: 1
-    gravityScale: 0
-    drag: 0.2
-    angularDrag: 0.2
-  moduleTorqueOnExplosion: 1
 --- !u!4 &1898969295
 Transform:
   m_ObjectHideFlags: 0
@@ -2330,6 +2343,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1898969296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898969289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de012fd42ef5e6c49969916d7d3786b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameSettings
+  moduleDragSpeed: 10
+  Rigidbody2DSettings:
+    mass: 0
+    gravityScale: 0
+    drag: 0.2
+    angularDrag: 0.2
+  moduleTorqueOnExplosion: 10
+  ShipContainer: {fileID: 759777370}
+  ModuleContainer: {fileID: 2098846114}
 --- !u!1 &2098846112
 GameObject:
   m_ObjectHideFlags: 0
@@ -2378,14 +2412,14 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 792926957}
-  - {fileID: 1334018261}
+  - {fileID: 1254140075}
   - {fileID: 1898969295}
   - {fileID: 57334571}
+  - {fileID: 792926957}
+  - {fileID: 1334018261}
   - {fileID: 1277208551}
   - {fileID: 62661484}
   - {fileID: 1213684764}
-  - {fileID: 1254140075}
   - {fileID: 1169669649}
   - {fileID: 759777370}
   - {fileID: 2098846114}

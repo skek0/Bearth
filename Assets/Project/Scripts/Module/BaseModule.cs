@@ -49,8 +49,8 @@ public class BaseModule : Module, ISelectable
             senderTransform = transform.Find("Sender");
         }
 
-        dragSpeed = GameManager.Instance.moduleDragSpeed;
-        torqueOnExplosion = GameManager.Instance.moduleTorqueOnExplosion;
+        dragSpeed = GameSettings.Instance.moduleDragSpeed;
+        torqueOnExplosion = GameSettings.Instance.moduleTorqueOnExplosion;
     }
 
     private void FixedUpdate()
@@ -118,7 +118,7 @@ public class BaseModule : Module, ISelectable
         if (GetComponent<Rigidbody2D>() == null) // 독립 모듈이 아니었을경우
         {
             rigid = gameObject.AddComponent<Rigidbody2D>();
-            GameManager.Instance.Rigidbody2DSettings.ApplyTo(rigid);
+            GameSettings.Instance.Rigidbody2DSettings.ApplyTo(rigid);
             rigid.mass = mass;
         }
 

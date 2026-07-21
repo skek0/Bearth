@@ -9,6 +9,12 @@ public class SceneSaveData
     public List<ShipInstanceSaveData> ships = new();
     public List<WorldModuleSaveData> looseModules = new();
 }
+[Serializable]
+public class PlayerSaveData
+{
+    public int version = 1;
+    public ShipSaveData ship;
+}
 
 [Serializable]
 public class ShipInstanceSaveData

@@ -26,6 +26,7 @@ public class ModuleMaker
                 break;
             case "PlayerModule":
                 _prefab.AddComponent<PlayerModule>();
+                _prefab.tag = "Player";
                 break;
             default:
                 Debug.LogError($"알 수 없는 모듈 타입입니다: {baseStat.ModuleType}");
@@ -78,5 +79,11 @@ public class ModuleMaker
         _prefab.name = baseStat.ModuleID;
 
         return _prefab;
+    }
+    public static GameObject CreateModule(string moduleID, Transform parent)
+    {
+        GameObject module = CreateModule(moduleID);
+        module.transform.parent = parent;
+        return module;
     }
 }
