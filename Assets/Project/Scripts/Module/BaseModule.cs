@@ -30,7 +30,7 @@ public class BaseModule : Module, ISelectable
     public Transform SenderTransform => senderTransform;
     public IReadOnlyCollection<Collider2D> SelfColliders => selfColliders;
     private HashSet<Collider2D> selfColliders;
-
+    Rigidbody2D sourceRb;
     protected override void Awake()
     {
         base.Awake();
@@ -112,6 +112,8 @@ public class BaseModule : Module, ISelectable
     {
         attachedParentPortId = null;
 
+        sourceRb = BelongedCore != null ? BelongedCore.Rigid : null;
+
         if (BelongedCore != null)
             NotifyDetached();
 
@@ -119,7 +121,13 @@ public class BaseModule : Module, ISelectable
         {
             rigid = gameObject.AddComponent<Rigidbody2D>();
             GameSettings.Instance.Rigidbody2DSettings.ApplyTo(rigid);
-            rigid.mass = mass;
+
+            // 분리시 튕김 방지용으로 코어의 속도를 그대로 가져오기 - 효용성이 있는지 확인 필요
+            if (sourceRb != null)
+            {
+                rigid.linearVelocity = sourceRb.linearVelocity;
+                rigid.angularVelocity = sourceRb.angularVelocity;
+            }
         }
 
         connectable = false;
@@ -290,8 +298,8 @@ public class BaseModule : Module, ISelectable
 
         // 부모 모듈 연결 관계 반영 + 코어 확정
         var newCore = AddThisToAttachedModuleAndGetCore(parentConnector);
+        newCore.AddMass(mass);
         NotifyAttached(newCore);
-
 
         return true;
     }

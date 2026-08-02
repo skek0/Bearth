@@ -1997,9 +1997,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de012fd42ef5e6c49969916d7d3786b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  moduleDragSpeed: 7.5
+  moduleDragSpeed: 10
   Rigidbody2DSettings:
-    mass: 0
+    mass: 0.01
     gravityScale: 0
     drag: 0.2
     angularDrag: 0.2
@@ -2372,6 +2372,6 @@ SceneRoots:
   - {fileID: 123616385}
   - {fileID: 539559678}
   - {fileID: 414729077}
+  - {fileID: 270719430}
   - {fileID: 550824980}
   - {fileID: 848963041}
-  - {fileID: 270719430}

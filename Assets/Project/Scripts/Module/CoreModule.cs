@@ -23,6 +23,11 @@ public class CoreModule : Module
         var coreWeapon = gameObject.AddComponent<CoreWeapon>();
         coreWeapon.Initialize();
     }
+    public override void ApplyBaseStat(BaseStat s)
+     {
+         base.ApplyBaseStat(s);
+         rigid.mass = mass;
+     }
     public virtual void Attack()
     {
         OnAttackCommand?.Invoke();

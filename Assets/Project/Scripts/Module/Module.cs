@@ -71,7 +71,7 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
     {
     }
 
-    public void ApplyBaseStat(BaseStat s)
+    public virtual void ApplyBaseStat(BaseStat s)
     {
         moduleId = s.ModuleID;
         mass = s.Mass;
