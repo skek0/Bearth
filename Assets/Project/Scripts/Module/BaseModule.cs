@@ -128,6 +128,8 @@ public class BaseModule : Module, ISelectable
                 rigid.linearVelocity = sourceRb.linearVelocity;
                 rigid.angularVelocity = sourceRb.angularVelocity;
             }
+
+            rigid.mass = mass;
         }
 
         connectable = false;
