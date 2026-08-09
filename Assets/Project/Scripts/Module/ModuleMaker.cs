@@ -60,7 +60,15 @@ public class ModuleMaker
             Object.Destroy(_prefab);
             return null;
         }
+
         spriteRenderer.sprite = Resources.Load<Sprite>("Sprites/" + baseStat.ModuleID);
+
+        if (spriteRenderer.sprite == null)
+        {
+            Debug.LogError($"스프라이트를 찾을 수 없습니다: {baseStat.ModuleID}");
+            Object.Destroy(_prefab);
+            return null;
+        }
 
         // 머티리얼 설정
         Material glowMaterial = Resources.Load<Material>("Materials/ModuleGlow");

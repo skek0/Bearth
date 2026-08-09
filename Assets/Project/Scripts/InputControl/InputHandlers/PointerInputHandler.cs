@@ -28,8 +28,7 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
 
     private void OnEnable()
     {
-        //pointerControl = InputController.Instance.Actions.PointerControl;
-        pointerControl = new PlayerInputActions().PointerControl;
+        pointerControl = InputController.Instance.Actions.PointerControl;
         pointerControl.Enable();
 
         pointerControl.Select.performed += OnSelectStart;
@@ -64,7 +63,7 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
         IHoverable nextHover = null;
 
         if (col != null)
-            col.TryGetComponent<IHoverable>(out nextHover);
+            col.TryGetComponent(out nextHover);
 
         if (ReferenceEquals(currentHover, nextHover))
         {
