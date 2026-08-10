@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PointerInputHandler : SceneSingleton<PointerInputHandler>
@@ -53,6 +54,12 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
 
     private void UpdateHover()
     {
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            // UI 위에 마우스가 올라가있으면 hover 처리하지 않음
+            return;
+        }
+
         Vector2 screenPos = pointerControl.PointerPos.ReadValue<Vector2>();
 
         var sp = new Vector3(screenPos.x, screenPos.y, -mainCam.transform.position.z);
@@ -93,7 +100,9 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
 
     private void OnSelectStart(InputAction.CallbackContext ctx)
     {
-        ClearCurrentControl();
+        ClearCurrentControl(); 
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+
         dragging = false;
 
         if (mainCam == null) return;
