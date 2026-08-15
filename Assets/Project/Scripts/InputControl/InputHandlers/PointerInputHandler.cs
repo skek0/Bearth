@@ -14,8 +14,8 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
     public event Action<GameObject> HoverTargetChanged;
 
     private PlayerInputActions.PointerControlActions pointerControl;
-
     private bool dragging;
+    private bool selectRequested;
     private ISelectable controllingObj;
     private IHoverable currentHover;
 
@@ -43,6 +43,7 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
         pointerControl.Select.canceled -= OnSelectEnd;
         
         dragging = false;
+        selectRequested = false;
         ClearCurrentControl();
     }
 
@@ -50,6 +51,11 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
     {
         UpdateHover();
         UpdateDrag();
+        if (selectRequested)
+        {
+            selectRequested = false;
+            ProcessSelect();
+        }
     }
 
     private void UpdateHover()
@@ -57,6 +63,8 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
         if (EventSystem.current.IsPointerOverGameObject())
         {
             // UI 위에 마우스가 올라가있으면 hover 처리하지 않음
+            currentHover?.OnHoverExit();
+            currentHover = null;
             return;
         }
 
@@ -97,15 +105,21 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
         controllingObj.OnDrag(screenPos);
     }
 
-
     private void OnSelectStart(InputAction.CallbackContext ctx)
     {
-        ClearCurrentControl(); 
-        if (EventSystem.current.IsPointerOverGameObject()) return;
+        selectRequested = true;
+    }
+    private void ProcessSelect()
+    {
+        ClearCurrentControl();
+
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
 
         dragging = false;
 
-        if (mainCam == null) return;
+        if (mainCam == null)
+            return;
 
         Vector2 screenPos = pointerControl.PointerPos.ReadValue<Vector2>();
 
@@ -113,16 +127,18 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
         Vector2 worldPos = mainCam.ScreenToWorldPoint(sp);
 
         Collider2D col = Physics2D.OverlapPoint(worldPos, layerMask);
-        if (col == null) return;
 
-        if (!col.TryGetComponent<ISelectable>(out var selectable) || selectable == null)
+        if (col == null)
+            return;
+
+        if (!col.TryGetComponent<ISelectable>(out var selectable) ||
+            selectable == null)
             return;
 
         controllingObj = selectable;
 
         dragging = true;
         controllingObj.OnSelected();
-
     }
 
     private void OnSelectEnd(InputAction.CallbackContext ctx)
