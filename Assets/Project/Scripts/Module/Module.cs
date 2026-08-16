@@ -20,7 +20,7 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
 
     [Header("Temp Serialize")]
     [SerializeField]protected int maxHp = 1;
-    [SerializeField]protected int currentHp = 1;
+    [ReadOnly][SerializeField]protected int currentHp = 1;
     [SerializeField]protected SpriteRenderer spriteRenderer = null;
 
     /// <summary>For saves</summary>
