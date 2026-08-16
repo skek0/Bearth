@@ -142,4 +142,11 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
         return false;
     }
 
+    public void CancelSpawn()
+    {
+        if (spriteRenderer != null && spriteRenderer.material != null)
+            Destroy(spriteRenderer.material);
+
+        Destroy(gameObject);
+    }
 }

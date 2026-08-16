@@ -1,16 +1,14 @@
 using UnityEngine;
 
-public class ModuleSpecs : MonoBehaviour
+public static class ModuleSpecs
 {
-    [Header("Resources paths (no extension)")]
-    [SerializeField] private string baseStatPath = "ModuleSpecs/BaseStats";
-    [SerializeField] private string rangedWeaponPath = "ModuleSpecs/WeaponRangedStats";
+    private const string baseStatPath = "ModuleSpecs/BaseStats";
+    private const string rangedWeaponPath = "ModuleSpecs/WeaponRangedStats";
 
-    private void Awake()
+    public static void LoadSpecs()
     {
         Load(baseStatPath, ModuleSpecDB.LoadBaseStats);
         Load(rangedWeaponPath, ModuleSpecDB.LoadWeaponRangedStats);
-
     }
 
     private static void Load(string path, System.Action<string> load)
