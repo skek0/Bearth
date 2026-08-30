@@ -90,7 +90,7 @@ public class CoreWeapon : MonoBehaviour
 
         projectile = Resources.Load("Projectiles/" + stat.ProjectileID) as GameObject;
 
-        fireController.Bind(this, firePoint, rangedBehavior, rangedStat, projectile, core.ModuleGuid.Guid);
+        fireController.Bind(this, firePoint, rangedBehavior, rangedStat, projectile, core);
         fireController.OnEnable(true); // 항상 준비 상태 — 실제 발사 가능 여부는 Attack()에서 판정
     }
 }

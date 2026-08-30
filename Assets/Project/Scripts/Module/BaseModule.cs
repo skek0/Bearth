@@ -306,7 +306,7 @@ public class BaseModule : Module, ISelectable
         return true;
     }
 
-    private void EnsureLoadAttachInitialized()
+    public void EnsureLoadAttachInitialized()
     {
         if (senderTransform == null)
             senderTransform = transform.Find("Sender");

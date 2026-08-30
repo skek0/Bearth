@@ -8,7 +8,6 @@ using UnityEngine;
 public class ShipSaveData
 {
     public int version = 1;
-    public string coreGuid;
     public List<ModuleSaveData> modules = new();
     public List<LinkSaveData> links = new();
 }
@@ -16,21 +15,15 @@ public class ShipSaveData
 [Serializable]
 public class ModuleSaveData
 {
-    public string guid;
     public string moduleId;
-
-    public Vector2 localPos;
-    public float localRotZ;
-
-    public int hp;
     public FactionType faction;
 }
 
 [Serializable]
 public class LinkSaveData
 {
-    public string childGuid;
-    public string parentGuid;
+    public int childIndex;
+    public int parentIndex;
     public string parentPortId;
 }
 

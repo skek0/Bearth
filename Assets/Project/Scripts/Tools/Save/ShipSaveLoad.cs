@@ -4,9 +4,6 @@ using UnityEngine;
 
 public static class ShipSaveLoad
 {
-    // =========================
-    // SAVE (core 기준 로컬)
-    // =========================
     public static ShipSaveData SaveFromCore(CoreModule core)
     {
         var data = new ShipSaveData();
@@ -20,28 +17,17 @@ public static class ShipSaveLoad
             .ThenBy(m => m.name)
             .ToList();
 
-        var guidByModule = new Dictionary<Module, string>(allModules.Count);
-        foreach (var m in allModules)
-            guidByModule[m] = m.GetComponent<ModuleGuid>().Guid;
-
-        data.coreGuid = guidByModule[core];
+        var indexByModule = new Dictionary<Module, int>(allModules.Count);
+        for (int i = 0; i < allModules.Count; i++)
+            indexByModule[allModules[i]] = i;
 
         var coreT = core.transform;
 
         foreach (var m in allModules)
         {
-            var guid = guidByModule[m];
-
-            Vector2 localPos = coreT.InverseTransformPoint(m.transform.position);
-            float localRotZ = (Quaternion.Inverse(coreT.rotation) * m.transform.rotation).eulerAngles.z;
-
             data.modules.Add(new ModuleSaveData
             {
-                guid = guid,
                 moduleId = m.ModuleId,
-                localPos = localPos,
-                localRotZ = localRotZ,
-                hp = m.Hp,
                 faction = m.Faction,
             });
         }
@@ -58,8 +44,8 @@ public static class ShipSaveLoad
 
             data.links.Add(new LinkSaveData
             {
-                childGuid = child.GetComponent<ModuleGuid>().Guid,
-                parentGuid = guidByModule[parent],
+                childIndex = indexByModule[child],
+                parentIndex = indexByModule[parent],
                 parentPortId = portId
             });
         }
@@ -67,9 +53,6 @@ public static class ShipSaveLoad
         return data;
     }
 
-    // =========================
-    // LOAD (리스폰 지점 기준, ModuleMaker 경유)
-    // =========================
     public static CoreModule LoadShipToRoot(
         Transform root,
         ShipSaveData data,
@@ -81,12 +64,7 @@ public static class ShipSaveLoad
             return null;
         }
 
-        var coreEntry = data.modules.FirstOrDefault(m => m.guid == data.coreGuid);
-        if (coreEntry == null)
-        {
-            Debug.LogError("[Load] core entry missing");
-            return null;
-        }
+        var coreEntry = data.modules[0];
 
         var coreGo = ModuleMaker.CreateModule(coreEntry.moduleId);
         if (coreGo == null)
@@ -104,24 +82,19 @@ public static class ShipSaveLoad
         }
 
         coreGo.transform.SetParent(root);
-
-        core.ModuleGuid.SetGuid(coreEntry.guid);
-        coreGo.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
-        core.Hp = coreEntry.hp;
+        core.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
         core.Faction = coreEntry.faction;
 
         CameraRebinder.BindTo(core.transform);
 
-        var map = new Dictionary<string, Module>(data.modules.Count)
-        {
-            [coreEntry.guid] = core
-        };
+        var moduleByIndex = new Module[data.modules.Count];
+        moduleByIndex[0] = core;
 
         SetPhysicsEnabled(core.gameObject, false);
 
-        foreach (var m in data.modules)
+        for (int i = 1; i < data.modules.Count; i++)
         {
-            if (m.guid == data.coreGuid) continue;
+            var m = data.modules[i];
 
             var go = ModuleMaker.CreateModule(m.moduleId);
             if (go == null)
@@ -139,50 +112,45 @@ public static class ShipSaveLoad
             }
 
             go.transform.SetParent(root);
-            module.ModuleGuid.SetGuid(m.guid);
 
-            Vector3 worldPos = core.transform.TransformPoint(m.localPos);
-            Quaternion worldRot = core.transform.rotation * Quaternion.Euler(0, 0, m.localRotZ);
-            module.transform.SetPositionAndRotation(worldPos, worldRot);
-
-            module.Hp = m.hp;
             module.Faction = m.faction;
 
             SetPhysicsEnabled(go, false);
 
-            map[m.guid] = module;
+            moduleByIndex[i] = module;
         }
 
-        RestoreLinksBfs(data, map);
+        RestoreLinksBfs(data, moduleByIndex);
 
-        foreach (var kv in map)
-            SetPhysicsEnabled(kv.Value.gameObject, true);
+        foreach (var mod in moduleByIndex)
+            if (mod != null) SetPhysicsEnabled(mod.gameObject, true);
 
         return core;
     }
 
-    private static void RestoreLinksBfs(ShipSaveData data, Dictionary<string, Module> map)
+    private static void RestoreLinksBfs(ShipSaveData data, Module[] moduleByIndex)
     {
-        var childrenByParent = new Dictionary<string, List<LinkSaveData>>();
+        var childrenByParent = new Dictionary<int, List<LinkSaveData>>();
         foreach (var link in data.links)
         {
-            if (!childrenByParent.TryGetValue(link.parentGuid, out var list))
-                childrenByParent[link.parentGuid] = list = new List<LinkSaveData>();
+            if (!childrenByParent.TryGetValue(link.parentIndex, out var list))
+                childrenByParent[link.parentIndex] = list = new List<LinkSaveData>();
             list.Add(link);
         }
 
-        var q = new Queue<string>();
-        q.Enqueue(data.coreGuid);
+        var q = new Queue<int>();
+        q.Enqueue(0); // core는 항상 index 0
 
         while (q.Count > 0)
         {
-            var parentGuid = q.Dequeue();
-            if (!childrenByParent.TryGetValue(parentGuid, out var children)) continue;
+            var parentIndex = q.Dequeue();
+            if (!childrenByParent.TryGetValue(parentIndex, out var children)) continue;
 
             foreach (var link in children)
             {
-                if (!map.TryGetValue(link.childGuid, out var childModule)) continue;
-                if (!map.TryGetValue(link.parentGuid, out var parentModule)) continue;
+                var childModule = moduleByIndex[link.childIndex];
+                var parentModule = moduleByIndex[link.parentIndex];
+                if (childModule == null || parentModule == null) continue;
                 if (childModule is not BaseModule child) continue;
 
                 var parentConnector = FindConnectorByPortId(parentModule.transform, link.parentPortId);
@@ -193,7 +161,7 @@ public static class ShipSaveLoad
                 }
 
                 child.LoadAttach(parentConnector);
-                q.Enqueue(link.childGuid);
+                q.Enqueue(link.childIndex);
             }
         }
     }

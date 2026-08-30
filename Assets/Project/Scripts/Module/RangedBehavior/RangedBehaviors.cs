@@ -17,7 +17,7 @@ public class ProjectileFiring : IRangedBehavior
 
         if (obj.TryGetComponent<Bullet>(out var bullet))
         {
-            bullet.SetBulletInfo(ctx.FinalDamage, ctx.Stat.speed, ctx.ShooterGuid);
+            bullet.SetBulletInfo(ctx.FinalDamage, ctx.Stat.speed, ctx.Owner);
             obj.SetActive(true);
         }
         else

@@ -7,7 +7,7 @@ public readonly struct FireContext
     public readonly int FinalDamage;
     public readonly float ExtraAngleDeg;
     public readonly GameObject ProjectilePrefab;
-    public readonly string ShooterGuid;
+    public readonly Module Owner;
 
     public FireContext(
         Transform firePoint,
@@ -15,13 +15,13 @@ public readonly struct FireContext
         int finalDamage,
         float extraAngleDeg,
         GameObject projectilePrefab,
-        string shooterGuid)
+        Module owner)
     {
         FirePoint = firePoint;
         Stat = stat;
         FinalDamage = finalDamage;
         ExtraAngleDeg = extraAngleDeg;
         ProjectilePrefab = projectilePrefab;
-        ShooterGuid = shooterGuid;
+        Owner = owner;
     }
 }

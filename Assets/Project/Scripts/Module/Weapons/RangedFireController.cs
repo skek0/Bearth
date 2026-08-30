@@ -10,7 +10,7 @@ public class RangedFireController
     IRangedBehavior rangedBehavior;
     RangedWeaponStat stat;
     GameObject projectilePrefab;
-    string ownerGuid;
+    Module owner;
 
     bool isReady;
     Coroutine readyCo;
@@ -30,7 +30,7 @@ public class RangedFireController
         rangedBehavior != null &&
         stat != null &&
         projectilePrefab != null &&
-        !string.IsNullOrEmpty(ownerGuid);
+        owner != null;
 
     public void Bind(
         MonoBehaviour runner,
@@ -38,7 +38,7 @@ public class RangedFireController
         IRangedBehavior rangedBehavior,
         RangedWeaponStat stat,
         GameObject projectilePrefab,
-        string ownerGuid
+        Module owner
     )
     {
         this.runner = runner;
@@ -46,7 +46,7 @@ public class RangedFireController
         this.rangedBehavior = rangedBehavior;
         this.stat = stat;
         this.projectilePrefab = projectilePrefab;
-        this.ownerGuid = ownerGuid;
+        this.owner = owner;
 
         // Bind가 늦게 들어온 경우: 이전 enable 요청을 반영
         if (enableRequested)
@@ -134,7 +134,7 @@ public class RangedFireController
                 stat.damage,
                 shots[i].angleDeg,
                 projectilePrefab,
-                ownerGuid
+                owner
             );
 
             rangedBehavior.Fire(ctx);

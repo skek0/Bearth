@@ -129,7 +129,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
             rangedBehavior,
             rangedStat,
             projectile,
-            module.ModuleGuid.Guid
+            module
             );
     }
 }

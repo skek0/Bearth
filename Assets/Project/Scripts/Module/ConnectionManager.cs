@@ -137,6 +137,7 @@ public class ConnectionManager : MonoBehaviour
 
         return true;
     }
+    public bool CanPlaceAt(BaseModule module, Transform connector) => HasEnoughPlace(module, connector);
 
     private bool HasBlockingCollider(BaseModule module, int count)
     {

@@ -17,14 +17,12 @@ public class Bullet : MonoBehaviour
     TrailEmitter trailEmitter;  // 충돌 후 이펙트 삭제되는 문제로 궤적을 따로 둠
     bool returned;
     Vector2 prevPos;
-
-    string ownerGuid = "";
-
-    public void SetBulletInfo(int damage, float speed, string guid)
+    Module owner;
+    public void SetBulletInfo(int damage, float speed, Module owner)
     {
         this.damage = damage;
         this.speed = speed;
-        this.ownerGuid = guid;
+        this.owner = owner;
     }
 
     private void Update()
@@ -66,15 +64,8 @@ public class Bullet : MonoBehaviour
 
     private bool ShouldIgnoreHit(Collider2D col)
     {
-        if (string.IsNullOrEmpty(ownerGuid))
-            return false;
-
-        // ModuleGuid를 직접 찍는게 가장 안전/가벼움 (Module GetComponent NRE 방지)
-        if (col.TryGetComponent(out ModuleGuid mg) && mg.Guid == ownerGuid)
-            return true;
-
-
-        return false;
+        if (owner == null) return false;
+        return col.TryGetComponent(out Module m) && m == owner;
     }
 
     private void HandleDamageHit(IDamageable damageable, Vector2 hitPoint, Vector2 fromPos)

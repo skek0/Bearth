@@ -4,14 +4,14 @@ using UnityEngine.EventSystems;
 public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
     [SerializeField] string id;
-    [SerializeField] Transform cancelZone; // 여기 위에서 손을 떼면 생성 취소
+    static Transform cancelZone; // 여기 위에서 손을 떼면 생성 취소
 
-    BaseModule spawnedModule;
+    BaseModule spawnedBaseModule;
 
     public void Initialize(string moduleId, Transform cancelZone)
     {
         id = moduleId;
-        this.cancelZone = cancelZone;
+        UIModule.cancelZone = cancelZone; // this.cancelZone -> 타입 이름으로 변경
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -19,7 +19,14 @@ public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
         GameObject go = ModuleMaker.CreateModule(id);
         if (go == null) return;
 
-        if (!go.TryGetComponent<BaseModule>(out spawnedModule))
+        if (go.TryGetComponent<CoreModule>(out _))
+        {
+            go.transform.SetParent(ShipContainer.Instance.transform);
+            go.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            return;
+        }
+
+        if (!go.TryGetComponent<BaseModule>(out spawnedBaseModule))
         {
             Debug.LogError($"[UIModule] '{id}'는 BaseModule이 아니라 드래그 배치를 지원하지 않습니다.");
             Destroy(go);
@@ -32,28 +39,28 @@ public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
         worldPos.z = 0f;
         go.transform.position = worldPos;
 
-        spawnedModule.OnSelected();
+        spawnedBaseModule.OnSelected();
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        spawnedModule?.OnDrag(eventData.position);
+        spawnedBaseModule?.OnDrag(eventData.position);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (spawnedModule == null) return;
+        if (spawnedBaseModule == null) return;
 
         if (IsOverCancelZone(eventData))
         {
-            spawnedModule.CancelSpawn();
+            spawnedBaseModule.CancelSpawn();
         }
         else
         {
-            spawnedModule.OnDeselected();
+            spawnedBaseModule.OnDeselected();
         }
 
-        spawnedModule = null;
+        spawnedBaseModule = null;
     }
 
     bool IsOverCancelZone(PointerEventData eventData)

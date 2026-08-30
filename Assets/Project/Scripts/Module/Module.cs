@@ -9,7 +9,6 @@ public enum FactionType
     Mine
 }
 
-[RequireComponent(typeof(ModuleGuid))]
 public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleInfoSource
 {
     protected bool connectable = false;
@@ -49,7 +48,6 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
 
     public IReadOnlyList<BaseModule> ConnectedModules => connectedModules;
     public bool Connectable => connectable;
-    public ModuleGuid ModuleGuid { get; private set; }
     public string ModuleId => moduleId;
 
     public string DisplayName => moduleId;
@@ -59,11 +57,11 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
     public int MaxHp => maxHp;
 
     HashSet<string> tags;
+    public IReadOnlyCollection<string> Tags => tags ??= new HashSet<string>();
     public void SetModuleId(string id) => moduleId = id;
     protected virtual void Awake()
     {
         //gameObject.layer = LayerMask.NameToLayer("Module");
-        ModuleGuid = GetComponent<ModuleGuid>();
         spriteRenderer = transform.Find("Skin").GetComponent<SpriteRenderer>();
     }
 
@@ -76,6 +74,7 @@ public abstract class Module : MonoBehaviour, IDamageable, IHoverable, IModuleIn
         moduleId = s.ModuleID;
         mass = s.Mass;
         maxHp = s.MaxHp;
+        currentHp = maxHp;
         tags = SplitToHashset(s.Tags);
     }
 
