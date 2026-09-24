@@ -13,9 +13,8 @@ public static class SceneSaveLoad
             Debug.LogError("[PlayerSave] Player core not found.");
             return;
         }
-
-        var data = new PlayerSaveData { ship = ShipSaveLoad.SaveFromCore(playerCore) };
-        File.WriteAllText(path ?? DefaultPath, JsonUtility.ToJson(data, true));
+        var ship = ShipSaveLoad.SaveFromCore(playerCore);
+        File.WriteAllText(path ?? DefaultPath, JsonUtility.ToJson(ship, true));
         Debug.Log($"[PlayerSave] Saved: {path ?? DefaultPath}");
     }
 
@@ -29,10 +28,9 @@ public static class SceneSaveLoad
             return;
         }
 
-        var data = JsonUtility.FromJson<PlayerSaveData>(File.ReadAllText(path));
-
-        ClearChildren(playerRoot);
-        ShipSaveLoad.LoadShipToRoot(playerRoot, data.ship, respawnPoint.position);
+        var ship = JsonUtility.FromJson<ShipSaveData>(File.ReadAllText(path));
+        ClearChildren(playerRoot); 
+        ShipSaveLoad.LoadShipToRoot(playerRoot, ship, respawnPoint.position);
 
         Debug.Log($"[PlayerLoad] Loaded: {path}");
     }
@@ -45,21 +43,24 @@ public static class SceneSaveLoad
     public static void Save1ShipToFile(string shipId)
     {
         var cores = GameObject.FindObjectsByType<CoreModule>(FindObjectsSortMode.None);
-        if (cores.Length == 0)
+        if (cores.Length != 1)
         {
-            Debug.LogError("[PlayerSave] CoreModule not found.");
+            Debug.LogError("CoreModule not found.");
             return;
         }
 
-        if (cores.Length > 1)
+        if (cores[0] is PlayerModule)
         {
-            Debug.LogError($"[PlayerSave] Multiple CoreModules found. Count: {cores.Length}");
+            Debug.LogError("[ShipEditor] 이 함수는 적 함선 전용입니다. 플레이어 함선은 저장 대상이 아닙니다.");
             return;
         }
 
-        var data = new PlayerSaveData { ship = ShipSaveLoad.SaveFromCore(cores[0]) };
-        string savePath = Path.Combine(Application.persistentDataPath, $"{shipId}.json");
-        File.WriteAllText(savePath, JsonUtility.ToJson(data, true));
+        string savePath = Path.Combine(Application.dataPath, "Resources", "Enemies", $"{shipId}.json");
+
+        Directory.CreateDirectory(Path.GetDirectoryName(savePath));
+
+        var ship = ShipSaveLoad.SaveFromCore(cores[0]);
+        File.WriteAllText(savePath, JsonUtility.ToJson(ship, true));
 
         Debug.Log($"[PlayerSave] Saved: {savePath}");
     }
