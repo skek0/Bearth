@@ -12,8 +12,11 @@ public class Enemy : MonoBehaviour
         ai = GetComponent<EnemyAI>();
     }
 
+    public void SetTarget(GameObject target) => player = target;
+
     private void Update()
     {
+        if (player == null || ai == null) return;
         ai.UpdateAI(new EnemyContext(player));
     }
 }

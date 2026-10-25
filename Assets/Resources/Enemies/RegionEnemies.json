@@ -1,0 +1,10 @@
+[
+    {
+        "RegionId": "Default",
+        "Enemies": [
+            { "ShipId": "gun_mk1", "Weight": 3 },
+            { "ShipId": "shotgun_mk1", "Weight": 2 },
+            { "ShipId": "tank", "Weight": 1 }
+        ]
+    }
+]

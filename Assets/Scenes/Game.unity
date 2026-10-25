@@ -265,6 +265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 123616385}
+  - component: {fileID: 123616386}
   m_Layer: 0
   m_Name: ShipContainer
   m_TagString: Untagged
@@ -287,6 +288,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &123616386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 123616384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26d281261b892d749aef4b870b776d80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShipContainer
 --- !u!1 &213116287
 GameObject:
   m_ObjectHideFlags: 0
@@ -3710,6 +3723,7 @@ GameObject:
   - component: {fileID: 2038278687}
   - component: {fileID: 2038278686}
   - component: {fileID: 2038278689}
+  - component: {fileID: 2038278691}
   m_Layer: 0
   m_Name: GameControllers
   m_TagString: Untagged
@@ -3774,7 +3788,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SaveController
   playerRoot: {fileID: 123616385}
   respawnPoint: {fileID: 270719430}
-  shipId: {fileID: 775745144}
 --- !u!114 &2038278689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3808,6 +3821,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbaf61a1763607e4590d0a3db7f2ec28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameController
+--- !u!114 &2038278691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038278680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76a92ad8385c4e349b184616f540f708, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  spawnInterval: 2
+  maxEnemyCount: 20
+  currentEnemyCount: 0
+  shipIdPool: []
 --- !u!1 &2038443617
 GameObject:
   m_ObjectHideFlags: 0

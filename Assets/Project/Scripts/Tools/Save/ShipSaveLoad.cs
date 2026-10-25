@@ -85,8 +85,6 @@ public static class ShipSaveLoad
         core.transform.SetPositionAndRotation(spawnPos, Quaternion.identity);
         core.Faction = coreEntry.faction;
 
-        CameraRebinder.BindTo(core.transform);
-
         var moduleByIndex = new Module[data.modules.Count];
         moduleByIndex[0] = core;
 

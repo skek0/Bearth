@@ -42,38 +42,36 @@ public class GameController : SceneSingleton<GameController>
     protected override void Awake()
     {
         base.Awake();
-        ModuleSpecs.LoadSpecs();
+        GameData.Initialize();
     }
     private void Start()
     {
         SaveController.Instance.Load();
-        EnableEnemySpawner();
+        CameraRebinder.BindTo(FindAnyObjectByType<PlayerModule>().transform);
 
-        Gamestate = GameState.Playing;
+        EnemySpawner.Instance.enabled = true;
+        //Gamestate = GameState.Playing;
     }
 
-    public void TogglePause()
-    {
-        if (gameState == GameState.GameOver) return;
+    //public void TogglePause()
+    //{
+    //    if (gameState == GameState.GameOver) return;
 
-        Gamestate = gameState == GameState.Playing
-            ? GameState.Paused
-            : GameState.Playing;
-    }
+    //    Gamestate = gameState == GameState.Playing
+    //        ? GameState.Paused
+    //        : GameState.Playing;
+    //}
 
-    public void Pause()
-    {
-        if (gameState == GameState.Playing)
-            Gamestate = GameState.Paused;
-    }
+    //public void Pause()
+    //{
+    //    if (gameState == GameState.Playing)
+    //        Gamestate = GameState.Paused;
+    //}
 
-    public void Resume()
-    {
-        if (gameState == GameState.Paused)
-            Gamestate = GameState.Playing;
-    }
+    //public void Resume()
+    //{
+    //    if (gameState == GameState.Paused)
+    //        Gamestate = GameState.Playing;
+    //}
 
-    private void EnableEnemySpawner()
-    {
-    }
 }

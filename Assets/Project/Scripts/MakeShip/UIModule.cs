@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
+public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler, IPointerEnterHandler
 {
     [SerializeField] string id;
     static Transform cancelZone; // 여기 위에서 손을 떼면 생성 취소
@@ -62,6 +62,10 @@ public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
 
         spawnedBaseModule = null;
     }
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        Debug.Log(gameObject.name);
+    }
 
     bool IsOverCancelZone(PointerEventData eventData)
     {
@@ -71,4 +75,5 @@ public class UIModule : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
         var hit = raycast.gameObject;
         return hit != null && cancelZone != null && hit.transform.IsChildOf(cancelZone);
     }
+
 }

@@ -15,6 +15,8 @@ public class MakeShip : SceneSingleton<MakeShip>
     {
         foreach (var modulestat in ModuleSpecDB.BaseStats)
         {
+            if(modulestat.Value.ModuleType == "PlayerModule")
+                continue;
             GameObject uiObj = new(modulestat.Key);
 
             UIModule uimodule = uiObj.AddComponent<UIModule>();
@@ -27,4 +29,8 @@ public class MakeShip : SceneSingleton<MakeShip>
         }
     }
 
+    public void ConfirmSaveShip()
+    {
+
+    }
 }

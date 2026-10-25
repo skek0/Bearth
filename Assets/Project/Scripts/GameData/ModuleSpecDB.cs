@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-[Serializable]
-public class BaseStatRoot
-{
-    public List<BaseStat> BaseStats;    // json RootKey
-}
 /// <summary>
 /// ModuleID, TypeID, Type, Tier, Rarity, Mass, MaxHp, Price, PrefabPath
 /// </summary>
@@ -24,13 +19,6 @@ public class BaseStat
     public string Components;
     public string Tags;
 }
-
-[Serializable]
-public class RangedWeaponSpecRoot 
-{
-    public List<WeaponRangedStat> RangedWeaponStats;
-}
-
 /// <summary>
 /// ModuleID, FireType, FireMode, Damage, Speed, Interval, Predelay, Accuracy, Penetration, ProjectileID
 /// </summary>
@@ -62,6 +50,8 @@ public class ProjectileInfo
 
 public static class ModuleSpecDB
 {
+    public const string baseStatPath = "ModuleSpecs/BaseStats";
+    public const string rangedWeaponPath = "ModuleSpecs/WeaponRangedStats";
     private static Dictionary<string, BaseStat> _baseStats = new();
     private static Dictionary<string, WeaponRangedStat> _weaponRangedStats = new();
 
@@ -69,29 +59,28 @@ public static class ModuleSpecDB
     public static IReadOnlyDictionary<string, BaseStat> BaseStats => _baseStats;
     public static IReadOnlyDictionary<string, WeaponRangedStat> WeaponRangedStats => _weaponRangedStats;
 
-    public static void LoadBaseStats(string json)
+    public static void Load()
+    {
+        LoadBaseStats();
+        LoadWeaponRangedStats();
+    }
+    public static void LoadBaseStats()
     {
         _baseStats.Clear();
 
-        foreach (var pair in JsonLoader.LoadDictionary<BaseStat>(
-                     json,
-                     row => row.ModuleID,
-                     "BaseStats"))
+        foreach( var stat in JsonLoader.LoadFromResources<BaseStat>(baseStatPath) )
         {
-            _baseStats.Add(pair.Key, pair.Value);
+            _baseStats.Add(stat.ModuleID, stat);
         }
     }
 
-    public static void LoadWeaponRangedStats(string json)
+    public static void LoadWeaponRangedStats()
     {
         _weaponRangedStats.Clear();
 
-        foreach (var pair in JsonLoader.LoadDictionary<WeaponRangedStat>(
-                     json,
-                     row => row.ModuleID,
-                     "WeaponRangedStats"))
+        foreach (var stat in JsonLoader.LoadFromResources<WeaponRangedStat>(rangedWeaponPath))
         {
-            _weaponRangedStats.Add(pair.Key, pair.Value);
+            _weaponRangedStats.Add(stat.ModuleID, stat);
         }
     }
 }

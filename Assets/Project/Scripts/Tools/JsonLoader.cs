@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -51,5 +52,31 @@ public static class JsonLoader
         }
 
         return dict;
+    }
+    // Resources 폴더에서 로드 (확장자 제외 경로)
+    public static List<T> LoadFromResources<T>(string path)
+    {
+        var textAsset = Resources.Load<TextAsset>(path);
+        if (textAsset == null)
+            throw new FileNotFoundException($"[JsonLoader] Resources not found: {path}");
+
+        try
+        {
+            return JsonConvert.DeserializeObject<List<T>>(textAsset.text);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"[JsonLoader] {path}: deserialize failed: {e.Message}", e);
+        }
+    }
+    public static string LoadText(string resourcePath)
+    {
+        var ta = Resources.Load<TextAsset>(resourcePath);
+        if (ta == null)
+        {
+            Debug.LogError($"[JsonLoader] Asset not found: Resources/{resourcePath}.json");
+            return null;
+        }
+        return ta.text;
     }
 }

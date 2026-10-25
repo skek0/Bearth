@@ -6,9 +6,8 @@ public class SaveController : SceneSingleton<SaveController>
 {
     [SerializeField] Transform playerRoot;
     [SerializeField] Transform respawnPoint;
-    [SerializeField] TextMeshProUGUI shipId;
 
-    public void Save() => SceneSaveLoad.SaveToFile();
-    public void Load() => SceneSaveLoad.LoadFromFile(playerRoot, respawnPoint);
-    public void SaveShip() => SceneSaveLoad.Save1ShipToFile(shipId.text);
+    public void Save() => SceneSaveLoad.SavePlayerShip();
+    public void Load() => SceneSaveLoad.LoadPlayerShip(playerRoot, respawnPoint);
+    public void SaveShip() => SceneSaveLoad.Save1EnemyShip();
 }

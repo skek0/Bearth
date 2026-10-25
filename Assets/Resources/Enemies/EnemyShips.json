@@ -1,0 +1,43 @@
+[
+    {
+        "ShipId": "gun_mk1",
+        "Data": {
+            "version": 1,
+            "modules": [
+                { "moduleId": "core_mk1", "faction": 1 },
+                { "moduleId": "gun_mk1", "faction": 1 }
+            ],
+            "links": [
+                { "childIndex": 1, "parentIndex": 0, "parentPortId": "4" }
+            ]
+        }
+    },
+    {
+        "ShipId": "shotgun_mk1",
+        "Data": {
+            "version": 1,
+            "modules": [
+                { "moduleId": "core_mk1", "faction": 1 },
+                { "moduleId": "shotgun_mk1", "faction": 1 }
+            ],
+            "links": [
+                { "childIndex": 1, "parentIndex": 0, "parentPortId": "4" }
+            ]
+        }
+    },
+    {
+        "ShipId": "tank",
+        "Data": {
+            "version": 1,
+            "modules": [
+                { "moduleId": "core_mk1", "faction": 1 },
+                { "moduleId": "beam_mk1", "faction": 1 },
+                { "moduleId": "beam_mk1", "faction": 1 }
+            ],
+            "links": [
+                { "childIndex": 1, "parentIndex": 0, "parentPortId": "3" },
+                { "childIndex": 2, "parentIndex": 0, "parentPortId": "1" }
+            ]
+        }
+    }
+]
