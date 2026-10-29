@@ -37,6 +37,7 @@ public static class SceneSaveLoad
 
         Debug.Log($"[PlayerLoad] Loaded: {path}");
     }
+    #region 적 함선 저장
     public static void Save1EnemyShip()
     {
         var cores = GameObject.FindObjectsByType<CoreModule>(FindObjectsSortMode.None);
@@ -76,17 +77,17 @@ public static class SceneSaveLoad
             return;
         }
 
-        string savePath = ShipSpecDB.FilePath;
+        string savePath = Path.Combine(Application.dataPath, "Resources", EnemyShipDB.ResourcePath + ".json");
         Directory.CreateDirectory(Path.GetDirectoryName(savePath));
 
         // 기존 파일 읽기 (파싱 실패 시 덮어쓰지 않고 중단)
-        var entries = new List<ShipEntry>();
+        var entries = new List<EnemyShipEntry>();
         if (File.Exists(savePath))
         {
             try
             {
-                entries = JsonConvert.DeserializeObject<List<ShipEntry>>(File.ReadAllText(savePath))
-                          ?? new List<ShipEntry>();
+                entries = JsonConvert.DeserializeObject<List<EnemyShipEntry>>(File.ReadAllText(savePath))
+                          ?? new List<EnemyShipEntry>();
             }
             catch (Exception e)
             {
@@ -95,7 +96,7 @@ public static class SceneSaveLoad
             }
         }
 
-        var entry = new ShipEntry
+        var entry = new EnemyShipEntry
         {
             ShipId = shipId,
             Data = ShipSaveLoad.SaveFromCore(core)
@@ -122,4 +123,5 @@ public static class SceneSaveLoad
         for (int i = root.childCount - 1; i >= 0; i--)
             UnityEngine.Object.Destroy(root.GetChild(i).gameObject);
     }
+    #endregion
 }

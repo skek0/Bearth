@@ -10,7 +10,7 @@ public static class GameData
         initialized = true;
 
         ModuleSpecDB.Load();
-        ShipSpecDB.Load();
+        EnemyShipDB.Load();
         RegionSpecDB.Load();
 
         Validate();
@@ -19,7 +19,7 @@ public static class GameData
     private static void Validate()
     {
         // 함선 → 모듈 ID 검증
-        foreach (var ship in ShipSpecDB.Ships)
+        foreach (var ship in EnemyShipDB.Ships)
         {
             foreach (var m in ship.Value.modules)
             {
@@ -35,7 +35,7 @@ public static class GameData
 
             foreach (var e in region.Value.Enemies)
             {
-                if (!ShipSpecDB.Contains(e.ShipId))
+                if (!EnemyShipDB.Contains(e.ShipId))
                     Debug.LogError($"[GameDB] Region '{region.Key}': unknown shipId '{e.ShipId}'");
                 if (e.Weight <= 0)
                     Debug.LogError($"[GameDB] Region '{region.Key}': invalid weight for '{e.ShipId}'");

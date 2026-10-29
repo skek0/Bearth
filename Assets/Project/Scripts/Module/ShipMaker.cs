@@ -7,7 +7,7 @@ public class ShipMaker
 
     public static GameObject CreateShip(string shipId, Vector2 spawnPos)
     {
-        if (!ShipSpecDB.TryGetShip(shipId, out var data))
+        if (!EnemyShipDB.TryGetShip(shipId, out var data))
         {
             Debug.LogError($"[ShipMaker] Unknown shipId: {shipId}");
             return null;
