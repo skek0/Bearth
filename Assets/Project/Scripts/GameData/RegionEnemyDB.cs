@@ -13,6 +13,9 @@ public class RegionEnemyEntry
 public class RegionStat
 {
     public string RegionId;
+    public float MinDistance;   // 이 지역이 시작되는 원점 거리
+    public float Margin;        // 안쪽 지역으로 돌아갈 때 필요한 여유 구간
+    public int MaxEnemyCount;   // 이 지역에서 동시에 유지할 최대 적 수
     public List<RegionEnemyEntry> Enemies;
 }
 

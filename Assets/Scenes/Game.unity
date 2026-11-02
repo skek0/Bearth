@@ -3724,6 +3724,7 @@ GameObject:
   - component: {fileID: 2038278686}
   - component: {fileID: 2038278689}
   - component: {fileID: 2038278691}
+  - component: {fileID: 2038278692}
   m_Layer: 0
   m_Name: GameControllers
   m_TagString: Untagged
@@ -3837,6 +3838,19 @@ MonoBehaviour:
   maxEnemyCount: 20
   currentEnemyCount: 0
   shipIdPool: []
+--- !u!114 &2038278692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2038278680}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1413c598e4cf2e4b9bec165cd8a9472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RegionManager
+  checkInterval: 0.25
 --- !u!1 &2038443617
 GameObject:
   m_ObjectHideFlags: 0

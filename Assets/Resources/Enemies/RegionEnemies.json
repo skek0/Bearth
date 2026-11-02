@@ -1,6 +1,18 @@
 [
     {
         "RegionId": "Default",
+        "MinDistance": 0,
+        "Margin": 0,
+        "MaxEnemyCount": 3,
+        "Enemies": [
+            { "ShipId": "gun_mk1", "Weight": 3 }
+        ]
+    },
+    {
+        "RegionId": "Inner",
+        "MinDistance": 200,
+        "Margin": 20,
+        "MaxEnemyCount": 5,
         "Enemies": [
             { "ShipId": "gun_mk1", "Weight": 3 },
             { "ShipId": "shotgun_mk1", "Weight": 2 },

@@ -47,7 +47,10 @@ public class GameController : SceneSingleton<GameController>
     private void Start()
     {
         SaveController.Instance.Load();
-        CameraRebinder.BindTo(FindAnyObjectByType<PlayerModule>().transform);
+
+        var player = FindAnyObjectByType<PlayerModule>().transform;
+        CameraRebinder.BindTo(player);
+        RegionManager.Instance.SetPlayer(player);
 
         EnemySpawner.Instance.enabled = true;
         //Gamestate = GameState.Playing;
