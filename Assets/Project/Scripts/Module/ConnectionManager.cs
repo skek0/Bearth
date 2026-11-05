@@ -93,7 +93,8 @@ public class ConnectionManager : MonoBehaviour
     private bool IsConnectableConnector(Transform connector)
     {
         if (connector != null && connector.parent != null && connector.parent.TryGetComponent(out Module m))
-            return m.Connectable;
+            return m.Connectable && m.Faction != FactionType.Enemy;
+
         return false;
     }
 

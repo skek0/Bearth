@@ -29,6 +29,7 @@ public class BaseModule : Module, ISelectable
     public string AttachedParentPortId => attachedParentPortId;
     public Transform SenderTransform => senderTransform;
     public IReadOnlyCollection<Collider2D> SelfColliders => selfColliders;
+    public bool CanSelect => BelongedCore == null || BelongedCore.Faction != FactionType.Enemy;
     private HashSet<Collider2D> selfColliders;
     Rigidbody2D sourceRb;
     protected override void Awake()
@@ -296,7 +297,6 @@ public class BaseModule : Module, ISelectable
             Destroy(rb);
 
         connectable = true;
-        faction = FactionType.Mine;
 
         // 부모 모듈 연결 관계 반영 + 코어 확정
         var newCore = AddThisToAttachedModuleAndGetCore(parentConnector);

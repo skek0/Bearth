@@ -131,8 +131,9 @@ public class PointerInputHandler : SceneSingleton<PointerInputHandler>
         if (col == null)
             return;
 
-        if (!col.TryGetComponent<ISelectable>(out var selectable) ||
-            selectable == null)
+        if (!col.TryGetComponent<ISelectable>(out var selectable) 
+            || selectable == null
+            || !selectable.CanSelect)
             return;
 
         controllingObj = selectable;
