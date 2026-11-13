@@ -64,6 +64,8 @@ public class ConnectionManager : MonoBehaviour
             Transform connector = col.transform;
 
             if (!IsConnectableConnector(connector)) continue;
+            if (!IsWithinDepthLimit(connector)) continue;
+
 
             float sqr = (connector.position - myPos).sqrMagnitude;
             if (sqr >= bestSqr) continue;
@@ -155,5 +157,15 @@ public class ConnectionManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+    private bool IsWithinDepthLimit(Transform connector)
+    {
+        if (connector.parent == null || !connector.parent.TryGetComponent(out Module parent))
+            return false;
+    
+        CoreModule core = parent as CoreModule ?? (parent as BaseModule)?.BelongedCore;
+        if (core == null) return false;
+    
+        return BaseModule.GetDepth(parent) + 1 <= core.MaxAttachDepth;
     }
 }

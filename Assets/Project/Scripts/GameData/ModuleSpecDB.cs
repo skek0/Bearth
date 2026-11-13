@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using static UnityEngine.Audio.IAudioGenerator;
 
 /// <summary>
 /// ModuleID, TypeID, Type, Tier, Rarity, Mass, MaxHp, Price, PrefabPath
@@ -18,6 +19,12 @@ public class BaseStat
     public string ModuleType;
     public string Components;
     public string Tags;
+}
+[Serializable]
+public class CoreStat
+{
+    public string ModuleID;
+    public int MaxAttachDepth;
 }
 /// <summary>
 /// ModuleID, FireType, FireMode, Damage, Speed, Interval, Predelay, Accuracy, Penetration, ProjectileID
@@ -51,17 +58,21 @@ public class ProjectileInfo
 public static class ModuleSpecDB
 {
     public const string baseStatPath = "ModuleSpecs/BaseStats";
+    public const string coreStatPath = "ModuleSpecs/CoreStats";
     public const string rangedWeaponPath = "ModuleSpecs/WeaponRangedStats";
     private static Dictionary<string, BaseStat> _baseStats = new();
+    private static Dictionary<string, CoreStat> _coreStats = new();
     private static Dictionary<string, WeaponRangedStat> _weaponRangedStats = new();
 
 
     public static IReadOnlyDictionary<string, BaseStat> BaseStats => _baseStats;
+    public static IReadOnlyDictionary<string, CoreStat> CoreStats => _coreStats;
     public static IReadOnlyDictionary<string, WeaponRangedStat> WeaponRangedStats => _weaponRangedStats;
 
     public static void Load()
     {
         LoadBaseStats();
+        LoadCoreStats();
         LoadWeaponRangedStats();
     }
     public static void LoadBaseStats()
@@ -74,6 +85,13 @@ public static class ModuleSpecDB
         }
     }
 
+    public static void LoadCoreStats()
+    {
+        _coreStats.Clear();
+        foreach (var stat in JsonLoader.LoadFromResources<CoreStat>(coreStatPath))
+            _coreStats.Add(stat.ModuleID, stat);
+    }
+    
     public static void LoadWeaponRangedStats()
     {
         _weaponRangedStats.Clear();

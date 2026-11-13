@@ -1,0 +1,4 @@
+[
+  { "ModuleID": "player_mk1", "MaxAttachDepth": 3 },
+  { "ModuleID": "core_mk1",   "MaxAttachDepth": 2 }
+]

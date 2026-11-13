@@ -83,6 +83,10 @@ public class ModuleMaker
         // 모듈 기본스탯 적용
         Module module = _prefab.GetComponent<Module>();
         module.ApplyBaseStat(baseStat);
+        if (module is CoreModule core && ModuleSpecDB.CoreStats.TryGetValue(moduleID, out var coreStat))
+        {
+            core.ApplyCoreStat(coreStat);
+        }
 
         _prefab.name = baseStat.ModuleID;
 

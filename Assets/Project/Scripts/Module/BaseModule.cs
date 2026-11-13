@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 public class BaseModule : Module, ISelectable
@@ -8,9 +10,12 @@ public class BaseModule : Module, ISelectable
     [SerializeField] Transform senderTransform;
 
     public CoreModule BelongedCore { get; private set; }
+    public int AttachDepth { get; private set; }   // 코어 0, 코어에 직접 부착 1
+    public static int GetDepth(Module m) => m is BaseModule b ? b.AttachDepth : 0;
 
-    public event Action<BaseModule, CoreModule> AttachedToCore;
-    public event Action<BaseModule, CoreModule> DetachedFromCore;
+
+    public event Action<BaseModule, Module> Attached;
+    public event Action<BaseModule, Module> Detached;
     public event Action<BaseModule> Selected;
     public event Action<BaseModule> Deselected;
     public event Action<BaseModule> Died;
@@ -115,8 +120,19 @@ public class BaseModule : Module, ISelectable
 
         sourceRb = BelongedCore != null ? BelongedCore.Rigid : null;
 
-        if (BelongedCore != null)
-            NotifyDetached();
+        var oldParent = attachedTo;
+        attachedParentPortId = null;
+        sourceRb = BelongedCore != null ? BelongedCore.Rigid : null;
+
+        SetCore(null);
+        AttachDepth = 0;
+
+        if (attachedTo != null)
+        {
+            attachedTo.RemoveConnectedModule(this);
+            attachedTo = null;
+        }
+        if (oldParent != null) Detached?.Invoke(this, oldParent);
 
         if (GetComponent<Rigidbody2D>() == null) // 독립 모듈이 아니었을경우
         {
@@ -163,9 +179,6 @@ public class BaseModule : Module, ISelectable
     {
         base.OnDeath();
 
-        if (BelongedCore != null)
-            NotifyDetached();
-
         Detach(transform.position);
         Died?.Invoke(this);
     }
@@ -183,7 +196,12 @@ public class BaseModule : Module, ISelectable
             rigid.mass = mass;
             return;
         }
-
+        if (!TryResolveParentAndCore(closestConnector, out var parent, out var core))
+        {
+            Debug.LogError($"[BaseModule] Trying to attach to an unconnected module: {name}");
+            rigid.mass = mass;
+            return;
+        }
         // 세이브용
         var port = closestConnector.GetComponent<ConnectorPort>();
         attachedParentPortId = port != null ? port.PortId : null;
@@ -197,48 +215,38 @@ public class BaseModule : Module, ISelectable
         connectable = true;
         faction = FactionType.Mine;
 
-        var newCore = AddThisToAttachedModuleAndGetCore(closestConnector);
-        newCore.AddMass(mass);
-        NotifyAttached(newCore);
+        parent.AddConnectedModule(this);
+        attachedTo = parent;
+        AttachDepth = GetDepth(parent) + 1;
+        SetCore(core);
+        Attached?.Invoke(this, parent);
     }
-    private void NotifyDetached()
+    private void SetCore(CoreModule core)
     {
-        var old = BelongedCore;
-        BelongedCore.AddMass(-mass);
-        BelongedCore = null;
-        if (old != null)
-            DetachedFromCore?.Invoke(this, old);
+        if (BelongedCore == core) return;
+        BelongedCore?.AddMass(-mass);
+        BelongedCore = core;
+        BelongedCore?.AddMass(mass);
     }
-
-    private void NotifyAttached(CoreModule newCore)
+   
+    private static CoreModule ResolveCore(Module m) => m switch
     {
-        if (newCore == null) return;
-        if (BelongedCore == newCore) return;
-
-        // 다른 코어였다면 먼저 detach 통보
-        if (BelongedCore != null)
-            NotifyDetached();
-
-        BelongedCore = newCore;
-        AttachedToCore?.Invoke(this, newCore);
-    }
-
-
-    private CoreModule AddThisToAttachedModuleAndGetCore(Transform closestConnector)
+        CoreModule c => c,
+        BaseModule b => b.BelongedCore,
+        _ => null
+    };
+   
+    private bool TryResolveParentAndCore(Transform connector, out Module parent, out CoreModule core)
     {
-        Module _attachedTo = GetModuleByConnector(closestConnector);
-        _attachedTo.AddConnectedModule(this);
-        attachedTo = _attachedTo;
-
-        if (_attachedTo.TryGetComponent<BaseModule>(out var bModule))
-            return bModule.BelongedCore;
-        if (_attachedTo.TryGetComponent<CoreModule>(out var cModule))
-            return cModule;
-
-        return null;
+        parent = GetModuleByConnector(connector);
+        core = parent != null ? ResolveCore(parent) : null;
+        return core != null;
     }
 
-    private Module GetModuleByConnector(Transform closestConnector)
+
+
+
+private Module GetModuleByConnector(Transform closestConnector)
     {
         Transform current = closestConnector;
 
@@ -253,7 +261,8 @@ public class BaseModule : Module, ISelectable
     }
 
     void SetPositionAndRotationByConnector(Transform closestConnector)
-    { // connector기준으로 위치 맞추기
+    { 
+        // connector기준으로 위치 맞추기
         senderTransform.GetLocalPositionAndRotation(out Vector3 localPos, out Quaternion localRot);
 
         Quaternion targetRot = closestConnector.rotation * Quaternion.Inverse(localRot);
@@ -281,6 +290,7 @@ public class BaseModule : Module, ISelectable
     public bool LoadAttach(Transform parentConnector)
     {
         if (parentConnector == null) return false;
+        if (!TryResolveParentAndCore(parentConnector, out var parent, out var core)) return false;
 
         EnsureLoadAttachInitialized();
 
@@ -299,9 +309,11 @@ public class BaseModule : Module, ISelectable
         connectable = true;
 
         // 부모 모듈 연결 관계 반영 + 코어 확정
-        var newCore = AddThisToAttachedModuleAndGetCore(parentConnector);
-        newCore.AddMass(mass);
-        NotifyAttached(newCore);
+        parent.AddConnectedModule(this);
+        attachedTo = parent;
+        AttachDepth = GetDepth(parent) + 1;
+        SetCore(core);
+        Attached?.Invoke(this, parent);
 
         return true;
     }

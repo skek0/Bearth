@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public static class GameData
 {
@@ -18,6 +19,12 @@ public static class GameData
 
     private static void Validate()
     {
+        foreach (var m in ModuleSpecDB.BaseStats)
+            {
+                bool isCore = m.Value.ModuleType == "CoreModule" || m.Value.ModuleType == "PlayerModule";
+                if (isCore && !ModuleSpecDB.CoreStats.ContainsKey(m.Key))
+                Debug.LogError($"[GameDB] Core '{m.Key}': CoreStats entry missing");
+            }
         // 함선 → 모듈 ID 검증
         foreach (var ship in EnemyShipDB.Ships)
         {

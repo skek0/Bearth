@@ -9,7 +9,10 @@ public class CoreModule : Module
     [SerializeField] Transform frontConnector;
     public Transform FrontConnector => frontConnector;
 
-
+    private CoreStat coreStat;
+    public CoreStat Stat => coreStat;
+    public int MaxAttachDepth => coreStat?.MaxAttachDepth ?? int.MaxValue;   // 스펙 없으면 무제한
+    public void ApplyCoreStat(CoreStat s) => coreStat = s;
     protected override void Awake()
     {
         base.Awake();

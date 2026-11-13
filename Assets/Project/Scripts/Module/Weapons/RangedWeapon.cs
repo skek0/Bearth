@@ -39,8 +39,8 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     void OnEnable()
     {
         // 모듈 이벤트 구독
-        module.AttachedToCore += OnAttach;
-        module.DetachedFromCore += OnDetach;
+        module.Attached += OnAttach;
+        module.Detached += OnDetach;
         module.Died += OnDead;
     }
 
@@ -48,8 +48,8 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     {
         if (module != null)
         {
-            module.AttachedToCore -= OnAttach;
-            module.DetachedFromCore -= OnDetach;
+            module.Attached -= OnAttach;
+            module.Detached -= OnDetach;
             module.Died -= OnDead;
         }
 
@@ -57,8 +57,9 @@ public class RangedWeapon : MonoBehaviour, IWeapon
         UnregisterFromCore();
     }
 
-    void OnAttach(BaseModule _, CoreModule core)
+    void OnAttach(BaseModule _, Module parent)
     {
+        var core = module.BelongedCore;
         if (core == null) return;
         if (belongedCore == core && attackable) return;
 
@@ -69,7 +70,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
     }
 
 
-    void OnDetach(BaseModule _, CoreModule oldCore)
+    void OnDetach(BaseModule _, Module oldParent)
     {
         // 발사 중단 + 등록 해제
         fireController.StopAll();
@@ -80,7 +81,7 @@ public class RangedWeapon : MonoBehaviour, IWeapon
 
     void OnDead(BaseModule _)
     {
-        OnDetach(_, belongedCore);
+        OnDetach(_, null);
     }
 
     void UnregisterFromCore()
