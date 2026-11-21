@@ -17,6 +17,6 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         if (player == null || ai == null) return;
-        ai.UpdateAI(new EnemyContext(player));
+        ai.Tick(new EnemyContext(player));
     }
 }

@@ -1,4 +1,12 @@
 [
-  { "ModuleID": "player_mk1", "MaxAttachDepth": 3 },
-  { "ModuleID": "core_mk1",   "MaxAttachDepth": 2 }
+	{ 
+    "ModuleID": "player_mk1", "MaxAttachDepth": 3,
+    "MaxForwardSpeed": 400, "MaxSideSpeed": 8, "BackwardSpeedRatio": 0.5, "AccelRate": 20, "LinearDamping": 0.2,
+    "ProportionalGain": 2.0, "DerivativeGain": 0.7, "MaxTorque": 15, "AngleThreshold": 0.2 
+    },
+    { 
+    "ModuleID": "core_mk1", "MaxAttachDepth": 2,
+    "MaxForwardSpeed": 14, "MaxSideSpeed": 8, "BackwardSpeedRatio": 0.5, "AccelRate": 2, "LinearDamping": 0.2,
+    "ProportionalGain": 2.0, "DerivativeGain": 0.7, "MaxTorque": 15, "AngleThreshold": 0.2 
+    }
 ]

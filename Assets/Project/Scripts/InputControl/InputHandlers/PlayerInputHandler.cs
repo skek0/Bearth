@@ -74,6 +74,7 @@ public class PlayerInputHandler : MonoBehaviour
     private void OnLookCanceled(InputAction.CallbackContext ctx)
     {
         looking = false;
+        player?.ClearRotationInput();
     }
     private void OnAttackStarted(InputAction.CallbackContext ctx)
     {

@@ -25,6 +25,18 @@ public class CoreStat
 {
     public string ModuleID;
     public int MaxAttachDepth;
+    // 이동
+    public float MaxForwardSpeed;
+    public float MaxSideSpeed;
+    public float BackwardSpeedRatio;
+    public float AccelRate;
+    public float LinearDamping;
+    
+    // 회전 (PD 제어)
+    public float ProportionalGain;
+    public float DerivativeGain;
+    public float MaxTorque;
+    public float AngleThreshold;
 }
 /// <summary>
 /// ModuleID, FireType, FireMode, Damage, Speed, Interval, Predelay, Accuracy, Penetration, ProjectileID

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(CoreMove))]
 public class CoreModule : Module
 {
     public event Action OnAttackCommand;
@@ -12,7 +13,11 @@ public class CoreModule : Module
     private CoreStat coreStat;
     public CoreStat Stat => coreStat;
     public int MaxAttachDepth => coreStat?.MaxAttachDepth ?? int.MaxValue;   // 스펙 없으면 무제한
-    public void ApplyCoreStat(CoreStat s) => coreStat = s;
+    public void ApplyCoreStat(CoreStat s)
+    {
+        coreStat = s;
+        rigid.linearDamping = s.LinearDamping;
+    }
     protected override void Awake()
     {
         base.Awake();

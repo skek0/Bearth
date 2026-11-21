@@ -1,17 +1,15 @@
 using UnityEngine;
 
 
-[RequireComponent(typeof(PlayerMove))]
 [RequireComponent(typeof(PlayerInputHandler))]
 public class PlayerModule : CoreModule, IPlayerControl
 {
-    PlayerMove moveComponent;
+    CoreMove moveComponent;
 
     protected override void Awake()
     {
         base.Awake();
-
-        moveComponent = GetComponent<PlayerMove>();
+        moveComponent = GetComponent<CoreMove>();
     }
     public void SetMoveInput(Vector2 moveinput)
     {
@@ -20,10 +18,15 @@ public class PlayerModule : CoreModule, IPlayerControl
 
     public void SetRotationInput(Vector2 rotationinput)
     {
-        moveComponent.SetRotationInput(rotationinput);
+        moveComponent.SetLookTarget(Camera.main.ScreenToWorldPoint(rotationinput));
     }
 
-    public void AttackCommand()
+    public void ClearRotationInput()
+    {
+        moveComponent.ClearLookTarget();
+    }
+
+public void AttackCommand()
     {
         base.Attack();
     }
