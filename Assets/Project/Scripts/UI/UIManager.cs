@@ -11,6 +11,7 @@ public class UIManager : GlobalSingleton<UIManager>
     public enum PopupType
     {
         SaveName,
+        Upgrade,
         // Confirm,
         // Settings,
     }
@@ -60,6 +61,18 @@ public class UIManager : GlobalSingleton<UIManager>
         var instance = Instantiate(prefab, popupRoot);
         _activeInstances[type] = instance;
         return instance;
+    }
+
+    public bool IsPopupActive(PopupType type)
+    {
+        return _activeInstances.TryGetValue(type, out var instance) && instance != null && instance.activeSelf;
+    }
+
+    /// <summary>열려 있으면 닫고, 닫혀 있으면 연다.</summary>
+    public void TogglePopup(PopupType type)
+    {
+        if (IsPopupActive(type)) HidePopup(type);
+        else ShowPopup(type);
     }
 
     public void HidePopup(PopupType type)

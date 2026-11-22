@@ -16,8 +16,12 @@ public static class SceneSaveLoad
             Debug.LogError("[PlayerSave] Player core not found.");
             return;
         }
-        var ship = ShipSaveLoad.SaveFromCore(playerCore);
-        File.WriteAllText(path ?? DefaultPath, JsonUtility.ToJson(ship, true));
+        var data = new PlayerSaveData
+        {
+            ship = ShipSaveLoad.SaveFromCore(playerCore)
+        };
+        PlayerProgress.WriteTo(data);
+        File.WriteAllText(path ?? DefaultPath, JsonUtility.ToJson(data, true));
         Debug.Log($"[PlayerSave] Saved: {path ?? DefaultPath}");
     }
 
@@ -28,10 +32,27 @@ public static class SceneSaveLoad
         if (!File.Exists(path))
         {
             Debug.LogWarning($"[PlayerLoad] Save file not found: {path}");
+            PlayerProgress.ReadFrom(null);
             return;
         }
 
-        var ship = JsonUtility.FromJson<ShipSaveData>(File.ReadAllText(path));
+        string json = File.ReadAllText(path);
+        var data = JsonUtility.FromJson<PlayerSaveData>(json);
+        ShipSaveData ship;
+        if (data?.ship != null && data.ship.modules != null && data.ship.modules.Count > 0)
+        {
+            ship = data.ship;
+        }
+        else
+        {
+            // 구버전 저장 파일: ShipSaveData만 저장되어 있음
+            ship = JsonUtility.FromJson<ShipSaveData>(json);
+            data = null;
+        }
+
+        // 함선 생성 전에 업그레이드를 먼저 복원해야 생성 시 스탯에 반영됨
+        PlayerProgress.ReadFrom(data);
+
         ClearChildren(playerRoot); 
         ShipSaveLoad.LoadShipToRoot(playerRoot, ship, respawnPoint.position);
 
