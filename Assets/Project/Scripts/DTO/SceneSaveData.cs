@@ -12,8 +12,17 @@ public class SceneSaveData
 [Serializable]
 public class PlayerSaveData
 {
-    public int version = 1;
+    public int version = 2;
     public ShipSaveData ship;
+    public int scrap;
+    public List<UpgradeSaveData> upgrades = new();
+}
+
+[Serializable]
+public class UpgradeSaveData
+{
+    public string upgradeId;
+    public int level;
 }
 
 [Serializable]

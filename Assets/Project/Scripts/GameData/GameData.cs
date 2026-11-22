@@ -13,6 +13,7 @@ public static class GameData
         ModuleSpecDB.Load();
         EnemyShipDB.Load();
         RegionSpecDB.Load();
+        UpgradeSpecDB.Load();
 
         Validate();
     }
@@ -25,6 +26,8 @@ public static class GameData
                 if (isCore && !ModuleSpecDB.CoreStats.ContainsKey(m.Key))
                 Debug.LogError($"[GameDB] Core '{m.Key}': CoreStats entry missing");
             }
+        // 업그레이드 → CoreStat 필드 검증
+        UpgradeSpecDB.Validate();
         // 함선 → 모듈 ID 검증
         foreach (var ship in EnemyShipDB.Ships)
         {

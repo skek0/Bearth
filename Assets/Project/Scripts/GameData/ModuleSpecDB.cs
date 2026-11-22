@@ -37,6 +37,8 @@ public class CoreStat
     public float DerivativeGain;
     public float MaxTorque;
     public float AngleThreshold;
+
+    public CoreStat Clone() => (CoreStat)MemberwiseClone();
 }
 /// <summary>
 /// ModuleID, FireType, FireMode, Damage, Speed, Interval, Predelay, Accuracy, Penetration, ProjectileID

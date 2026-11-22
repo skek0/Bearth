@@ -1,0 +1,29 @@
+[
+    {
+    "UpgradeID": "MoveSpeed", "DisplayName": "이동 속도",
+    "Levels": [
+        { "Cost": 10, "Add": { "MaxForwardSpeed": 1.0, "MaxSideSpeed": 0.5 } },
+        { "Cost": 20, "Add": { "MaxForwardSpeed": 1.0, "MaxSideSpeed": 0.5 } },
+        { "Cost": 35, "Add": { "MaxForwardSpeed": 1.5, "MaxSideSpeed": 0.75 } },
+        { "Cost": 55, "Add": { "MaxForwardSpeed": 1.5, "MaxSideSpeed": 0.75 } },
+        { "Cost": 80, "Add": { "MaxForwardSpeed": 2.0, "MaxSideSpeed": 1.0 } }
+    ]
+    },
+    {
+    "UpgradeID": "TurnSpeed", "DisplayName": "회전 속도",
+    "Levels": [
+        { "Cost": 10, "Add": { "MaxTorque": 2.0, "ProportionalGain": 0.2 } },
+        { "Cost": 20, "Add": { "MaxTorque": 2.0, "ProportionalGain": 0.2 } },
+        { "Cost": 35, "Add": { "MaxTorque": 3.0, "ProportionalGain": 0.3 } },
+        { "Cost": 55, "Add": { "MaxTorque": 3.0, "ProportionalGain": 0.3 } },
+        { "Cost": 80, "Add": { "MaxTorque": 4.0, "ProportionalGain": 0.4 } }
+    ]
+    },
+    {
+    "UpgradeID": "AttachDepth", "DisplayName": "부착 깊이",
+    "Levels": [
+        { "Cost": 50, "Add": { "MaxAttachDepth": 1 } },
+        { "Cost": 120, "Add": { "MaxAttachDepth": 1 } }
+    ]
+    }
+]
